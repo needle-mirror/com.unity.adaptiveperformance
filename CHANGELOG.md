@@ -4,57 +4,27 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2019-04-29
+
+### Changed 
+- Fix Analytics system error with unloaded subsystem. 
+
 ## [1.1.0] - 2019-11-07
 
-### Fix warnings and logging
+### Changed
 - Fixed initial version log to represent the correct version (subsystem)
 - Fixed non reachable code warning. 
 - Fixed .net 3.5 breaking warning of unused variables and unassigned variables.
 
-### Analytics Support
-- Added Analytics events for subsystem manager and thermal status.   
+### Added
+- Analytics events for subsystem manager and thermal status.   
 
 ## [1.0.1] - 2019-08-29
 
-### Compatibility with Subsystem 
-- Subsystem API changes in Unity 2019.3
-
-### Change default performance levels
-- The default performance levels are changed to the maximum levels in automatic and manual mode
+### Changed 
+- Subsystem API to ensure compatibility with Subsystems in Unity 2019.3
+- The default performance levels are to the maximum levels in automatic and manual mode
 
 ## [1.0.0] - 2019-08-19
 
-### Ensure compatiblity with On Demand Rendering (Unity 2019.3 feature)
-
-## [0.2.0-preview.1] - 2019-06-19
-
-### New API
-- CPU frame time
-- Reworked AdaptivePerformanceSubsystem interface
-- Configurable logging frequency
-
-### Package Split
-- The Adaptive Performance package was split into a Adaptive Performance base package *Adaptive Performance* and the first provider package *AP Samsung (Android)*
-
-### Other
-- Compatibility with Unity 2017.4
-
-## [0.1.1-preview.1] - 2019-04-29
-
-### Bugfixes
-- Only try to initialize Samsung GameSDK on Samsung devices
-- Fix exception on shutdown
-
-## [0.1.0-preview.3] - 2019-03-27
-
-### Update Samsung GameSDK license information
-
-## [0.0.1-preview.2] - 2019-03-12
-
-### GameSDK 1.6 support
-
-## [0.0.1-preview.1] - 2019-03-11
-
-### This is the first release of *Unity Package Adaptive Performance*.
-
-Adaptive Performance support for Samsung S10 phones using the Samsung GameSDK
+### This is the first release of *Adaptive Performance*.
