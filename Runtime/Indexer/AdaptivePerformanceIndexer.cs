@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace UnityEngine.AdaptivePerformance
 {
-    // TODO: Enum and values is very vague, we should come up something better
     /// <summary>
     /// Describes what action is needed to stabilize.
     /// </summary>
@@ -28,101 +27,51 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// Describes what thermal method is used for figuring out thermal state of device.
-    /// </summary>
-    public enum ThermalStateMode
-    {
-        /// <summary>
-        /// Temperature state is calculated from thermal level and thermal trend.
-        /// Has better control over thermal state, but not very accurate between device versions.
-        /// </summary>
-        TemperatureLevelBased,
-        /// <summary>
-        /// Temperature state is calculated from thermal warning and thermal trend.
-        /// </summary>
-        WarningBased,
-    }
-
-    /// <summary>
     /// System used for tracking device thermal state.
     /// </summary>
     internal class ThermalStateTracker
     {
-        private Vector2 m_SafeRange = new Vector2(0.6f, 0.7f);
-        private Queue<float> m_Samples;
-        private int m_SampleCapacity;
-        private float m_LastThermalTrend;
+        private float warningTemp = 1.0f;
+        private float throttlingTemp = 1.0f;
 
-        public Vector2 SafeRange
+        public ThermalStateTracker()
         {
-            get { return m_SafeRange; }
-            set { m_SafeRange = value; }
-        }
-
-        public float Trend { get; private set; }
-        public ThermalStateMode Mode { get; set; }
-
-        public ThermalStateTracker(int sampleCapacity)
-        {
-            m_Samples = new Queue<float>(sampleCapacity);
-            m_SampleCapacity = sampleCapacity;
         }
 
         public StateAction Update()
         {
-            var thermalTrend = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureTrend;
-            var diff = thermalTrend - m_LastThermalTrend;
-            m_LastThermalTrend = thermalTrend;
+            float thermalTrend = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureTrend;;
 
-            m_Samples.Enqueue(diff);
-            if (m_Samples.Count > m_SampleCapacity)
-                m_Samples.Dequeue();
+            var thermalLevel = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureLevel;
+            var warning = Holder.Instance.ThermalStatus.ThermalMetrics.WarningLevel;
 
-            // Calculate from samples if trend is increasing or decreasing
-            var trend = 0.0f;
-            foreach (var sample in m_Samples)
-                trend += sample;
-            Trend = trend;
+            if (warning == WarningLevel.ThrottlingImminent && warningTemp == 1.0f)
+                warningTemp = thermalLevel; // remember throttling imminent level
 
-            if (Mode == ThermalStateMode.TemperatureLevelBased)
+            if (warning == WarningLevel.Throttling && throttlingTemp == 1.0f)
+                throttlingTemp = thermalLevel; // remember throttling level
+
+            // normal operating conditions
+            if (warning == WarningLevel.NoWarning && thermalLevel < warningTemp)
+                return StateAction.Increase;
+
+            // Throttling needs to cool down a lot before changing to no warning
+            if (warning == WarningLevel.Throttling || thermalLevel >= throttlingTemp)
+                return StateAction.FastDecrease;
+
+            // warm device
+            if (warning == WarningLevel.ThrottlingImminent || thermalLevel >= warningTemp)
             {
-                var thermalLevel = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureLevel;
-                var min = m_SafeRange.x <= thermalLevel;
-                var max = m_SafeRange.y >= thermalLevel;
+                // halfway to throttling?
+                if (thermalLevel > (warningTemp + throttlingTemp) / 2)
+                    return StateAction.Decrease;
 
-                // This is thermal safe zone and this is where we want to be ideally, no action needed
-                if (min && max)
+                if (thermalTrend <= 0)
                     return StateAction.Stale;
-
-                // This is thermal cold zone, it means we can push device and it is recommended to get away from it
-                if (thermalLevel <= 0.20f)
-                    return StateAction.Increase;
-
-                // This is thermal hot zone and it is very close to throttling, we should do everything to get away from it
-                if (thermalLevel >= 0.8f)
+                else if (thermalTrend > 0.5)
                     return StateAction.FastDecrease;
-
-                // This is thermal cool zone, we still have space to increase thermal levels to get into safe zone
-                if (!min && trend <= 0)
-                    return StateAction.Increase;
-
-                // This is thermal mild zone, we have to decrease thermal levels to get back into safe zone
-                if (!max && trend >= 0)
+                else
                     return StateAction.Decrease;
-            }
-
-            if (Mode == ThermalStateMode.WarningBased)
-            {
-                var warning = Holder.Instance.ThermalStatus.ThermalMetrics.WarningLevel;
-
-                if (warning == WarningLevel.NoWarning && trend <= 0)
-                    return StateAction.Increase;
-
-                if (warning == WarningLevel.ThrottlingImminent && trend >= 0)
-                    return StateAction.Decrease;
-
-                if (warning == WarningLevel.Throttling)
-                    return StateAction.FastDecrease;
             }
 
             return StateAction.Stale;
@@ -313,7 +262,7 @@ namespace UnityEngine.AdaptivePerformance
         {
             m_Settings = settings;
             TimeUntilNextAction = m_Settings.indexerSettings.thermalActionDelay;
-            m_ThermalStateTracker = new ThermalStateTracker(120);
+            m_ThermalStateTracker = new ThermalStateTracker();
             m_PerformanceStateTracker = new PerformanceStateTracker(120);
             m_UnappliedScalers = new List<AdaptivePerformanceScaler>();
             m_AppliedScalers = new List<AdaptivePerformanceScaler>();
@@ -326,9 +275,6 @@ namespace UnityEngine.AdaptivePerformance
         {
             if (Holder.Instance == null || !m_Settings.indexerSettings.active)
                 return;
-
-            // Update mode in case it was changed
-            m_ThermalStateTracker.Mode = m_Settings.indexerSettings.thermalStateMode;
 
             var thermalAction = m_ThermalStateTracker.Update();
             var performanceAction = m_PerformanceStateTracker.Update();
@@ -383,6 +329,9 @@ namespace UnityEngine.AdaptivePerformance
 
             foreach (var scaler in m_UnappliedScalers)
             {
+                if (!scaler.Enabled)
+                    continue;
+
                 if (scaler.OverrideLevel != -1)
                     continue;
 
@@ -397,6 +346,9 @@ namespace UnityEngine.AdaptivePerformance
 
             foreach (var scaler in m_AppliedScalers)
             {
+                if (!scaler.Enabled)
+                    continue;
+
                 if (scaler.OverrideLevel != -1)
                     continue;
 

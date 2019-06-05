@@ -62,6 +62,8 @@ public class AutoPerfControl : MonoBehaviour
         ap.DevicePerformanceControl.AutomaticPerformanceControl = AutoControlMode;
         ap.DevelopmentSettings.Logging = true;
         ap.DevelopmentSettings.LoggingFrequencyInFrames = 200;
+
+        Debug.Log($"Auto Performance Control overrides settings automatic performance mode to {ap.DevicePerformanceControl.AutomaticPerformanceControl},logging to {ap.DevelopmentSettings.Logging}.");
         // The base cycle amount for one test sequence
         loopCycles = 1;
         // If Auto mode is enabled, we're not using the loopCycles
@@ -236,11 +238,11 @@ public class AutoPerfControl : MonoBehaviour
 
     void EnableGameObject(GameObject level)
     {
-        HighLevelLoad.SetActive(false);
-        MidLevelLoad.SetActive(false);
-        NoLoad.SetActive(false);
+        HighLevelLoad.transform.GetChild(0).gameObject.SetActive(false);
+        MidLevelLoad.transform.GetChild(0).gameObject.SetActive(false);
+        NoLoad.transform.GetChild(0).gameObject.SetActive(false);
 
-        level.SetActive(true);
+        level.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     [Tooltip("If checked, logs will be taken at the LoggingFrequency interval ")]

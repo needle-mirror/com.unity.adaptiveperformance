@@ -108,7 +108,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 return;
             }
 
-            AdaptivePerformancePackageMetadataStore.AddPackage(package);
+            AdaptivePerformancePackageMetadataStore.AddPluginPackage(package);
 
             if (!InitializePackageFromMetadata(package, packageMetadata))
             {

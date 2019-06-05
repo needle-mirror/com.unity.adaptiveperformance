@@ -21,7 +21,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
             AdaptivePerformancePackageInitializationBootstrap.BeginPackageInitialization();
 
             TestPackage.Editor.TestPackage pkg = new TestPackage.Editor.TestPackage();
-            AdaptivePerformancePackageMetadataStore.AddPackage(pkg);
+            AdaptivePerformancePackageMetadataStore.AddPluginPackage(pkg);
             AdaptivePerformancePackageInitializationBootstrap.InitPackage(pkg);
         }
 
@@ -78,7 +78,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
             string[] assets = new string[0] {};
 
             TestPackage.Editor.TestPackage pkg = new TestPackage.Editor.TestPackage();
-            AdaptivePerformancePackageMetadataStore.AddPackage(pkg);
+            AdaptivePerformancePackageMetadataStore.AddPluginPackage(pkg);
             AdaptivePerformancePackageInitializationBootstrap.InitPackage(pkg);
 
             while (frameCount < 60)

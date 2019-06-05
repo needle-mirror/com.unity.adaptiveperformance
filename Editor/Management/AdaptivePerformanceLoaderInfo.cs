@@ -34,7 +34,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             return other != null && Equals(loaderType, other.loaderType) && Equals(instance, other.instance);
         }
 
-        static string[] s_LoaderBlackList = { "DummyLoader", "SampleLoader", "AdaptivePerformanceLoaderHelper" };
+        static string[] s_LoaderblockList = { "DummyLoader", "SampleLoader", "AdaptivePerformanceLoaderHelper" };
 
         internal static void GetAllKnownLoaderInfos(List<AdaptivePerformanceLoaderInfo> newInfos)
         {
@@ -44,7 +44,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 if (loaderType.IsAbstract)
                     continue;
 
-                if (s_LoaderBlackList.Contains(loaderType.Name))
+                if (s_LoaderblockList.Contains(loaderType.Name))
                     continue;
 
                 var assets = AssetDatabase.FindAssets(String.Format("t:{0}", loaderType));

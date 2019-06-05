@@ -205,7 +205,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
 
             for (int i = 0; i < Constants.DefaultAverageFrameCount; ++i)
             {
-                subsystem.NextGpuFrameTime = 0.033f;
+                subsystem.NextGpuFrameTime = 0.040f;
                 subsystem.NextCpuFrameTime = 0.015f;
                 subsystem.NextOverallFrameTime = 0.042f;
                 yield return null;

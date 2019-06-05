@@ -91,6 +91,12 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         /// <value>Interface to scalers that are active and their associated settings.</value>
         AdaptivePerformanceIndexer Indexer { get; }
+
+        /// <summary>
+        /// Access to the Settings. <see cref="IAdaptivePerformanceSettings"/>
+        /// </summary>
+        /// <value>Interface to settings that are loaded from the provider settings object during startup.</value>
+        IAdaptivePerformanceSettings Settings { get; }
     }
 
     /// <summary>

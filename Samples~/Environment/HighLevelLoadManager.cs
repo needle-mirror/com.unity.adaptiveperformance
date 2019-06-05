@@ -17,6 +17,7 @@ public class HighLevelLoadManager : MonoBehaviour
 
     public void SetLoad(float loadAmount)
     {
+        startingLoadAmount = loadAmount;
         int childCount = floatingRocksParent.childCount;
         for (int i = 0; i < childCount; i++)
         {

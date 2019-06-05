@@ -1,7 +1,7 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.10",
+  "version": "2.0.0-preview.11",
   "unity": "2019.3",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
@@ -20,7 +20,7 @@
     "vrr"
   ],
   "dependencies": {
-    "com.unity.subsystemregistration": "1.0.6"
+    "com.unity.subsystemregistration": "1.1.0"
   },
   "license": "See LICENSE.md file",
   "author": {
@@ -57,14 +57,49 @@
       "displayName": "Adaptive Framerate Sample",
       "description": "Demonstrates how Adaptive Framrate using target framerate or variable refresh rate works.",
       "path": "Samples~/Adaptive Framerate"
+    },
+    {
+      "displayName": "Adaptive Batching Sample",
+      "description": "Demonstrates how Adaptive Batching works.",
+      "path": "Samples~/Adaptive Batching"
+    },
+    {
+      "displayName": "Adaptive LOD Sample",
+      "description": "Demonstrates how Adaptive Performance LOD Scaler works.",
+      "path": "Samples~/Adaptive LOD"
+    },
+    {
+      "displayName": "Adaptive Lut Sample",
+      "description": "Demonstrates how Adaptive Lut Scaler works.",
+      "path": "Samples~/Adaptive Lut"
+    },
+    {
+      "displayName": "Adaptive MSAA Sample",
+      "description": "Demonstrates how Adaptive MSAA works.",
+      "path": "Samples~/Adaptive MSAA"
+    },
+    {
+      "displayName": "Adaptive Resolution Sample",
+      "description": "Demonstrates how Adaptive Resolution works.",
+      "path": "Samples~/Adaptive Resolution"
+    },
+    {
+      "displayName": "Adaptive Shadow Sample",
+      "description": "Demonstrates how Adaptive Performance Shadow Scaler, such as Adaptive Shadow Quality, Adaptive Shadow Resolution, Adaptive Shadow Distance and Adaptive Shadow Cascade work.",
+      "path": "Samples~/Adaptive Shadow"
+    },
+    {
+      "displayName": "Adaptive Sorting Sample",
+      "description": "Demonstrates how Adaptive Sorting works.",
+      "path": "Samples~/Adaptive Sorting"
     }
   ],
   "upmCi": {
-    "footprint": "0adadac2d1fe93e449078161100e81d55871e1e7"
+    "footprint": "f17de34fb08dc2fe42c8b68aeda491bbd42554d9"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "ce9a138c52e057c4ab117256393e4cf3ca9c0c0c"
+    "revision": "925e820700a8d312a7281c9badb9a7183dbc3101"
   }
 }

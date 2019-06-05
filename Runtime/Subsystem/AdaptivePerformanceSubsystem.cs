@@ -183,7 +183,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// If <see cref="Feature.GpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>) this parameter is ignored.
         /// </param>
         /// <returns>`true` on success. When this fails, it means that the system took control of the active performance levels.</returns>
-        bool SetPerformanceLevel(int cpu, int gpu);
+        bool SetPerformanceLevel(ref int cpu, ref int gpu);
     }
 
     /// <summary>

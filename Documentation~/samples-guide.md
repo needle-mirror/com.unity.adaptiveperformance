@@ -8,13 +8,25 @@ While running, each sample will log information about the current state and any 
 
 ## Installation
 
-Install Adaptive Performance samples from the **Package Manager** window. The following samples are available:
+Install Adaptive Performance samples from the **Package Manager** window. Some of the samples require Universal Renderpipeline to work while other work with any renderpipeline. The following samples are available for any renderpipeline:
 
 - [Sample Environment](#sample-environment)
 - [Thermal Sample](#thermal-sample)
 - [Bottleneck Sample](#bottleneck-sample)
 - [VRR Sample](#vrr-sample)
 - [Automatic Performance Control Sample](#automatic-performance-control-sample)
+- [Adaptive Framerate Sample](#adaptive-framerate-sample)
+- [Adaptive LOD Sample](#adaptive-lod-sample)
+- [Adaptive Resolution Sample](#adaptive-resolution-sample)
+
+The following samples require Universal Renderpipeline:
+
+- [Adaptive Batching Sample](#adaptive-batching-sample)
+- [Adaptive Lut Sample](#adaptive-lut-sample)
+- [Adaptive MSAA Sample](#adaptive-msaa-sample)
+- [Adaptive Shadow Sample](#adaptive-shadow-sample)
+- [Adaptive Sorting Sample](#adaptive-sorting-sample)
+
 
 ## Sample Environment
 The sample environment is required for most of the samples, because the samples share the same assets. You should install the sample environment before installing any other samples to have the necessary base structure available.
@@ -62,6 +74,8 @@ At lower refresh rates, the motion of the objects might appear a little choppy. 
 
 At the time of writing, the only device to support Variable Refresh Rate is the Samsung S20+ with GameSDK 3.2 or later.
 
+**Note** This demo requires the [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html) provider to be installed.
+
 ## Automatic Performance Control Sample
 The Automatic Performance Control sample shows how the Automatic Performance Control features of Adaptive Performance works, using two different prefabs that have a medium and high CPU load respectively. Both scenes target 60 FPS and attempt to keep the frame rate stable. If the device reports that throttling is imminent, the sample drops the framerate to 45 and Adaptive Performance automatically reduces the load on the device until it cools down and stops throttling.
 
@@ -83,21 +97,153 @@ The TestSequence component has some additional options for configuring how the t
 |Auto Mode|The test will loop through the defined sequence until the device reaches the Throttling Imminent thermal state  at which point target FPS is set to 45. The timeout is defined in the Auto Perf Control component.|
 |Test Sequence|The order in which test levels should load, and how long they should run, in seconds.|
 
-## Adaptive Framerate
-The Adaptive Framerate sample shows how the rendering rate can be adjusted dynamically at runtime. This feature uses the Indexer system to make decisions on when and how much to increase or decrease the rendering rate to maintain performance and thermal stability. The sample uses the same content as the Auto Performance Control sample. It switches between high and medium CPU load while using no load for 15 seconds in between each load set to allow the framerate to come back up.
+## Adaptive Framerate Sample
+The Adaptive Framerate sample shows how the framerate can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the framerate to maintain performance and thermal stability.
+
+The sample uses the same content as the Auto Performance Control sample. It switches between high and medium CPU load while using no load for 15 seconds in between each load set to allow the framerate to come back up.
 
 ### Options
-The Adaptive Framerate sample scene has two GameObjects named **AdaptiveFramerate** and **VariableRefreshRateScaler**. By default the **AdaptiveFramerate** GameObject is enabled to use Application.TargetFramerate for managing the framerate. Alternatively you may use Variable Refresh Rate on supported devices. To do so disable the **AdaptiveFramerate** GameObject and enable the **VariableRefreshRateScaler** GameObject.
+The Adaptive Framerate sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
 
-Both scalers allow setting a minimum and maximum framerate for the scene via a double ended slider.
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+To adapt framerate automatically you can work with two Scalers named **Adaptive Framerate** and **Adaptive Variable Refresh Rate**.
+By default no Scaler is enabled and you need to enable **Adaptive Framerate** and/or **Adaptive VariableRefreshRate**. Each of those Scalers has a different purpose
+
+|**Scaler**|**Description**|
+|:---|:---|
+|Adaptive Framerate| Uses Application.TargetFramerate for managing the framerate between minimum and maximum framerate.|
+|Adaptive Variable Refresh Rate| Uses VRR on supported devices to set VRR close to the achiveable framerate defined between minimum and maximum framerate of the Adaptive Framerate settings. Adaptive VRR is based on Adapive Framerate and will change the Application.TargetFramerate to the maximum framerate.|
+
+Both scalers share the same setting. Adaptive Framerate settings are available in the Adaptive Performance settings. Adaptive VRR is using the same base settings as Adaptive Framerate and if you change them for Adaptive Framerate it also changes them for adaptive VRR. We recommend to use Adaptive VRR always in combination with Adaptive Framerate and use the same settings. To change Adaptive VRR settings, you can either change the Adaptive Framerate settings or use C# api shown in `AdaptiveFrameRateSettings.cs`.
+
+**Note** This demo requires the [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html) provider to be installed if you want to use Adaptive VRR.
+
+## Adaptive Resolution Sample
+The Adaptive Resolution sample shows how the resolution can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the resolution to maintain performance and thermal stability.
+
+Adaptive Resolution uses [On-Demand rendering](https://docs.unity3d.com/ScriptReference/Rendering.OnDemandRendering.html) and is only supported on Vulkan on any Render Pipeline. If you do not use Vulkan and use Universal Render Pipeline it will fallback and use the Render Scale.
+
+### Options
+The Adaptive Resolution sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+
+## Adaptive LOD Sample
+The Adaptive LOD sample shows how the lod bias can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the lod bias to maintain performance and thermal stability.
+
+The sample uses the same content as the Auto Performance Control sample. It switches between high and medium CPU load while using no load for 15 seconds in between each load set to allow the framerate to come back up.
+
+### Options
+The Adaptive LOD sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+## Adaptive Batching Sample
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive Batching sample shows how batching can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how to change batching to maintain performance and thermal stability.
+
+Changes are not visible on-screen for this demo, please use a graphics performanec analyzer to see the differences.
+
+### Options
+The Adaptive batching sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+## Adaptive Lut Sample
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive Lut sample shows how the lut can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the lut to maintain performance and thermal stability.
+
+The sample uses the same content as the Auto Performance Control sample. It switches between high and medium CPU load while using no load for 15 seconds in between each load set to allow the framerate to come back up.
+
+### Options
+The Adaptive Lut sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+Changes are not visible on-screen for this demo, please use a graphics performanec analyzer to see the differences.
+
+## Adaptive MSAA Sample
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive MSAA sample shows how MSAA can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease MSAA to maintain performance and thermal stability.
+
+### Options
+The Adaptive MSAA sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+Changes are not visible on-screen for this demo, please use a graphics performanec analyzer to see the differences.
+
+## Adaptive Shadow Sample
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive Shadow sample shows how Shadow Distance, Shadow Cascades, Shadow Resolution and Shadow Distance can be adjusted dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the different shadow features to maintain performance and thermal stability.
+
+The sample uses the same content as the Auto Performance Control sample. It switches between high and medium CPU load while using no load for 15 seconds in between each load set to allow the framerate to come back up.
+
+### Options
+The Adaptive Shadow sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+## Adaptive Sorting Sample
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive Sorting sample shows how sorting can be used dynamically at runtime.
+
+This feature uses the Indexer system to make decisions on when to change sorting to maintain performance and thermal stability.
+
+### Options
+The Adaptive Sorting sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers used and lets you modify the status for easier testing:
+
+- Enable/Disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+Changes are not visible on-screen for this demo, please use a graphics performanec analyzer to see the differences.
 
 # Technical details
 ## Requirements
 
-Most samples are designed for Unity built-in render pipeline. If you use another render pipeline, you need to convert the Assets. For example, if you use the Universal Render Pipeline, go to **Edit &gt; Render Pipeline &gt; Universal Render Pipeline &gt; Upgrade Project Materials to UniversalRP Materials** from Unity's main menu.
+Most samples are designed for Unity built-in render pipeline. Some samples require other Render Pipelines to showcase the features. Please see the [Universal Render Pipeline](#universal-render-pipeline) section below.
 
 ## Project Settings
 
 To enable proper timing for Adaptive Performance, you need to enable the **Frame Timing Stats** option (menu: **Edit &gt; Project Settings &gt; Player &gt; Other Settings**).
 
 If you want to use `Application.targetFrameRate` to limit the target frame rate, set the **VSync Count** option under **Edit &gt; Project Settings &gt; Quality &gt; Other** to **Don't Sync**.
+
+### Universal Render Pipeline
+You need to use Universal Render Pipeline in your project for some samples. The Scalers used in those samples directly change settings in the Universal Render Pipeline and therefore will not have any effect when using any other Render Pipeline.
+
+Adaptive Performance requires Universal Render Pipeline versions `7.5`, `8.2`, `10.0` and later. Install it via the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html).
+
+To use the Universal Render Pipeline Settings we ship with the samples you have to follow following steps:
+
+- Go to **Project Settings &gt; Graphics &gt; Scraiptable Render Pipeline Settings** and add the Universal Render Pipeline Asset from `Sample Environment/URP Settings/APSamplesHighQuality.asset`.
+- Go to **Project Settings &gt; Quality &gt; Rendering** and add the Universal Render Pipeline Asset from `Sample Environment/URP Settings/APSamplesHighQuality.asset`.
+- Convert the Assets from Unit built-in pipeline to Universal Render Pipeline. Go to **Edit &gt; Render Pipeline &gt; Universal Render Pipeline &gt; Upgrade Project Materials to UniversalRP Materials** from Unity's main menu.

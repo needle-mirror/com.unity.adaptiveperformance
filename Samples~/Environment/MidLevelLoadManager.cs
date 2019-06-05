@@ -10,6 +10,7 @@ public class MidLevelLoadManager : MonoBehaviour
 
     public void SetLoad(float loadAmount)
     {
+        startingLoadAmount = loadAmount;
         foreach (Transform veg in Vegetation)
         {
             veg.gameObject.SetActive(false);

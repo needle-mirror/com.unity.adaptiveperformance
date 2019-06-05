@@ -25,7 +25,20 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         internal static AdaptivePerformanceSettingsManager Instance => s_SettingsManager;
 
-        internal bool ResetUi { get; set; }
+        bool resetUi = false;
+        internal bool ResetUi
+        {
+            get
+            {
+                return resetUi;
+            }
+            set
+            {
+                resetUi = value;
+                if (resetUi)
+                    Repaint();
+            }
+        }
 
         SerializedObject m_SettingsWrapper;
 
@@ -161,6 +174,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 var serializedSettingsObject = new SerializedObject(settings);
                 serializedSettingsObject.Update();
 
+                EditorGUILayout.LabelField($"Settings for {buildTargetGroup}", EditorStyles.boldLabel);
+
                 SerializedProperty initOnStart = serializedSettingsObject.FindProperty("m_InitManagerOnStart");
                 EditorGUIUtility.labelWidth = 240;
                 EditorGUILayout.PropertyField(initOnStart, Content.k_InitializeOnStart);
@@ -220,18 +235,18 @@ namespace UnityEditor.AdaptivePerformance.Editor
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error trying to display provider assingment UI : {ex.Message}");
+                Debug.LogError($"Error trying to display provider assignment UI : {ex.Message}");
             }
 
             EditorGUILayout.EndBuildTargetSelectionGrouping();
         }
 
-        private void DisplayLink(GUIContent text, Uri link, int leftMargin, int width)
+        private void DisplayLink(GUIContent text, Uri link)
         {
             var labelStyle = EditorStyles.linkLabel;
             var uriRect = GUILayoutUtility.GetRect(text, labelStyle);
-            uriRect.x += leftMargin;
-            uriRect.width = width;
+            var size = labelStyle.CalcSize(text);
+            uriRect.width = size.x;
             if (GUI.Button(uriRect, text, labelStyle))
             {
                 System.Diagnostics.Process.Start(link.AbsoluteUri);
@@ -242,7 +257,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         private void DisplayDocumentationLink()
         {
-            DisplayLink(Content.k_DocText, Content.k_DocUri, 5, 120);
+            DisplayLink(Content.k_DocText, Content.k_DocUri);
             EditorGUILayout.Space();
         }
 
@@ -263,7 +278,6 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 m_SettingsWrapper.ApplyModifiedProperties();
             }
             EditorGUI.EndDisabledGroup();
-            EditorGUILayout.Space();
         }
 
         /// <summary>
@@ -271,12 +285,15 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// </summary>
         public override void OnGUI(string searchContext)
         {
-            AdaptivePerformancePackageMetadataStore.ReportProgressOnActiveWork();
-
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical();
 
             DisplayDocumentationLink();
             DisplayLoadOrderUi();
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
 
             base.OnGUI(searchContext);
         }

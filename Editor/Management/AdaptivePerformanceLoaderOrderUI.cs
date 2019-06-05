@@ -131,9 +131,14 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 }
 
                 m_OrderedList = new ReorderableList(m_LoaderMetadata, typeof(LoaderInformation), false, true, false, false);
-                m_OrderedList.drawHeaderCallback = (rect) => GUI.Label(rect, EditorGUIUtility.TrTextContent("Providers"), EditorStyles.label);
+                m_OrderedList.drawHeaderCallback = (rect) => GUI.Label(rect, EditorGUIUtility.TrTextContent(L10n.Tr("Providers")), EditorStyles.label);
                 m_OrderedList.drawElementCallback = (rect, index, isActive, isFocused) => DrawElementCallback(rect, index, isActive, isFocused);
                 m_OrderedList.elementHeightCallback = (index) => GetElementHeight(index);
+                m_OrderedList.drawFooterCallback = (rect) =>
+                {
+                    var status = AdaptivePerformancePackageMetadataStore.GetCurrentStatusDisplayText();
+                    GUI.Label(rect, status, EditorStyles.label);
+                };
             }
 
             if (m_LoaderMetadata == null || m_LoaderMetadata.Count == 0)

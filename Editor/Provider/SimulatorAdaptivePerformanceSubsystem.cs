@@ -1,5 +1,3 @@
-#if UNITY_EDITOR
-
 using System;
 using UnityEngine.Scripting;
 using UnityEngine;
@@ -262,7 +260,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         /// <param name="cpuLevel"></param>
         /// <param name="gpuLevel"></param>
         /// <returns></returns>
-        public bool SetPerformanceLevel(int cpuLevel, int gpuLevel)
+        public bool SetPerformanceLevel(ref int cpuLevel, ref int gpuLevel)
         {
             LastRequestedCpuLevel = cpuLevel;
             LastRequestedGpuLevel = gpuLevel;
@@ -292,4 +290,3 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
     }
 }
-#endif

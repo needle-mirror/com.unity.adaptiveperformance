@@ -3,15 +3,13 @@ using System.IO;
 
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using UnityEngine.AdaptivePerformance;
 using UnityEditor.AdaptivePerformance.Editor.Metadata;
 
 namespace UnityEditor.AdaptivePerformance.Editor
 {
     internal class AdaptivePerformanceConfigurationProvider : SettingsProvider
     {
-        static readonly GUIContent s_WarningToCreateSettings = EditorGUIUtility.TrTextContent("You must create a serialized instance of the settings data in order to modify the settings in this UI. Until then only default settings set by the provider will be available.");
-
         Type m_BuildDataType = null;
         string m_BuildSettingsKey;
         UnityEditor.Editor m_CachedEditor;
@@ -21,6 +19,10 @@ namespace UnityEditor.AdaptivePerformance.Editor
         {
             m_BuildDataType = buildDataType;
             m_BuildSettingsKey = buildSettingsKey;
+            if (currentSettings == null)
+            {
+                Create();
+            }
         }
 
         ScriptableObject currentSettings
@@ -68,12 +70,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         {
             if (m_SettingsWrapper == null || m_SettingsWrapper.targetObject == null)
             {
-                EditorGUILayout.HelpBox(s_WarningToCreateSettings);
-                if (GUILayout.Button(EditorGUIUtility.TrTextContent("Create")))
-                {
-                    ScriptableObject settings = Create();
-                    InitEditorData(settings);
-                }
+                ScriptableObject settings = Create();
+                InitEditorData(settings);
             }
 
             if (m_SettingsWrapper != null  && m_SettingsWrapper.targetObject != null && m_CachedEditor != null)

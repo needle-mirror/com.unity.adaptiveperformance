@@ -21,8 +21,8 @@ public class VariableRefreshRateControl : MonoBehaviour
         m_VRR = UnityEngine.AdaptivePerformance.Samsung.Android.VariableRefreshRate.Instance;
         timeOuttimer = timeOut;
 
-        Application.targetFrameRate = 120;
-        targetRefreshRate.SetValueWithoutNotify(120);
+        Application.targetFrameRate = 60;
+        targetRefreshRate.SetValueWithoutNotify(60);
 
         if (m_VRR == null)
         {

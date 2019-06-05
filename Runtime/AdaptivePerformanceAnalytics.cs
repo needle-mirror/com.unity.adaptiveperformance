@@ -167,6 +167,7 @@ namespace UnityEngine.AdaptivePerformance
                 return;
 
             s_AdaptivePerformanceEvent.UpdateGeneralEventData();
+            s_AdaptivePerformanceEvent.UpdateFeatureData();
 
             for (var i = 0; i < s_AdaptivePerformanceEvent.featureData.Length; ++i)
             {
