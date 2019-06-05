@@ -17,11 +17,19 @@ public class Move : MonoBehaviour
 
     void Update()
     {
-        addedSpeed = Mathf.Abs(Mathf.Sin(Time.time * 1.5f) * (max - min));
-        timer -= Time.deltaTime;
+        var dt = Time.deltaTime;
+        timer -= dt;
         if (timer < 0)
         {
             timer = waitTime;
+
+            var timeForMove = Time.time;
+            if (waitTime < dt)
+            {
+                timeForMove += (dt - waitTime);
+            }
+
+            addedSpeed = Mathf.Abs(Mathf.Sin(timeForMove * 1.5f) * (max - min));
             var z = (Mathf.PingPong((addedSpeed), max - min) + min);
             transform.position = new Vector3(pos.x, pos.y, z);
         }

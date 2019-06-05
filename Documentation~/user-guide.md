@@ -1,8 +1,6 @@
-**_Adaptive Performance User Guide_**
+# Adaptive Performance user guide
 
-# Using Adaptive Performance
-
-When you install the Adaptive Performance package, Unity automatically creates a GameObject that implements `IAdaptivePerformance` in your Project at run time. To access the instance, use `UnityEngine.AdaptivePerformance.Holder.Instance`.
+When you install the Adaptive Performance package, Unity automatically creates a GameObject that implements `IAdaptivePerformance` in your Project at runtime. To access the instance, use `UnityEngine.AdaptivePerformance.Holder.Instance`.
 
 To check if your device supports Adaptive Performance, use the `Instance.Active` property. To get detailed information during runtime, enable debug logging in the provider settings or via the `Instance.DevelopmentSettings.Logging` during runtime or via boot time flags from the settings API:
 
@@ -18,33 +16,36 @@ static class AdaptivePerformanceConfig
 }
 ```
 
-Unity enables AdaptivePerformance by default once you install the package and if it finds a suitable subsystem. A subsystem needs to be installed and checked in the settings to be added at built time and findable during runtime. To disable Adaptive Performance, disable the *Initialize Adaptive Performance* checkbox in the provider tab for the target platform.
+Unity enables Adaptive Performance by default once you install the package and if it finds a suitable subsystem. A subsystem needs to be installed and checked in the settings to be added at build time and findable during runtime. To disable Adaptive Performance, disable the *Initialize Adaptive Performance* option in the provider tab for the target platform.
 
 ![Samsung Android provider in the provider list is installed and ready to use. Initialize Adaptive Performance checkbox is installed](Images/installation-provider.png)
 
-For a description of the detailed startup behavior of a subsystem please read the subsystem documentation.
+For a description of the detailed startup behavior of a subsystem, see the subsystem documentation.
 
-## Performance Status
+## Performance status
 
-Adaptive Performance tracks several performance metrics and updates them every frame. To access these metrics, use the `Instance.PerformanceStatus`property.
+Adaptive Performance tracks several performance metrics and updates them every frame. To access these metrics, use the `Instance.PerformanceStatus` property.
 
 ### Frame timing
 
-Adaptive Performance always tracks the average GPU, CPU, and overall frame times, and updates them every frame. You can access the latest timing data using the `PerformanceStatus.FrameTiming` property.
+Adaptive Performance always tracks the average GPU, CPU, and overall frame times, and updates them every frame. To access the latest timing data, use the `PerformanceStatus.FrameTiming` property.
 
-The overall frame time is the time difference between frames. You can use it to calculate the current framerate of the application.
-The CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread. It doesn’t include the times when Unity might be blocked by the operating system, or when Unity needs to wait for the GPU to catch up with rendering.
-The GPU time is the time the GPU is actively processing data to render a frame. It doesn’t include the time when the GPU has to wait for Unity to provide data to render.
+Overall frame time is the time difference between frames. Use it to calculate the current framerate of the application.
+
+CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread. It doesn’t include the times when Unity might be blocked by the operating system, or when Unity needs to wait for the GPU to catch up with rendering.
+
+GPU time is the time the GPU is actively processing data to render a frame. It doesn’t include the time when the GPU has to wait for Unity to provide data to render.
 
 ### Performance bottleneck
 
-Adaptive Performance uses the currently configured target frame rate (see `UnityEngine.Application.targetFrameRate` and `QualitySettings`) and the information that `FrameTiming`provides to calculate what is limiting the frame rate of the application. If the application isn’t performing at the desired target framerate, it might be bound by either CPU or GPU processing. You can subscribe with a delegate function to the `PerformanceStatus.PerformanceBottleneckChangeEvent` event to get a notification whenever the current performance bottleneck of the application changes.
+Adaptive Performance uses the currently configured target frame rate (see `UnityEngine.Application.targetFrameRate` and `QualitySettings`) and the information that `FrameTiming` provides to calculate what is limiting the application's frame rate. If the application isn’t performing at the desired target framerate, it might be bound by either CPU or GPU processing. To get a notification whenever the current performance bottleneck of the application changes, subscribe with a delegate function to the `PerformanceStatus.PerformanceBottleneckChangeEvent` event.
 
-You can use the information about the current performance bottleneck to make targeted adjustments to the game content at run time. For example, in a GPU-bound application, lowering the rendering resolution often improves the frame rate significantly, but the same change might not make a big difference for a CPU-bound application.
+You can use the information about the current performance bottleneck to make targeted adjustments to the game content at runtime. For example, in a GPU-bound application, lowering the rendering resolution often improves the frame rate significantly, but the same change might not make a big difference for a CPU-bound application.
 
 ## Device thermal state feedback
 
 The Adaptive Performance API gives you access to the current thermal warning level of the device (`Instance.ThermalStatus.ThermalMetrics.WarningLevel`) and a more detailed temperature level (`Instance.ThermalStatus.ThermalMetrics.TemperatureLevel`). The application can make modifications based on these values to avoid the operating system throttling it.
+
 The following example shows the implementation of a Unity component that uses Adaptive Performance feedback to adjust the global LOD bias:
 
 ```
@@ -86,21 +87,22 @@ public class AdaptiveLOD : MonoBehaviour
 ## Configuring CPU and GPU performance levels
 
 The CPU and GPU consume the most power on a mobile device, especially when running a game. Typically, the operating system decides which clock speeds to use for the CPU and GPU. CPU cores and GPUs are less efficient when running at their maximum clock speed. When they run at high clock speeds, the mobile device overheats, and the operating system throttles CPU and GPU frequency to cool down the device.
-By default, Adaptive Performance automatically configures CPU and GPU performance levels based on the current performance bottleneck.
-Alternatively, you can switch to `Manual` mode; to do this, set  `Instance.DevicePerformanceControl.AutomaticPerformanceControl` to `false`. In `Manual` mode, you can use the `Instance.DevicePerformanceControl.CpuLevel` and `Instance.DevicePerformanceControl.GpuLevel` properties to optimize CPU and GPU performance. To check which mode you are currently in, use `Instance.DevicePerformanceControl.PerformanceControlMode`.
+
+By default, Adaptive Performance automatically configures CPU and GPU performance levels based on the current performance bottleneck. Alternatively, you can switch to `Manual` mode; to do this, set  `Instance.DevicePerformanceControl.AutomaticPerformanceControl` to `false`. In `Manual` mode, you can use the `Instance.DevicePerformanceControl.CpuLevel` and `Instance.DevicePerformanceControl.GpuLevel` properties to optimize CPU and GPU performance. To check which mode your application currently runs in, use `Instance.DevicePerformanceControl.PerformanceControlMode`.
 
 The application can configure these properties based on the thermal feedback and the frame time data that the Adaptive Performance API provides. It also uses these questions about its current performance requirements:
+
 - Did the application reach the target frame rate in the previous frames?
-- Is the application in an in-game scene, a loading screen, or a menu?
+- Is the application in a scene, a loading screen, or a menu?
 - Are device temperatures rising?
 - Is the device close to thermal throttling?
 - Is the device GPU or CPU bound?
 
-*Note:* Changing GPU and GPU levels only has an effect as long as the device is not in thermal throttling state (`Instance.WarningLevel` equals `PerformanceWarningLevel.Throttling`).
+**Note:** Changing GPU and GPU levels only has an effect as long as the device is not in thermal throttling state (`Instance.WarningLevel` equals `PerformanceWarningLevel.Throttling`).
 In some situations, the device might take control over the CPU and GPU levels. This changes the value of `Instance.DevicePerformanceControl.PerformanceControlMode`
 to `PerformanceControlMode.System`.
 
-The following example shows how to reduce thermal pressure and power consumption by using the Adaptive Performance Automatic Performance Control. It adjusts the CPU and GPU levels based on your `targetFrameRate` and helps you to reduce power consumption, heat and current efficiently. Setting CPU and GPU level manually is not recommended instead you should use the Automatic Performance Control to achieve the best performance by setting the `targetFrameRate` only:
+The following example shows how to reduce thermal pressure and power consumption by using the Adaptive Performance Automatic Performance Control. It adjusts the CPU and GPU levels based on your `targetFrameRate` and helps you to reduce power consumption, heat and current efficiently. Setting CPU and GPU levels manually is not recommended. Instead, you should use the Automatic Performance Control to achieve the best performance by setting the `targetFrameRate` only:
 
 ```
 public void EnterMenu()
@@ -123,38 +125,34 @@ public void EnterBenchmark()
 }
 ```
 
-## Indexer
+## Indexer and Scalers
 
-The Indexer is a Adaptive Performance system that tracks thermal and performance state and offers a quantified quality index. This index is used by Scalers to adjust quality. The quality control is achieved by changing different scaler levels.
+The Indexer is an Adaptive Performance system that tracks thermal and performance state and offers a quantified quality index.
 
-Scaler can make a decisions by priorities supplied from the indexer using the following targets:
+Scalers are components that represent individual features, such as graphics or physics. A Scaler controls the quality of its feature, using data from the indexer to make adjustments. A Scaler's default value is zero. As the value increases, the associated feature's quality (as measured by level of detail) decreases.
+
+Scalers make decisions based on priorities that the Indexer supplies, using the following targets:
+
 - Targets current bottleneck.
 - Lowest level.
 - Lowest visual impact.
 
-### Using Indexer and Scaler
+Scalers only work when the Indexer is active. Activate the Indexer from the **Project Settings** window (menu: **Edit &gt; Project Settings &gt; Adaptive Performance &gt; {Provider} &gt; Runtime Settings &gt; Indexer Settings**, then enable the **Active** option).
 
-Scaler only work when Indexer is active. To activate the scaler check the 'Active' checkbox in Adaptive Performance settings __Edit > Project Settings > Adaptive Performance > {Provider} > Runtime Settings > Indexer Settings > Active__.
-
-![Samsung Android provider in the provider list is installed and ready to use. Initialize Adaptive Performance checkbox is installed](Images/settings-provider-logging.png)
+![Samsung Android provider in the provider list is installed and ready to use.](Images/settings-provider-logging.png)
 
 Add any Scaler into the scene which you want to control using the Indexer quality quantification.
-
-### Scaler
-
-A component that represents single feature that can be anything (etc. Graphics, Physics...).
-Scaler controls its feature quality with levels and by default it starts with a zero. As the level increases, the feature quality decreases in LOD fashion..
 
 ### Standard Scalers
 
 Adaptive Performance provides a few common Scaler.
 
-General render Scaler:
+General render Scalers:
 - TextureQualityScaler
 - LODScaler
 - AdaptiveResolutionScaler
 
-Universal Render Pipeline Scaler (These Scaler only work with `com.unity.render-pipelines.universal`, `7.5`, `8.2`, `9.0`):
+Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal`, versions `7.5`, `8.2`, and `9.0`):
 - RenderScaleScaler
 - DynamicBatchingScaler
 - LutScaler
@@ -165,11 +163,12 @@ Universal Render Pipeline Scaler (These Scaler only work with `com.unity.render-
 - ShadowmapResolutionScaler
 - SortingScaler
 
-### Custom Scaler
+### Custom Scalers
 
-In order to create custom scaler you need to create a new class that inherits `AdaptivePerformanceScaler`.
+To create custom Scalers, you need to create a new class that inherits `AdaptivePerformanceScaler`.
 
-The following example shows scaler for controlling texture quality:
+The following example shows a Scaler for controlling texture quality:
+
 ```
 public class TextureQualityScaler : AdaptivePerformanceScaler
 {
@@ -195,9 +194,22 @@ public class TextureQualityScaler : AdaptivePerformanceScaler
 }
 ```
 
-# Technical details
-## Requirements
+## Provider settings
 
-This version of Adaptive Performance is compatible with Unity Editor versions 2019 LTS and later (2020.2 and later recommended).
+![Provider settings in the Project Settings window](Images/simulator-provider-settings.png)
 
-To use Adaptive Performance, you must have at least one subsystem installed. See the [Installing Adaptive Performance](installing-and-configuring.md#installation) section in this documentation for more details.
+Each Adaptive Performance provider supplies several settings for controlling behavior at runtime and during development. The following settings are available for all providers, but values are provider-specific.
+
+### Auto Performance Mode
+Auto Performance Mode controls performance by changing CPU and GPU levels.
+
+### Indexer
+- Active: Whether or not the Indexer system should be enabled.
+- Thermal Action Delay: Delay in seconds after any scaler is applied or unapplied because of thermal state.
+- Performance Action Delay: Delay in seconds after any scaler is applied or unapplied because of performance state.
+- Thermal State Mode: Thermal state mode used by the Indexer. Can be Temperature Level Based or Warning Based.
+   - Thermal Safe Range: Thermal level range that the Indexer will target.
+
+### Development Settings
+ - Logging: Enable this option to have the Adaptive Performance subsystem log messages to the player log. This is only active for Development builds.
+ - Logging Frequency: How frequently the system should log messages specified in frames.

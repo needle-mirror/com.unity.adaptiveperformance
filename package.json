@@ -1,7 +1,7 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.8",
+  "version": "2.0.0-preview.9",
   "unity": "2019.3",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
@@ -52,14 +52,19 @@
       "displayName": "Automatic Performance Control Sample",
       "description": "Demonstrates how the Automatic Performance Control works.",
       "path": "Samples~/Automatic Performance Control"
+    },
+    {
+      "displayName": "Adaptive Framerate Sample",
+      "description": "Demonstrates how Adaptive Framrate using target framerate or variable refresh rate works.",
+      "path": "Samples~/Adaptive Framerate"
     }
   ],
   "upmCi": {
-    "footprint": "362c869bc946c1f6d0691868c31761b0ff01cc8c"
+    "footprint": "512c47834b7090218a9a353c55e001b25f6df1b9"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "ffeda41247f41a7e9afba52fc4a29deb3eb10454"
+    "revision": "95881d7e606ba1def27ebcc09597962335dd1b5b"
   }
 }

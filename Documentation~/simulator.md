@@ -1,14 +1,38 @@
-**_Adaptive Performance Simulator User Guide_**
+# Adaptive Performance Simulator extension
 
-# About Adaptive Performance Simulator extension
+Adaptive Performance adds a section of controls to the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest) window to let you simulate thermal and bottleneck events in the Editor. This should help you to test your Adaptive Performance implementations in the Editor without the need to deploy your app to a device. The extension uses the `SimulatorAdaptivePerformanceSubsystem` to simulate the events.
 
-The Device Simulator Extension adds an additional section to the [Device Simulator](https://docs.unity3d.com/Manual/DeviceSimulator.html) window to let you simulate thermal and bottleneck events in the Editor. This should help you to test your Adaptive Performance implementations in the Editor without the need to deploy to the device. The extension uses the 'SimulatorAdaptivePerformanceSubsystem' to simulate the events.
+When you install the Adaptive Performance package, Unity automatically installs the Simulator provider. To enable the Simulator, you must:
 
-# Using Adaptive Performance Simulator extension
+* [Activate](installing-and-configuring.md#provider-installation) the Simulator provider for Desktop platforms in the **Project Settings** window
+* Install the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@2.2/manual/index.html) package.
 
-When you install the Adaptive Performance package, Unity automatically installs the Simulator provider. To enable the Simulator you have to [Activate](installing-and-configuring.md#provider-installation) the Simulator provider on Desktop platforms.
+![Adaptive Performance Device Simulator settings.](Images/simulator-provider-enable.png)
 
-# Technical details
-## Requirements
+The simulator provider has several settings for development and runtime, which are available for each individual provider. For more information, see the [Adaptive Performance user guide](user-guide.md).
 
-This version of Adaptive Performance Simulator is compatible with Unity Editor versions 2020.2 and later.
+![Adaptive Performance Device Simulator Settings.](Images/simulator-provider-settings.png)
+
+## Device Simulator window
+
+![Adaptive Performance Device Simulator settings.](Images/simulator-extension-settings.png)
+
+After you install Adaptive Performance, the **Device Simulator** window will display the following additional settings to simulate various thermal and bottleneck conditions:
+
+### Thermal
+* Warning Level - Simulates a thermal warning level. The options are No Warning, Throttling Imminent, and Throttling.
+* Level - The temperature level simulates the skin temperature level of a device. Options range between nominal temperature (0) and critical throttling temperature (maximum level of 1.0).
+* Trend - Temperature trends with a value below 0 simulate a temperature drop. Values higher than 0 simulate a temperature increase.
+
+### Performance
+* Bottleneck - Simulate the device bottleneck, which can be CPU, GPU, or target frame rate bound. Target framerate is either VSync or the value set in [Application.TargetFramerate](https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html).
+* Auto Control Mode - Sets CPU and GPU level automatically. If the system is throttling performance, the Control Mode is set to System and Auto Control Mode has no influence.
+* Target FPS - Simulates the application target framerate in frames per second.
+* CPU Level - Simulates the frequency cap of the CPU in discrete levels.
+* GPU Level - Simulates the frequency cap of the GPU in discrete levels.
+
+### Developer Options
+* Logging - Enable or disable logging from the Adaptive Performance subsystem.
+* Logging Frequency - Control Adaptive Performance logging frequency in frames.
+
+Adaptive Performance also includes an API that you can use to script thermal and bottleneck changes.

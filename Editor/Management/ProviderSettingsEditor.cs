@@ -39,7 +39,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// <summary>
         /// Whether the runtime settings are collapsed or not.
         /// </summary>
-        bool m_ShowRuntimeSettings = true;
+        public bool m_ShowRuntimeSettings = true;
         /// <summary>
         /// Whether the development settings are collapsed or not.
         /// </summary>

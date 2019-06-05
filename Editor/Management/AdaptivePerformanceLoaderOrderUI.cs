@@ -34,7 +34,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         struct Content
         {
             public static readonly string k_AtNoLoaderInstance = L10n.Tr("There are no Adaptive Performance providers available for this platform.");
-            public static readonly string k_LicenseText = L10n.Tr("By installing a provider, you agree to the terms and conditions of the End User License Agreement found under \"View licenses\".");
+            public static readonly string k_LicenseText = L10n.Tr("By clicking the checkbox to install a provider, you acknowledge that you have read and agreed to the terms and conditions found under \"View licenses.\"");
             public static readonly GUIContent k_LicenseViewText = new GUIContent(L10n.Tr("View licenses"));
         }
 

@@ -10,6 +10,8 @@ namespace UnityEngine.AdaptivePerformance
     [System.Serializable]
     public class AdaptivePerformanceIndexerSettings
     {
+        const string m_FeatureName = "Indexer";
+
         [SerializeField, Tooltip("Active")]
         bool m_Active = true;
 
@@ -19,7 +21,14 @@ namespace UnityEngine.AdaptivePerformance
         public bool active
         {
             get { return m_Active; }
-            set { m_Active = value; }
+            set
+            {
+                if (m_Active == value)
+                    return;
+
+                m_Active = value;
+                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(m_FeatureName, m_Active);
+            }
         }
 
         [SerializeField, Tooltip("Thermal Action Delay")]

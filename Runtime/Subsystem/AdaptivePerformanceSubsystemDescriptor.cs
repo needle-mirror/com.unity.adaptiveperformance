@@ -83,7 +83,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// Register the subsystem with the subsystem registry and make it available to use during runtime.
         /// </summary>
         /// <param name="cinfo">Pass in the information about the subsystem.</param>
-        /// <returns>Returns an active subsytem descriptor.</returns>
+        /// <returns>Returns an active subsystem descriptor.</returns>
         public static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor(Cinfo cinfo)
         {
             return AdaptivePerformanceSubsystemRegistry.RegisterDescriptor(cinfo);

@@ -22,33 +22,33 @@ public class VariableRefreshRateControl : MonoBehaviour
         timeOuttimer = timeOut;
 
         Application.targetFrameRate = 120;
+        targetRefreshRate.SetValueWithoutNotify(120);
 
         if (m_VRR == null)
         {
             Debug.Log("[AP VRR] Variable Refresh Rate is not supported on this device.");
             notSupportedPanel.SetActive(true);
-
+            enabled = false;
             return;
         }
-        else
-        {
-            RefreshRateChanged();
-        }
 
-        m_VRR.RefreshRateChanged += RefreshRateChanged;
+        m_VRR.RefreshRateChanged += UpdateDropdown;
         supportedRefreshRates.onValueChanged.AddListener(delegate {
-            UpdateCurrentRefreshRate(supportedRefreshRates.value);
+            if (!m_VRR.SetRefreshRateByIndex(supportedRefreshRates.value))
+                UpdateDropdown();
         });
 
         targetRefreshRate.onValueChanged.AddListener(delegate {
             Application.targetFrameRate = (int)targetRefreshRate.value;
-            UpdateTargetRefreshRateText(Application.targetFrameRate);
         });
-        targetRefreshRate.value = Application.targetFrameRate;
+        UpdateDropdown();
     }
 
     void Update()
     {
+        targetRefreshRateLabel.text = $"Target Refresh Rate: {Application.targetFrameRate} Hz";
+        currentRefreshRate.text = $"Current refresh rate: {m_VRR.CurrentRefreshRate} Hz";
+
         timeOuttimer -= Time.deltaTime;
 
         if (timeOuttimer < 0)
@@ -61,57 +61,21 @@ public class VariableRefreshRateControl : MonoBehaviour
         }
     }
 
-    void UpdateCurrentRefreshRate(int refreshRateIndex)
+    void UpdateDropdown()
     {
-        UpdateCurrentRefreshRateText(m_VRR.SupportedRefreshRates[refreshRateIndex]);
-        if (!m_VRR.SetRefreshRateByIndex(refreshRateIndex))
-        {
-            Debug.Log("[AP VRR] Setting Variable Refresh Rate to {0} is not supported." + m_VRR.SupportedRefreshRates[refreshRateIndex]);
-            return;
-        }
-        supportedRefreshRates.value = refreshRateIndex;
-    }
-
-    void UpdateCurrentRefreshRateText(int refreshRateHz)
-    {
-        currentRefreshRate.text = $"Current refresh rate: {refreshRateHz} Hz";
-    }
-
-    void UpdateTargetRefreshRateText(int targetRateHz)
-    {
-        targetRefreshRateLabel.text = $"Target Refresh Rate: {targetRateHz} Hz";
-    }
-
-    void OnApplicationPause(bool pause)
-    {
-        if (!pause && m_VRR != null)
-        {
-            RefreshRateChanged();
-        }
-    }
-
-    void RefreshRateChanged()
-    {
-        var refreshRate = m_VRR.CurrentRefreshRate;
         var options = new List<Dropdown.OptionData>();
-        var index = -1;
-
         supportedRefreshRates.ClearOptions();
 
+        var index = -1;
         for (var i = 0; i < m_VRR.SupportedRefreshRates.Length; ++i)
         {
             var rr = m_VRR.SupportedRefreshRates[i];
-            if (rr == refreshRate)
-                index = i;
             options.Add(new Dropdown.OptionData(rr.ToString()));
+            if (rr == m_VRR.CurrentRefreshRate)
+                index = i;
         }
 
         supportedRefreshRates.AddOptions(options);
-
-        if (index != -1)
-            supportedRefreshRates.value = index;
-
-        UpdateCurrentRefreshRateText(m_VRR.CurrentRefreshRate);
-        UpdateTargetRefreshRateText(Application.targetFrameRate);
+        supportedRefreshRates.SetValueWithoutNotify(index);
     }
 }

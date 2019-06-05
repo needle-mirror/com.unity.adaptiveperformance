@@ -10,13 +10,14 @@ using Provider = UnityEngine.AdaptivePerformance.Provider;
 namespace UnityEditor.AdaptivePerformance.Simulator.Editor
 {
     /// <summary>
-    /// The subsystem is used for simulating Adaptive Performance in the Editor with the Device Simulator. It is also used for Adaptive Performance tests and can be used to simulate Adaptive Performance when it is not available on the hardware you work with.
+    /// The subsystem is used for simulating Adaptive Performance in the Editor with the <see cref="https://docs.unity3d.com/Manual/DeviceSimulator.html">Device Simulator</see>.
+    /// It is also used for Adaptive Performance tests and can be used to simulate Adaptive Performance when it is not available on the hardware you work with.
     /// </summary>
     [Preserve]
     public class SimulatorAdaptivePerformanceSubsystem : AdaptivePerformanceSubsystem, IApplicationLifecycle, IDevicePerformanceLevelControl
     {
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.ChangeFlags"/>.
         /// </summary>
         public Feature ChangeFlags
         {
@@ -25,7 +26,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.TemperatureLevel"/>.
         /// </summary>
         public float TemperatureLevel
         {
@@ -38,7 +39,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.TemperatureTrend"/>.
         /// </summary>
         public float TemperatureTrend
         {
@@ -51,7 +52,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.WarningLevel"/>.
         /// </summary>
         public WarningLevel WarningLevel
         {
@@ -64,7 +65,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.CpuPerformanceLevel"/>.
         /// </summary>
         public int CpuPerformanceLevel
         {
@@ -77,7 +78,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.GpuPerformanceLevel"/>.
         /// </summary>
         public int GpuPerformanceLevel
         {
@@ -90,7 +91,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.GpuFrameTime"/>.
         /// </summary>
         public float NextGpuFrameTime
         {
@@ -103,7 +104,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.CpuFrameTime"/>.
         /// </summary>
         public float NextCpuFrameTime
         {
@@ -116,7 +117,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details see: <see cref="PerformanceDataRecord.OverallFrameTime"/>.
         /// </summary>
         public float NextOverallFrameTime
         {
@@ -129,7 +130,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Is needed when you want to simulate performance changes. To change AutomaticPerformanceControl you have to set AcceptsPerformanceLevel to `true`.
+        /// Is needed when you want to simulate performance changes. To change AutomaticPerformanceControl you have to set AcceptsPerformanceLevel to `true`. <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/>
         /// </summary>
         public bool AcceptsPerformanceLevel
         {
@@ -142,18 +143,18 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// The current version of the Device Simulator Adaptive Performance Subsystem. Matches the version of the Adaptive Performance Subsystem. <see cref="AdaptivePerformanceSubsystem.Version"/>
         /// </summary>
         public override Version Version
         {
             get
             {
-                return new Version(1, 0, 0);
+                return new Version(2, 0, 0);
             }
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>
         /// </summary>
         public int MaxCpuPerformanceLevel
         {
@@ -164,7 +165,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>
         /// </summary>
         public int MaxGpuPerformanceLevel
         {
@@ -175,15 +176,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
-        /// </summary>
-        public Feature InitCapabilities
-        {
-            set { Capabilities = value; }
-        }
-
-        /// <summary>
-        /// Only for internal use.
+        /// Main constructor, not used in the subsystem specifically.
         /// </summary>
         public SimulatorAdaptivePerformanceSubsystem()
         {
@@ -193,32 +186,32 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Perform initialization of the subsystem.
         /// </summary>
-        override public void Start()
+        public override void Start()
         {
             initialized = true;
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Stop running the subsystem.
         /// </summary>
-        override public void Stop()
+        public override void Stop()
         {
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Cleanup when the subsystem object is destroyed.
         /// </summary>
         protected override void OnDestroy() {}
 
         private PerformanceDataRecord updateResult = new PerformanceDataRecord();
 
         /// <summary>
-        /// Only for internal use.
+        /// Update current results and flags.
         /// </summary>
-        /// <returns></returns>
-        override public PerformanceDataRecord Update()
+        /// <returns>The latest PerformanceDataRecord object.</returns>
+        public override PerformanceDataRecord Update()
         {
             updateResult.ChangeFlags &= Capabilities;
             var result = updateResult;
@@ -227,40 +220,44 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Callback that is called when the application goes into a pause state.
         /// </summary>
         public void ApplicationPause()
         {
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Callback that is called when the application is resumed after being paused.
         /// </summary>
         public void ApplicationResume()
         {
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// <see cref="AdaptivePerformanceSubsystem.ApplicationLifecycle"/>.
         /// </summary>
         public override IApplicationLifecycle ApplicationLifecycle { get { return null; } }
 
         /// <summary>
-        /// Only for internal use.
+        /// <see cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>.
         /// </summary>
         public override IDevicePerformanceLevelControl PerformanceLevelControl { get { return this; } }
 
+        /////////////////////////// THESE ARE NOT USED ANYWHERE. THEY SHOULD BE REMOVED!@
         /// <summary>
-        /// Only for internal use.
+        /// Get or set the CPU level to simulate.
         /// </summary>
         public int LastRequestedCpuLevel { get; set; }
+
         /// <summary>
-        /// Only for internal use.
+        /// Get or set the GPU level to simulate.
         /// </summary>
         public int LastRequestedGpuLevel { get; set; }
 
+        /////////////////////////////////////////////////////////////////////////////////////
+
         /// <summary>
-        /// Only for internal use.
+        /// Set the performance level for both the CPU and GPU.
         /// </summary>
         /// <param name="cpuLevel"></param>
         /// <param name="gpuLevel"></param>
@@ -281,9 +278,9 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
-        /// Only for internal use.
+        /// Register the subsystem with the subsystem registry and make it available to use during runtime.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns an active subsystem descriptor.</returns>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor()
         {

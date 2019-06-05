@@ -223,7 +223,7 @@ namespace UnityEngine.AdaptivePerformance
         private PerformanceStateTracker m_PerformanceStateTracker;
         private AdaptivePerformanceScalerEfficiencyTracker m_ScalerEfficiencyTracker;
         private IAdaptivePerformanceSettings m_Settings;
-        string m_FeatureName = "Indexer";
+        const string m_FeatureName = "Indexer";
 
         /// <summary>
         /// Time left until next action.
@@ -320,8 +320,6 @@ namespace UnityEngine.AdaptivePerformance
             m_ScalerEfficiencyTracker = new AdaptivePerformanceScalerEfficiencyTracker();
 
             AdaptivePerformanceAnalytics.RegisterFeature(m_FeatureName, m_Settings.indexerSettings.active);
-            if (m_Settings.indexerSettings.active)
-                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent("Indexer", m_Settings.indexerSettings.active);
         }
 
         internal void Update()

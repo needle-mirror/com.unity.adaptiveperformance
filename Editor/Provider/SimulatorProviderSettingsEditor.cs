@@ -21,7 +21,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
 
             if (selectedBuildTargetGroup == BuildTargetGroup.Standalone)
             {
-                EditorGUIUtility.labelWidth = 170; // some property labels are cut-off
+                EditorGUIUtility.labelWidth = 180; // some property labels are cut-off
                 DisplayBaseRuntimeSettings();
                 EditorGUILayout.Space();
                 DisplayBaseDeveloperSettings();

@@ -27,7 +27,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
         static protected SimulatorProviderLoader loader = null;
         static protected SimulatorProviderSettings settings = null;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void SetupTest()
         {
             testManager = ScriptableObject.CreateInstance<AdaptivePerformanceManagerSettings>();
