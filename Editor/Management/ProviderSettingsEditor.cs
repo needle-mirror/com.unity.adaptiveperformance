@@ -21,11 +21,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_LoggingLabel = EditorGUIUtility.TrTextContent("Logging", "Only active in development mode.");
         static GUIContent s_AutomaticPerformanceModeEnabledLabel = EditorGUIUtility.TrTextContent("Auto Performance Mode", "Auto Performance Mode controls performance by changing CPU and GPU levels.");
         static GUIContent s_StatsLoggingFrequencyInFramesLabel = EditorGUIUtility.TrTextContent("Logging Frequency", "Changes the logging frequency.");
-        static GUIContent s_IndexerActiveLabel = EditorGUIUtility.TrTextContent("Active", "Is indexer enabled.");
-        static GUIContent s_IndexerThermalActionDelayLabel = EditorGUIUtility.TrTextContent("Thermal Action Delay", "Delay after any scaler is applied or unapplied, because of thermal state.");
-        static GUIContent s_IndexerPerformanceActionDelayLabel = EditorGUIUtility.TrTextContent("Performance Action Delay", "Delay after any scaler is applied or unapplied, because of performance state.");
-        static GUIContent s_IndexerThermalStateModeLabel = EditorGUIUtility.TrTextContent("Thermal State Mode", "Thermal state mode used by indexer.");
-        static GUIContent s_IndexerThermalSafeRangeLabel = EditorGUIUtility.TrTextContent("Thermal Safe Range", "Thermal level range that indexer will target.");
+        static GUIContent s_IndexerActiveLabel = EditorGUIUtility.TrTextContent("Active", "Is Indexer enabled.");
+        static GUIContent s_IndexerThermalActionDelayLabel = EditorGUIUtility.TrTextContent("Thermal Action Delay", "Delay after any Scaler is applied or unapplied because of thermal state.");
+        static GUIContent s_IndexerPerformanceActionDelayLabel = EditorGUIUtility.TrTextContent("Performance Action Delay", "Delay after any Scaler is applied or unapplied because of performance state.");
+        static GUIContent s_IndexerThermalStateModeLabel = EditorGUIUtility.TrTextContent("Thermal State Mode", "Thermal state mode used by the Indexer.");
+        static GUIContent s_IndexerThermalSafeRangeLabel = EditorGUIUtility.TrTextContent("Thermal Safe Range", "Thermal level range that the Indexer will target.");
 
         SerializedProperty m_LoggingProperty;
         SerializedProperty m_AutoPerformanceModeEnabledProperty;
