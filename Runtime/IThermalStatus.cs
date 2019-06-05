@@ -9,7 +9,7 @@ namespace UnityEngine.AdaptivePerformance
     public delegate void ThermalEventHandler(ThermalMetrics thermalMetrics);
 
     /// <summary>
-    /// ThermalMetrics stores the thermal state as <see cref="TemperatureLevel"/>, <see cref="TemperatureTrend"/>, and <see cref="WarningLevel"/>. 
+    /// ThermalMetrics stores the thermal state as <see cref="TemperatureLevel"/>, <see cref="TemperatureTrend"/>, and <see cref="WarningLevel"/>.
     /// </summary>
     public struct ThermalMetrics
     {
@@ -19,7 +19,7 @@ namespace UnityEngine.AdaptivePerformance
         public WarningLevel WarningLevel { get; set; }
 
         /// <summary>
-        /// Current normalized temperature level in the range of [0, 1]. 
+        /// Current normalized temperature level in the range of [0, 1].
         /// A value of 0 means standard operation temperature and the device is not in a throttling state.
         /// A value of 1 means that the device has reached maximum temperature and is either going into or is already in throttling state.
         /// </summary>
@@ -55,12 +55,12 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// The warning levels are used in the <see cref="ThermalMetrics"/> and describe the thermal status of the device in 3 categories. 
+    /// The warning levels are used in the <see cref="ThermalMetrics"/> and describe the thermal status of the device in 3 categories.
     /// </summary>
     public enum WarningLevel
     {
         /// <summary>
-        /// No warning is the normal warning level during standard thermal state. 
+        /// No warning is the normal warning level during standard thermal state.
         /// </summary>
         NoWarning,
 

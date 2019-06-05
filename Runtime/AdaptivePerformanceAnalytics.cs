@@ -32,9 +32,9 @@ namespace UnityEngine.AdaptivePerformance
         [Serializable]
         internal class AdaptivePerformanceAnalyticsEvent
         {
-            // Is Adaptive Performance enable at all or only added as package and disabled 
+            // Is Adaptive Performance enable at all or only added as package and disabled
             public bool enabled;
-            // Is Adaptive Performance active and has at least one provider initialized 
+            // Is Adaptive Performance active and has at least one provider initialized
             public bool initialized;
             // Name of the currently active provider
             public string activeProvider;
@@ -61,8 +61,8 @@ namespace UnityEngine.AdaptivePerformance
                 for (var i = 0; i < providerData.Length; ++i)
                 {
                     providerData[i].id = perfDescriptors[i].id;
-                    providerData[i].version = "0.0"; 
-                    providerData[i].enabled = false; 
+                    providerData[i].version = "0.0";
+                    providerData[i].enabled = false;
                     providerData[i].customData = "";
                 }
             }
@@ -76,7 +76,7 @@ namespace UnityEngine.AdaptivePerformance
             }
 
             public void UpdateGeneralEventData()
-            { 
+            {
                 var ap = Holder.Instance;
                 if (ap == null)
                     return;
@@ -108,7 +108,7 @@ namespace UnityEngine.AdaptivePerformance
         const string    k_VendorKey                     = "unity.adaptiveperformance";
         const int       k_MaxEventsPerHour              = 100;
         const int       k_MaxNumberOfElementsInStruct   = 10;
-        
+
         static AdaptivePerformanceAnalyticsEvent s_AdaptivePerformanceEvent;
         static AdaptivePerformanceThermalAnalyticsEvent s_AdaptivePerformanceThermalEvent;
         static List<FeatureData> s_Features = new List<FeatureData>();
@@ -140,11 +140,12 @@ namespace UnityEngine.AdaptivePerformance
 
             s_AdaptivePerformanceEvent.UpdateGeneralEventData();
             var providerData = s_AdaptivePerformanceEvent.providerData;
-            if(subsystem != null) 
-            { 
+            if (subsystem != null)
+            {
                 for (var i = 0; i < providerData.Length; ++i)
                 {
-                    if (providerData[i].id == subsystem.SubsystemDescriptor.id) { 
+                    if (providerData[i].id == subsystem.SubsystemDescriptor.id)
+                    {
                         providerData[i].version = subsystem.Version.ToString();
                         providerData[i].enabled = subsystem.initialized;
                     }
@@ -156,12 +157,12 @@ namespace UnityEngine.AdaptivePerformance
 #endif
         }
 
-        // If the status of a feature changes it uses this method to update the AdaptivePerformanceEvent and sends the update. Features should not change often as it has performance implications using string comparison.  
+        // If the status of a feature changes it uses this method to update the AdaptivePerformanceEvent and sends the update. Features should not change often as it has performance implications using string comparison.
         [Conditional("UNITY_ANALYTICS")]
         public static void SendAdaptiveFeatureUpdateEvent(string feature, bool status)
         {
 #if UNITY_ANALYTICS
-            // When features are initialized adaptivePerformanceEvent is not created yet but SendAdaptiveStartupEvent will send a status update for all events during creation of the event. 
+            // When features are initialized adaptivePerformanceEvent is not created yet but SendAdaptiveStartupEvent will send a status update for all events during creation of the event.
             if (s_AdaptivePerformanceEvent == null)
                 return;
 
@@ -187,7 +188,7 @@ namespace UnityEngine.AdaptivePerformance
         {
 #if UNITY_ANALYTICS
             // Temperature level and trend will call the method more often but we do not want to send events
-            if (s_LastWarningLevel == thermalMetrics.WarningLevel)   
+            if (s_LastWarningLevel == thermalMetrics.WarningLevel)
                 return;
 
             switch (thermalMetrics.WarningLevel)
@@ -198,7 +199,7 @@ namespace UnityEngine.AdaptivePerformance
                     s_AdaptivePerformanceThermalEvent.numThrottlingImminentEventSinceStartup++; break;
                 case WarningLevel.NoWarning:
                     s_AdaptivePerformanceThermalEvent.numNoWarningEventSinceStartup++; break;
-            }             
+            }
 
             s_AdaptivePerformanceThermalEvent.currentTempLevel = thermalMetrics.TemperatureLevel;
             s_AdaptivePerformanceThermalEvent.currentTempTrend = thermalMetrics.TemperatureTrend;
@@ -208,15 +209,16 @@ namespace UnityEngine.AdaptivePerformance
             Send(EventName.AdaptivePerformanceThermal, s_AdaptivePerformanceThermalEvent);
 #endif
         }
+
 #if UNITY_ANALYTICS
         static bool RegisterEvents()
         {
             if (s_IsRegistered)
                 return true;
-            
+
             var allEventNames = Enum.GetNames(typeof(EventName));
-            for(var i = 0; i < allEventNames.Length; ++i) 
-            { 
+            for (var i = 0; i < allEventNames.Length; ++i)
+            {
                 if (!RegisterEvent(allEventNames[i]))
                     return false;
             }
@@ -225,7 +227,6 @@ namespace UnityEngine.AdaptivePerformance
             return s_IsRegistered;
         }
 
-        
         static bool RegisterEvent(string eventName)
         {
             var result = Analytics.Analytics.RegisterEvent(eventName, k_MaxEventsPerHour, k_MaxNumberOfElementsInStruct, k_VendorKey);
@@ -264,13 +265,15 @@ namespace UnityEngine.AdaptivePerformance
                 AnalyticsLog.Debug("Failed to send event {0}. Result: {1}", eventName, ex);
             }
         }
+
 #endif
         internal static class AnalyticsLog
         {
             [Conditional("ADAPTIVE_PERFORMANCE_ANALYTICS_LOGGING")]
             public static void Debug(string format, params object[] args)
             {
-                if (StartupSettings.Logging)
+                IAdaptivePerformanceSettings settings = AdaptivePerformanceGeneralSettings.Instance?.Manager.ActiveLoaderAs<AdaptivePerformanceLoader>()?.GetSettings();
+                if (settings != null && settings.logging)
                     UnityEngine.Debug.Log(System.String.Format("[Analytics] " + format, args));
             }
         }

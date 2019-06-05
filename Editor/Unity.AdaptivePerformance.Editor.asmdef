@@ -1,10 +1,17 @@
 {
     "name": "Unity.AdaptivePerformance.Editor",
     "references": [
-      "Unity.AdaptivePerformance"
+        "GUID:7dbf32976982c98448af054f2512cb79"
     ],
     "includePlatforms": [
         "Editor"
     ],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

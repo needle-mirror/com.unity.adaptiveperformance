@@ -3,7 +3,7 @@ using System;
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
-    /// Use the developer settings interface to access and change settings which are available only in development mode. 
+    /// Use the developer settings interface to access and change settings which are available only in development mode.
     /// </summary>
     public interface IDevelopmentSettings
     {

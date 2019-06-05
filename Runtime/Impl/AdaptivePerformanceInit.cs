@@ -1,4 +1,3 @@
-
 namespace UnityEngine.AdaptivePerformance
 {
     internal class AdaptivePerformanceManagerSpawner : ScriptableObject
@@ -19,7 +18,7 @@ namespace UnityEngine.AdaptivePerformance
 
     internal static class AdaptivePerformanceInitializer
     {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Initialize()
         {
             ScriptableObject.CreateInstance<AdaptivePerformanceManagerSpawner>();

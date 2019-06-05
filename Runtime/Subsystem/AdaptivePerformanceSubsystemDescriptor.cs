@@ -48,22 +48,23 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// The Adaptive Performance Subsystem Descriptor is used for describing the subsystem so it can be picked up by the subsystem management system. 
+    /// The Adaptive Performance Subsystem Descriptor is used for describing the subsystem so it can be picked up by the subsystem management system.
     /// </summary>
+#pragma warning disable CS0618
     [Preserve]
     public sealed class AdaptivePerformanceSubsystemDescriptor : AdaptivePerformanceSubsystemDescriptorBase
     {
         /// <summary>
-        /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during initialization of the subsystem. 
+        /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during initialization of the subsystem.
         /// </summary>
         public struct Cinfo
         {
             /// <summary>
-            /// The ID stores the name of the subsystem used to identify it in the subsystem registry. 
+            /// The ID stores the name of the subsystem used to identify it in the subsystem registry.
             /// </summary>
             public string id { get; set; }
             /// <summary>
-            /// The subsystem implementation type stores the the type used for initialization in the subsystem registry. 
+            /// The subsystem implementation type stores the the type used for initialization in the subsystem registry.
             /// </summary>
             public Type subsystemImplementationType { get; set; }
         }
@@ -88,4 +89,5 @@ namespace UnityEngine.AdaptivePerformance.Provider
             return AdaptivePerformanceSubsystemRegistry.RegisterDescriptor(cinfo);
         }
     }
+#pragma warning restore CS0618
 }

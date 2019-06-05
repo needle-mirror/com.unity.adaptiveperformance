@@ -71,7 +71,8 @@ namespace UnityEngine.AdaptivePerformance
             AdaptivePerformanceAnalytics.RegisterFeature(m_featureName, m_Enabled);
         }
 
-        public bool Enabled {
+        public bool Enabled
+        {
             get
             {
                 return m_Enabled;
@@ -82,7 +83,7 @@ namespace UnityEngine.AdaptivePerformance
                     return;
 
                 m_Enabled = value;
-                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(m_featureName, m_Enabled); 
+                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(m_featureName, m_Enabled);
             }
         }
 
@@ -263,5 +264,3 @@ namespace UnityEngine.AdaptivePerformance
         }
     }
 }
-
-

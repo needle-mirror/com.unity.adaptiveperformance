@@ -1,26 +1,44 @@
-#if DEVICE_SIMULATOR_ENABLED
+// device simulator is in core unity with Unity 2020.2, before that it's supported via packages.
+#if DEVICE_SIMULATOR_ENABLED //|| UNITY_2020_2_OR_NEWER - not landed in trunk yet, do not enable
 using System;
+#if DEVICE_SIMULATOR_ENABLED
 using Unity.DeviceSimulator;
+#else
+using UnityEditor.DeviceSimulator;
+#endif
 using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
-using UnityEngine.AdaptivePerformance.Simulator;
+using UnityEditor.AdaptivePerformance.Simulator.Editor;
 using UnityEngine.AdaptivePerformance;
 
-namespace UnityEditor.AdaptivePerformance
+namespace UnityEditor.AdaptivePerformance.Editor
 {
-    public class AdaptivePerformanceUIExtension : IDeviceSimulatorExtension, ISerializationCallbackReceiver
+    public class AdaptivePerformanceUIExtension :
+        #if DEVICE_SIMULATOR_ENABLED
+        IDeviceSimulatorExtension
+        #else
+        DeviceSimulatorExtension
+        #endif
+        , ISerializationCallbackReceiver
     {
+#if !DEVICE_SIMULATOR_ENABLED
+        override
+#endif
         public string extensionTitle { get { return "Adaptive Performance"; } }
 
+#if DEVICE_SIMULATOR_ENABLED
         public void OnExtendDeviceSimulator(VisualElement visualElement)
         {
-            m_ExtensionFoldout = visualElement as Foldout;
-
+            m_ExtensionFoldout = visualElement;
+#else
+        override public VisualElement OnCreateExtensionUI()
+        {
+            m_ExtensionFoldout = new VisualElement();
+#endif
             var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/AdaptivePerformanceExtension.uxml");
             m_ExtensionFoldout.Add(tree.CloneTree());
 
-            //m_StatusFlag = m_ExtensionFoldout.Q<TextField>("flag-status");
             m_ThermalFoldout = m_ExtensionFoldout.Q<Foldout>("thermal");
             m_ThermalFoldout.value = m_SerializationStates.thermalFoldout;
             m_WarningLevel = m_ExtensionFoldout.Q<EnumField>("thermal-warning-level");
@@ -30,6 +48,8 @@ namespace UnityEditor.AdaptivePerformance
             m_TemperatureTrendField = m_ExtensionFoldout.Q<FloatField>("thermal-temperature-trend-field");
             m_PerformanceFoldout = m_ExtensionFoldout.Q<Foldout>("performance");
             m_PerformanceFoldout.value = m_SerializationStates.performanceFoldout;
+            m_TargetFPS = m_ExtensionFoldout.Q<SliderInt>("performance-target-fps");
+            m_TargetFPSField = m_ExtensionFoldout.Q<IntegerField>("performance-target-fps-field");
             m_ControlAutoMode = m_ExtensionFoldout.Q<Toggle>("performance-control-auto-mode");
             m_CpuLevel = m_ExtensionFoldout.Q<SliderInt>("performance-cpu-level");
             m_CpuLevelField = m_ExtensionFoldout.Q<IntegerField>("performance-cpu-level-field");
@@ -112,6 +132,33 @@ namespace UnityEditor.AdaptivePerformance
 
                 subsystem.TemperatureTrend = newTemperatureTrend;
             });
+            m_TargetFPS.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                // sync value field
+                m_TargetFPSField.value = evt.newValue;
+
+                Application.targetFrameRate = evt.newValue;
+                SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
+            });
+            m_TargetFPSField.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                var newTargetFPS = evt.newValue;
+                if (newTargetFPS < m_TargetFPS.lowValue)
+                {
+                    newTargetFPS = m_TargetFPS.lowValue;
+                    m_TargetFPSField.SetValueWithoutNotify(newTargetFPS);
+                }
+                if (newTargetFPS > m_TargetFPS.highValue)
+                {
+                    newTargetFPS = m_TargetFPS.highValue;
+                    m_TargetFPSField.SetValueWithoutNotify(newTargetFPS);
+                }
+
+                m_TargetFPS.value = newTargetFPS;
+
+                Application.targetFrameRate = newTargetFPS;
+                SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
+            });
             m_ControlAutoMode.RegisterCallback<ChangeEvent<bool>>((evt) =>
             {
                 var ap = Holder.Instance;
@@ -131,7 +178,7 @@ namespace UnityEditor.AdaptivePerformance
             {
                 // sync value field
                 m_CpuLevelField.value = evt.newValue;
-             
+
                 var ap = Holder.Instance;
                 if (ap == null)
                     return;
@@ -183,12 +230,11 @@ namespace UnityEditor.AdaptivePerformance
                 }
 
                 m_GpuLevel.value = newGPULevel;
-           
+
                 var ap = Holder.Instance;
                 if (ap == null)
                     return;
                 ap.DevicePerformanceControl.GpuLevel = newGPULevel;
-
             });
             m_Bottleneck.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
@@ -220,9 +266,13 @@ namespace UnityEditor.AdaptivePerformance
             EditorApplication.playModeStateChanged += LogPlayModeState;
 
             SyncAPSubsystemSettingsToEditor();
+
+#if !DEVICE_SIMULATOR_ENABLED
+            return m_ExtensionFoldout;
+#endif
         }
 
-        Foldout m_ExtensionFoldout;
+        VisualElement m_ExtensionFoldout;
         Foldout m_ThermalFoldout;
         EnumField m_WarningLevel;
         Slider m_TemperatureLevel;
@@ -231,6 +281,8 @@ namespace UnityEditor.AdaptivePerformance
         FloatField m_TemperatureTrendField;
         Foldout m_PerformanceFoldout;
         Toggle m_ControlAutoMode;
+        SliderInt m_TargetFPS;
+        IntegerField m_TargetFPSField;
         SliderInt m_CpuLevel;
         IntegerField m_CpuLevelField;
         SliderInt m_GpuLevel;
@@ -239,6 +291,7 @@ namespace UnityEditor.AdaptivePerformance
         Foldout m_DeveloperFoldout;
         Toggle m_DevLogging;
         IntegerField m_DevLoggingFrequency;
+        SimulatorAdaptivePerformanceSubsystem m_subsystem;
 
         [SerializeField, HideInInspector]
         AdaptivePerformanceStates m_SerializationStates;
@@ -282,6 +335,10 @@ namespace UnityEditor.AdaptivePerformance
             m_TemperatureLevelField.value = thermalMetrics.TemperatureLevel;
             m_TemperatureTrend.value = thermalMetrics.TemperatureTrend;
             m_TemperatureTrendField.value = thermalMetrics.TemperatureTrend;
+            m_TargetFPS.value = Application.targetFrameRate;
+            m_TargetFPS.highValue = 140;
+            m_TargetFPS.lowValue = 0;
+            m_TargetFPSField.value = Application.targetFrameRate;
             m_ControlAutoMode.value = ctrl.AutomaticPerformanceControl;
             m_CpuLevel.value = ctrl.CpuLevel;
             m_CpuLevel.highValue = ctrl.MaxCpuPerformanceLevel;
@@ -307,7 +364,7 @@ namespace UnityEditor.AdaptivePerformance
             var targetFrameRate = Application.targetFrameRate;
 
             // default target framerate is -1 to use default platform framerate so we assume it's 60
-            if(targetFrameRate == -1)
+            if (targetFrameRate == -1)
                 targetFrameRate = 60;
 
             var currentTargetFramerateHalfMS = 1.0f / targetFrameRate / 2.0f;
@@ -343,16 +400,12 @@ namespace UnityEditor.AdaptivePerformance
             if (!Application.isPlaying)
                 return null;
 
-            return StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
-        }
-    }
-
-    public static class AdaptivePerformanceSimulatorSetup
-    {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
-            StartupSettings.PreferredSubsystem = SimulatorAdaptivePerformanceSubsystem.Initialize();
+            var loader = AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader;
+            if (m_subsystem == null && loader != null)
+            {
+                m_subsystem = loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            }
+            return m_subsystem;
         }
     }
 }

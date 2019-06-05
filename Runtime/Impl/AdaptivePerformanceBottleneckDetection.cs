@@ -42,7 +42,7 @@ namespace UnityEngine.AdaptivePerformance
                 {
                     // higher GPU time compared to CPU time? => might be GPU bound
                     // but we can only be somewhat sure if we have relatively high GPU utilization
- 
+
                     float gpuUtilizationThreshold = wasGpuBound ? 0.7f : 0.72f;
                     if (gpuUtilization > gpuUtilizationThreshold)
                     {
@@ -67,7 +67,7 @@ namespace UnityEngine.AdaptivePerformance
                         }
                     }
                 }
-             }
+            }
 
             return PerformanceBottleneck.Unknown;
         }
@@ -89,6 +89,5 @@ namespace UnityEngine.AdaptivePerformance
 
             return false;
         }
-
     }
 }

@@ -35,7 +35,7 @@ namespace UnityEngine.AdaptivePerformance
 
         public float GetLatestResult()
         {
-            return (float) AndroidCpuUsage_GetLatestCpuTimeDelta();
+            return (float)AndroidCpuUsage_GetLatestCpuTimeDelta();
         }
     }
 #else

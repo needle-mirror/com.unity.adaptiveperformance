@@ -22,7 +22,7 @@ namespace UnityEngine.AdaptivePerformance
         const double TemperatureIncreaseForMaxTrend = 0.5;
 
         // At this slope of a fitted line we report ThermalTrend of 1.0;
-        const double SlopeAtMaxTrend = 0.3 / MaxTimeSeconds; 
+        const double SlopeAtMaxTrend = 0.3 / MaxTimeSeconds;
 
         float[] m_TimeStamps = new float[MaxValues];
         float[] m_Temperature = new float[MaxValues];
@@ -141,7 +141,7 @@ namespace UnityEngine.AdaptivePerformance
                 PopOldestValue();
                 updateTrend = true;
             }
-           
+
             if (changed || newTemperatureTimestamp >= timestampThresholdForNewValue)
             {
                 if (m_NumValues == MaxValues)

@@ -1,12 +1,28 @@
 {
     "name": "Unity.AdaptivePerformance.Editor.Tests",
     "references": [
-    	"Unity.AdaptivePerformance.Editor",
-        "Unity.AdaptivePerformance"
+        "Unity.AdaptivePerformance.Editor",
+        "Unity.AdaptivePerformance",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.AdaptivePerformance.Tests",
+        "Unity.AdaptivePerformance.Tests.Standalone",
+        "Unity.AdaptivePerformance.TestPackage",
+        "Unity.AdaptivePerformance.TestPackage.Editor"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": ["Editor"],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -2,7 +2,6 @@ using System;
 
 namespace UnityEngine.AdaptivePerformance.Provider
 {
-
     /// <summary>
     /// Feature flags
     /// See <see cref="PerformanceDataRecord.ChangeFlags"/> and <seealso cref="AdaptivePerformanceSubsystem.Capabilities"/>.
@@ -35,7 +34,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         GpuPerformanceLevel = 0x10,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.PerformanceLevelControl"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
+        /// See <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
         /// </summary>
         PerformanceLevelControl = 0x20,
         /// <summary>
@@ -53,13 +52,13 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// The performance data record stores all information about the thermal and performance status and uses it to deliver it from the provider subsystem to Adaptive Performance for further processing. 
+    /// The performance data record stores all information about the thermal and performance status and uses it to deliver it from the provider subsystem to Adaptive Performance for further processing.
     /// </summary>
     public struct PerformanceDataRecord
     {
         /// <summary>
         /// A bitset of features which indicate if their value changed in the last frame or at startup.
-        /// Unsupported features will never change. 
+        /// Unsupported features will never change.
         /// Fields not changing always have valid data as long as its capability is supported.
         /// </summary>
         /// <value>Bitset</value>
@@ -108,7 +107,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public int GpuPerformanceLevel { get; set; }
 
         /// <summary>
-        /// `true` if performance levels may currently be controlled manually and aren't controlled by Adaptive Performance or the operating system. 
+        /// `true` if performance levels may currently be controlled manually and aren't controlled by Adaptive Performance or the operating system.
         /// Has changed when <see cref="Feature.PerformanceLevelControl"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public bool PerformanceLevelControlAvailable { get; set; }
@@ -133,7 +132,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// The interface describes how the Adaptive Performance provider lifecycle behaves. 
+    /// The interface describes how the Adaptive Performance provider lifecycle behaves.
     /// </summary>
     public interface IApplicationLifecycle
     {
@@ -245,58 +244,20 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public virtual string Stats { get { return "";  } }
     }
 
-#if UNITY_2019_2_OR_NEWER
     /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
     /// </summary>
+#pragma warning disable CS0618
     public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Subsystem<AdaptivePerformanceSubsystemDescriptor>
     {
         /// <summary>
-        /// Returns if the provider subsystem is currently running. 
+        /// Returns if the provider subsystem is currently running.
         /// </summary>
         override public bool running { get { return initialized; } }
         /// <summary>
-        /// Returns if the provider subsystem was initialized successfully. 
+        /// Returns if the provider subsystem was initialized successfully.
         /// </summary>
-        public bool initialized { get; protected set; } 
+        public bool initialized { get; protected set; }
     }
-
-#elif UNITY_2018_3_OR_NEWER
-    /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
-    /// </summary>
-    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Experimental.Subsystem<AdaptivePerformanceSubsystemDescriptor>
-    {
-        /// <summary>
-        /// Returns if the provider subsystem was initialized successfully. 
-        /// </summary>
-        public bool initialized { get; protected set; } 
-    }
-
-#else
-    /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
-    /// </summary>
-    public abstract class AdaptivePerformanceSubsystemBase
-    {
-        /// <summary>
-        /// Called when the provider subsystem starts. 
-        /// </summary>
-        public abstract void Start();
-        /// <summary>
-        /// Called when the provider subsystem stops. 
-        /// </summary>
-        public abstract void Stop();
-        /// <summary>
-        /// Called when the provider subsystem gets destroyed. 
-        /// </summary>
-        public abstract void Destroy();
-        /// <summary>
-        /// Returns if the provider subsystem was initialized successfully. 
-        /// </summary>
-        public bool initialized { get; protected set; } 
-    }
-
-#endif
-
+#pragma warning restore CS0618
 }

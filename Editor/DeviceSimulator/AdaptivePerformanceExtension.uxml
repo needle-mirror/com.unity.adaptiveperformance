@@ -15,6 +15,10 @@
         <Style src="AdaptivePerformanceExtension.uss" />
         <uie:EnumField name="performance-bottleneck" label="Bottleneck" type="UnityEngine.AdaptivePerformance.PerformanceBottleneck, Unity.AdaptivePerformance" value="Unknown" include-obsolete-values="false" tooltip="Simulate the device bottleneck by setting it to CPU, GPU or target framerate bound. Target framerate is either VSync or the value set in UnityEngine.Application.TargetFramerate" />
         <ui:Toggle name="performance-control-auto-mode" label="Auto Control Mode" value="true" tooltip="Auto Control Mode sets CPU and GPU level automatically. If the system is throttling the Performance Control Mode is set to system and Auto Control Mode has no influence" />
+        <ui:VisualElement name="performance-target-fps-container" style="flex-direction: row;" tooltip="Target FPS simulates the application target framerate in frames per second">
+            <ui:SliderInt label="Target FPS" name="performance-target-fps" low-value="0" high-value="1000" value="4" style="flex-grow: 10;"/>
+            <uie:IntegerField name="performance-target-fps-field" max-length="2" style="min-width:60px;max-width:60px;margin-left:auto;"/>
+        </ui:VisualElement>
         <ui:VisualElement name="performance-level-container-cpu" style="flex-direction: row;" tooltip="CPU level simulates the frequency cap of the CPU in discrete levels">
             <ui:SliderInt label="CPU Level" name="performance-cpu-level" low-value="0" high-value="6" value="4" style="flex-grow: 10;"/>
             <uie:IntegerField name="performance-cpu-level-field" max-length="2" style="min-width:60px;max-width:60px;margin-left:auto;"/>

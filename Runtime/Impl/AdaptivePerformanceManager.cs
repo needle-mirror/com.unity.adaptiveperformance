@@ -64,14 +64,24 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         public int LoggingFrequencyInFrames { get; set; }
-   
-        public bool Active { get { return m_Subsystem != null; } } 
+
+        public bool Active { get { return m_Subsystem != null; } }
 
         public int MaxCpuPerformanceLevel { get { return m_DevicePerfControl != null ? m_DevicePerfControl.MaxCpuPerformanceLevel : Constants.UnknownPerformanceLevel; } }
-  
+
         public int MaxGpuPerformanceLevel { get { return m_DevicePerfControl != null ? m_DevicePerfControl.MaxGpuPerformanceLevel : Constants.UnknownPerformanceLevel; } }
 
-        public bool AutomaticPerformanceControl { get; set; }
+        private bool m_AutomaticPerformanceControl;
+        private bool m_AutomaticPerformanceControlChanged;
+        public bool AutomaticPerformanceControl
+        {
+            get { return m_AutomaticPerformanceControl; }
+            set
+            {
+                m_AutomaticPerformanceControl = value;
+                m_AutomaticPerformanceControlChanged = true;
+            }
+        }
 
         public PerformanceControlMode PerformanceControlMode { get { return m_DevicePerfControl != null ? m_DevicePerfControl.PerformanceControlMode : PerformanceControlMode.System; } }
 
@@ -100,6 +110,8 @@ namespace UnityEngine.AdaptivePerformance
         public IPerformanceStatus PerformanceStatus { get { return this; } }
         public IDevicePerformanceControl DevicePerformanceControl { get { return this; } }
 
+        public AdaptivePerformanceIndexer Indexer { get; private set; }
+
         DevicePerformanceControlImpl m_DevicePerfControl;
         AutoPerformanceLevelController m_AutoPerformanceLevelController;
         CpuTimeProvider m_CpuFrameTimeProvider;
@@ -107,63 +119,62 @@ namespace UnityEngine.AdaptivePerformance
         Provider.IApplicationLifecycle m_AppLifecycle;
         TemperatureTrend m_TemperatureTrend;
         bool m_UseProviderOverallFrameTime = false;
-
-        AdaptivePerformanceManager()
-        {
-            AutomaticPerformanceControl = StartupSettings.AutomaticPerformanceControl;
-        }
-
-        private bool InitializeSubsystem(Provider.AdaptivePerformanceSubsystem subsystem)
-        {
-            if (subsystem == null)
-                return false;
-
-            subsystem.Start();
-
-            if (subsystem.initialized)
-            {
-                m_Subsystem = subsystem;
-
-                APLog.Debug("Subsystem version={0}", m_Subsystem.Version);
-
-                return true;
-            }
-            else
-            {
-                subsystem.Destroy();
-
-                return false;
-            }
-        }
+        IAdaptivePerformanceSettings m_Settings;
 
         public void Awake()
         {
-            APLog.enabled = StartupSettings.Logging;
-            LoggingFrequencyInFrames = StartupSettings.StatsLoggingFrequencyInFrames;
-            if (!StartupSettings.Enable)
+            APLog.enabled = true;
+            if (AdaptivePerformanceGeneralSettings.Instance == null)
             {
+                APLog.Debug("No Provider was configured for use. Make sure you added at least one Provider in the Adaptive Performance Settings.");
                 AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
                 return;
             }
 
-            if (InitializeSubsystem(StartupSettings.PreferredSubsystem))
+            if (!AdaptivePerformanceGeneralSettings.Instance.InitManagerOnStart)
             {
-                m_Subsystem = StartupSettings.PreferredSubsystem;
+                APLog.Debug("Adaptive Performance is disabled via Settings.");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
             }
-            else
+
+            var activeLoader = AdaptivePerformanceGeneralSettings.Instance.Manager.ActiveLoaderAs<AdaptivePerformanceLoader>();
+            if (activeLoader == null)
             {
-                System.Collections.Generic.List<Provider.AdaptivePerformanceSubsystemDescriptor> perfDescriptors = Provider.AdaptivePerformanceSubsystemRegistry.GetRegisteredDescriptors();
-                if(perfDescriptors.Count == 0)
+                APLog.Debug("No Active Loader was found. Make sure to select your loader in the Adaptive Performance Settings for this platform.");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            m_Settings = activeLoader.GetSettings();
+            if (m_Settings == null)
+            {
+                APLog.Debug("No Settings available. Did the Post Process Buildstep fail?");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            AutomaticPerformanceControl = m_Settings.automaticPerformanceMode;
+            LoggingFrequencyInFrames = m_Settings.statsLoggingFrequencyInFrames;
+            APLog.enabled = m_Settings.logging;
+
+            if (m_Subsystem == null)
+            {
+                var subsystem = (Provider.AdaptivePerformanceSubsystem)activeLoader.GetDefaultSubsystem();
+
+                if (subsystem != null)
                 {
-                    APLog.Debug("No Subsystems found and initialized.");
-                } 
-                foreach (var perfDesc in perfDescriptors)
-                {
-                    var subsystem = perfDesc.Create();
-                    if (InitializeSubsystem(subsystem))
+                    if (subsystem.initialized)
                     {
                         m_Subsystem = subsystem;
-                        break;
+                        APLog.Debug("Subsystem version={0}", m_Subsystem.Version);
+                    }
+                    else
+                    {
+                        subsystem.Destroy();
+                        APLog.Debug("Subsystem not initialized.");
+                        AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                        return;
                     }
                 }
             }
@@ -173,7 +184,7 @@ namespace UnityEngine.AdaptivePerformance
                 m_UseProviderOverallFrameTime = m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime);
                 m_DevicePerfControl = new DevicePerformanceControlImpl(m_Subsystem.PerformanceLevelControl);
                 m_AutoPerformanceLevelController = new AutoPerformanceLevelController(m_DevicePerfControl, PerformanceStatus, ThermalStatus);
-      
+
                 m_AppLifecycle = m_Subsystem.ApplicationLifecycle;
 
                 if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuFrameTime))
@@ -208,6 +219,8 @@ namespace UnityEngine.AdaptivePerformance
                 ThermalEvent += (ThermalMetrics thermalMetrics) => LogThermalEvent(thermalMetrics);
                 PerformanceBottleneckChangeEvent += (PerformanceBottleneckChangeEventArgs ev) => LogBottleneckEvent(ev);
                 PerformanceLevelChangeEvent += (PerformanceLevelChangeEventArgs ev) => LogPerformanceLevelEvent(ev);
+
+                Indexer = new AdaptivePerformanceIndexer(ref m_Settings);
 
                 UpdateSubsystem();
             }
@@ -265,7 +278,7 @@ namespace UnityEngine.AdaptivePerformance
                 {
                     if (m_CpuFrameTimeProvider != null)
                         m_CpuFrameTimeProvider.LateUpdate();
-    
+
                     if (m_GpuFrameTimeProvider != null)
                         m_GpuFrameTimeProvider.Measure();
                 }
@@ -275,9 +288,11 @@ namespace UnityEngine.AdaptivePerformance
         public void Update()
         {
             if (m_Subsystem == null)
-                return;      
+                return;
 
             UpdateSubsystem();
+
+            Indexer.Update();
 
             if (APLog.enabled && LoggingFrequencyInFrames > 0)
             {
@@ -374,8 +389,8 @@ namespace UnityEngine.AdaptivePerformance
 
             triggerThermalEventEvent = (ThermalEvent != null) &&
                 (updateResult.ChangeFlags.HasFlag(Provider.Feature.WarningLevel) ||
-                 updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
-                 updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend));
+                    updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
+                    updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend));
 
             // The Subsystem may have changed the current levels (e.g. "timeout" of Samsung subsystem)
             if (updateResult.ChangeFlags.HasFlag(Provider.Feature.CpuPerformanceLevel))
@@ -384,8 +399,9 @@ namespace UnityEngine.AdaptivePerformance
                 m_DevicePerfControl.CurrentGpuLevel = updateResult.GpuPerformanceLevel;
 
             // Update PerformanceControlMode
-            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceLevelControl))
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceLevelControl) || m_AutomaticPerformanceControlChanged)
             {
+                m_AutomaticPerformanceControlChanged = false;
                 if (updateResult.PerformanceLevelControlAvailable)
                 {
                     if (AutomaticPerformanceControl)
@@ -438,17 +454,6 @@ namespace UnityEngine.AdaptivePerformance
                 PerformanceBottleneckChangeEvent(performanceBottleneckChangeEventArgs);
         }
 
-        private static float AndroidDefaultFrameRate()
-        {
-            // see https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html 
-            return 30.0f;
-        }
-
-        private static int RenderFrameInterval()
-        {
-            return Rendering.OnDemandRendering.renderFrameInterval;
-        }
-
         private static bool WillCurrentFrameRender()
         {
             return Rendering.OnDemandRendering.willCurrentFrameRender;
@@ -456,35 +461,15 @@ namespace UnityEngine.AdaptivePerformance
 
         public static float EffectiveTargetFrameRate()
         {
-#if !UNITY_EDITOR
             return UnityEngine.Rendering.OnDemandRendering.effectiveRenderFrameRate;
-#else
-
-            int vsyncCount = QualitySettings.vSyncCount;
-            if (vsyncCount == 0)
-            {
-                var targetFrameRate = Application.targetFrameRate;
-                if (targetFrameRate >= 0)
-                    return ((float)targetFrameRate) / RenderFrameInterval();
-
-#if UNITY_ANDROID
-                return AndroidDefaultFrameRate() / RenderFrameInterval();
-#else
-                return -1.0f;
-#endif
-            }
-            else
-            {
-                float displayRefreshRate = 60.0f;
-                return displayRefreshRate / (vsyncCount * RenderFrameInterval());
-            }
-#endif
         }
 
         public void OnDestroy()
         {
             if (m_Subsystem != null)
                 m_Subsystem.Destroy();
+            if (Indexer != null)
+                Indexer.UnapplyAllScalers();
         }
 
         public void OnApplicationPause(bool pause)

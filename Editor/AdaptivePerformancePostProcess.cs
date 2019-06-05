@@ -4,9 +4,9 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace UnityEditor.AdaptivePerformance
+namespace UnityEditor.AdaptivePerformance.Editor
 {
-    internal class AdaptivePerformancePostProcess : IPreprocessBuildWithReport 
+    internal class AdaptivePerformancePostProcess : IPreprocessBuildWithReport
     {
         public int callbackOrder { get { return 0; } }
 
@@ -27,7 +27,7 @@ namespace UnityEditor.AdaptivePerformance
         }
 
         /// <summary>
-        /// Processes a list of all installed packages and notifies user via console if no Adaptive Performance Provider package is installed. 
+        /// Processes a list of all installed packages and notifies user via console if no Adaptive Performance Provider package is installed.
         /// </summary>
         static void CheckInstalledPackages()
         {
@@ -36,13 +36,13 @@ namespace UnityEditor.AdaptivePerformance
                 if (Request.Status == StatusCode.Success)
                 {
                     var installedPackageCount = 0;
-                
+
                     foreach (var package in Request.Result)
-                        if(package.name.StartsWith("com.unity.adaptiveperformance."))
+                        if (package.name.StartsWith("com.unity.adaptiveperformance."))
                             installedPackageCount++;
-                  
-                    if(installedPackageCount == 0)
-                    { 
+
+                    if (installedPackageCount == 0)
+                    {
                         Debug.LogWarning("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get useful information during runtime. Please install a provider such as, Adaptive Performance Samsung (Android), via the Unity Package Manager.");
                         PackageManager.UI.Window.Open("com.unity.adaptiveperformance.samsung.android");
                     }
