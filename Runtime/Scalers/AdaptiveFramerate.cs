@@ -1,10 +1,12 @@
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
-    /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the application update rate using <see cref="Application.TargetFramerate"/>.
+    /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the application update rate using <see cref="Application.targetFrameRate"/>.
     /// </summary>
     public class AdaptiveFramerate : AdaptivePerformanceScaler
     {
+        int m_DefaultFPS;
+
         /// <summary>
         /// Ensures settings are applied during startup.
         /// </summary>
@@ -14,6 +16,22 @@ namespace UnityEngine.AdaptivePerformance
             if (m_Settings == null)
                 return;
             ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveFramerate);
+        }
+
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected override void OnDisabled()
+        {
+            Application.targetFrameRate = m_DefaultFPS;
+        }
+
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected override void OnEnabled()
+        {
+            m_DefaultFPS = Application.targetFrameRate;
             Application.targetFrameRate = (int)MaxBound;
         }
 

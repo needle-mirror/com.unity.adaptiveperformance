@@ -15,7 +15,7 @@ namespace UnityEngine.AdaptivePerformance
         private static float s_RenderScaleMultiplier = 1;
 
         /// <summary>
-        /// Amount to multiply the main lights shadowmap resolution. Values are clamped between 0, 1.
+        /// Amount to multiply the main lights shadowmap resolution. Values are clamped between 0 and 1.
         /// </summary>
         public static float MainLightShadowmapResolutionMultiplier
         {
@@ -40,7 +40,7 @@ namespace UnityEngine.AdaptivePerformance
             set;
         }
         /// <summary>
-        /// Adjust the size of look up tables that are used for color grading.
+        /// Adjust the size of lookup tables that are used for color grading.
         /// </summary>
         public static float LutBias
         {
@@ -48,7 +48,7 @@ namespace UnityEngine.AdaptivePerformance
             set;
         }
         /// <summary>
-        /// Adjust how far in the distance shadows will be rendered. Values are clamped between 0, 1.
+        /// Adjust how far in the distance shadows will be rendered. Values are clamped between 0 and 1.
         /// </summary>
         public static float MaxShadowDistanceMultiplier
         {
@@ -81,9 +81,9 @@ namespace UnityEngine.AdaptivePerformance
             set;
         }
         /// <summary>
-        /// Whether depth based sorting should be enabled.
-        /// When enabled there is a higher load on the CPU but less rendering overdraw.
-        /// When disabled there is less CPU pressure but more overdraw.
+        /// Whether depth-based sorting should be enabled.
+        /// When enabled, there is a higher load on the CPU but less rendering overdraw.
+        /// When disabled, there is less CPU pressure but more overdraw.
         /// </summary>
         public static bool SkipFrontToBackSorting
         {

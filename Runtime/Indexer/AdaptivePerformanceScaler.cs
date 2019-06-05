@@ -6,11 +6,11 @@ namespace UnityEngine.AdaptivePerformance
     public enum ScalerVisualImpact
     {
         /// <summary>
-        /// Low impact on visual quality. Changes may not be very noticeable to the user.
+        /// Low impact on visual quality. Changes might not be very noticeable to the user.
         /// </summary>
         Low,
         /// <summary>
-        /// Medium impact on visual quality. Mildly affects the visuals in the scene and may be noticeable to the user.
+        /// Medium impact on visual quality. Mildly affects the visuals in the scene and might be noticeable to the user.
         /// </summary>
         Medium,
         /// <summary>
@@ -20,7 +20,7 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// Scaler targeted bottleneck flags.
+    /// Bottleneck flags that the scaler targets.
     /// </summary>
     [System.Flags]
     public enum ScalerTarget
@@ -34,7 +34,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         GPU = 0x2,
         /// <summary>
-        /// The scaler targets fillrate. Often at the expense of visual quality.
+        /// The scaler targets fillrate, often at the expense of visual quality.
         /// </summary>
         FillRate = 0x4
     }
@@ -44,7 +44,7 @@ namespace UnityEngine.AdaptivePerformance
     /// You control the quality through changing the levels, where 0 represents the controller not being applied and 1,2... as applied.
     /// As a result, a higher level represents lower visuals, but better performance.
     /// </summary>
-    public abstract class AdaptivePerformanceScaler : MonoBehaviour
+    public abstract class AdaptivePerformanceScaler : ScriptableObject
     {
         private AdaptivePerformanceIndexer m_Indexer;
         /// <summary>
@@ -92,7 +92,7 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
         /// <summary>
-        /// Returns visual impact of scaler when applied.
+        /// Returns the visual impact of scaler when applied.
         /// </summary>
         public virtual ScalerVisualImpact VisualImpact
         {
@@ -106,7 +106,7 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
         /// <summary>
-        /// Returns what bottlenecks this scaler targets.
+        /// Returns the bottlenecks that this scaler targets.
         /// </summary>
         public virtual ScalerTarget Target
         {
@@ -120,7 +120,7 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
         /// <summary>
-        /// Returns max level of scaler.
+        /// Returns the maximum level of this scaler.
         /// </summary>
         public virtual int MaxLevel
         {
@@ -162,15 +162,15 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
         /// <summary>
-        /// Returns current level of scale.
+        /// Returns the current level of scale.
         /// </summary>
         public int CurrentLevel { get; private set; }
         /// <summary>
-        /// Returns `true` if scaler can no longer be applied, otherwise returns `false`.
+        /// Returns `true` if the scaler can no longer be applied, otherwise returns `false`.
         /// </summary>
         public bool IsMaxLevel { get => CurrentLevel == MaxLevel; }
         /// <summary>
-        /// Returns `true` if scaler is not applied otherwise `false`.
+        /// Returns `true` if the scaler is not applied, otherwise returns `false`.
         /// </summary>
         public bool NotLeveled { get => CurrentLevel == 0; }
         /// <summary>
@@ -186,13 +186,13 @@ namespace UnityEngine.AdaptivePerformance
         AdaptivePerformanceScalerSettingsBase m_defaultSetting = new AdaptivePerformanceScalerSettingsBase();
 
         /// <summary>
-        /// Settings reference for all scaler.
+        /// Settings reference for all scalers.
         /// </summary>
         protected IAdaptivePerformanceSettings m_Settings;
 
         /// <summary>
-        /// Allows manually overriding level.
-        /// If value -1 <see cref="AdaptivePerformanceIndexer"/> will handle levels, otherwise scaler will be forced to specified value.
+        /// Allows you to manually override the scaler level.
+        /// If the value is -1, <see cref="AdaptivePerformanceIndexer"/> will handle levels, otherwise scaler will be forced to the value you specify.
         /// </summary>
         public int OverrideLevel
         {
@@ -258,6 +258,7 @@ namespace UnityEngine.AdaptivePerformance
             m_Indexer.AddScaler(this);
             AdaptivePerformanceAnalytics.RegisterFeature(Name, Enabled);
             AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(Name, Enabled);
+            OnEnabled();
         }
 
         private void OnDisable()
@@ -266,13 +267,14 @@ namespace UnityEngine.AdaptivePerformance
                 return;
 
             m_Indexer.RemoveScaler(this);
+            OnDisabled();
         }
 
         internal void IncreaseLevel()
         {
             if (IsMaxLevel)
             {
-                Debug.LogError("Can not increase scaler level as it is already max.");
+                Debug.LogError("Cannot increase scaler level as it is already max.");
                 return;
             }
             CurrentLevel++;
@@ -284,7 +286,7 @@ namespace UnityEngine.AdaptivePerformance
         {
             if (NotLeveled)
             {
-                Debug.LogError("Can not decrease scaler level as it is already 0.");
+                Debug.LogError("Cannot decrease scaler level as it is already 0.");
                 return;
             }
             CurrentLevel--;
@@ -292,8 +294,18 @@ namespace UnityEngine.AdaptivePerformance
             OnLevel();
         }
 
+        internal void Activate()
+        {
+            OnEnabled();
+        }
+
+        internal void Deactivate()
+        {
+            OnDisabled();
+        }
+
         /// <summary>
-        /// Any scaler with setting in <see cref="IAdaptivePerformanceSettings"/> needs to call this with the settings for the respective scaler to apply the default settings.
+        /// Any scaler with settings in <see cref="IAdaptivePerformanceSettings"/> needs to call this method and provide the scaler specific setting. Unity uses the setting arguments in the base-scaler as the default settings.
         /// </summary>
         /// <param name="defaultSetting">The settings to apply to the scaler.</param>
         protected void ApplyDefaultSetting(AdaptivePerformanceScalerSettingsBase defaultSetting)
@@ -313,5 +325,13 @@ namespace UnityEngine.AdaptivePerformance
         /// Callback for any level change
         /// </summary>
         protected virtual void OnLevel() {}
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected virtual void OnEnabled() {}
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected virtual void OnDisabled() {}
     }
 }

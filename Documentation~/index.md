@@ -8,11 +8,11 @@ To install this package, follow the instructions in the [installation guide](ins
 
 ### Using the Adaptive Performance Provider Management system
 
-For information on installing Adaptive Performance in an existing Unity Project, see [Getting started](installing-and-configuring.md).
+For information on installing Adaptive Performance in an existing Unity Project, see [Installing Adaptive Performance](installing-and-configuring.md).
 
 There are two target audiences for the Adaptive Performance Provider Management system: the end user and the subsystem provider developer. You can find documentation for both audiences here:
 
-* [End-user](./user-guide.md)
+* [End user](./user-guide.md)
 * [Provider](./provider.md)
 
 This package also includes documentation on how to:

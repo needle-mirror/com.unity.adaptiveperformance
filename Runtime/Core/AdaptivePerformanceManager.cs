@@ -247,7 +247,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void LogPerformanceLevelEvent(PerformanceLevelChangeEventArgs ev)
         {
-            APLog.Debug("[perf level change] cpu: {0}({1}) gpu: {2}({3})", ev.CpuLevel, ToStringWithSign(ev.CpuLevelDelta), ev.GpuLevel, ToStringWithSign(ev.GpuLevelDelta));
+            APLog.Debug("[perf level change] cpu: {0}({1}) gpu: {2}({3}) control mode: {4} manual override: {5}", ev.CpuLevel, ToStringWithSign(ev.CpuLevelDelta), ev.GpuLevel, ToStringWithSign(ev.GpuLevelDelta), ev.PerformanceControlMode, ev.ManualOverride);
         }
 
         private void AddNonNegativeValue(RunningAverage runningAverage, float value)
@@ -302,8 +302,8 @@ namespace UnityEngine.AdaptivePerformance
                 if (m_FrameCount % LoggingFrequencyInFrames == 0)
                 {
                     APLog.Debug(m_Subsystem.Stats);
-                    APLog.Debug("Performance level CPU={0}/{1} GPU={2}/{3} warn={4}({5}) mode={6}", m_PerformanceMetrics.CurrentCpuLevel, MaxCpuPerformanceLevel,
-                        m_PerformanceMetrics.CurrentGpuLevel, MaxGpuPerformanceLevel, m_ThermalMetrics.WarningLevel, (int)m_ThermalMetrics.WarningLevel, m_DevicePerfControl.PerformanceControlMode);
+                    APLog.Debug("Performance level CPU={0}/{1} GPU={2}/{3} thermal warn={4}({5}) thermal level={6} mode={7}", m_PerformanceMetrics.CurrentCpuLevel, MaxCpuPerformanceLevel,
+                        m_PerformanceMetrics.CurrentGpuLevel, MaxGpuPerformanceLevel, m_ThermalMetrics.WarningLevel, (int)m_ThermalMetrics.WarningLevel, m_ThermalMetrics.TemperatureLevel, m_DevicePerfControl.PerformanceControlMode);
                     APLog.Debug("Average GPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageGpuFrameTime * 1000.0f, m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
                     APLog.Debug("Average CPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageCpuFrameTime * 1000.0f, m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
                     APLog.Debug("Average frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageFrameTime * 1000.0f, m_FrameTiming.CurrentFrameTime * 1000.0f);

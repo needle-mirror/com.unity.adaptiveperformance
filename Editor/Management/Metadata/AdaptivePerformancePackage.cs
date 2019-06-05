@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 {
     /// <summary>
-    /// Implement this interface to provide package level information and actions.
+    /// Implement this interface to provide package-level information and actions.
     ///
     /// Adaptive Performance Provider Management will reflect on all types in the project to find implementers
     /// of this interface. These instances are used to get information required to integrate
@@ -20,8 +20,8 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         /// <summary>
         /// Allows the package to configure new settings passed in.
         /// </summary>
-        /// <param name="obj">ScriptableObject instance representing an instance of the settings
-        /// type provided by <see cref="IAdaptivePerformancePackageMetadata.Settings"/>.</param>
+        /// <param name="obj">ScriptableObject instance that represents an instance of the settings
+        /// type provided by <see cref="IAdaptivePerformancePackageMetadata.settingsType"/>.</param>
         /// <returns>True if the operation succeeded, false if not. If implementation is empty, just return true.</returns>
         bool PopulateNewSettingsInstance(ScriptableObject obj);
     }

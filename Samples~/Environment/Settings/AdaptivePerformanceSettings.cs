@@ -45,6 +45,9 @@ public class AdaptivePerformanceSettings : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        if (!AdaptivePerformanceGeneralSettings.Instance || !AdaptivePerformanceGeneralSettings.Instance.Manager || !AdaptivePerformanceGeneralSettings.Instance.Manager.isInitializationComplete)
+            return;
+
         IAdaptivePerformanceSettings settings = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetSettings();
         if (settings == null)
             return;

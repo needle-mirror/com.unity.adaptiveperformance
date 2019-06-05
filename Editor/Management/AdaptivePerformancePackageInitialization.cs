@@ -14,7 +14,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// <value>The name of the package</value>
         string PackageName { get; }
         /// <summary>The loader full type name for this package</summary>
-        /// <value>Loader fulltype name</value>
+        /// <value>Loader full type name</value>
         string LoaderFullTypeName { get; }
         /// <summary>The loader type name for this package</summary>
         /// <value>Loader type name</value>
@@ -120,8 +120,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static bool InitializePackageFromMetadata(IAdaptivePerformancePackage package, IAdaptivePerformancePackageMetadata packageMetadata)
         {
             bool ret = true;
-            ret |= InitializeLoaderFromMetadata(packageMetadata.packageName, packageMetadata.loaderMetadata);
-            ret |= InitializeSettingsFromMetadata(package, packageMetadata.packageName, packageMetadata.settingsType, packageMetadata.licenseURL);
+            ret = ret && InitializeLoaderFromMetadata(packageMetadata.packageName, packageMetadata.loaderMetadata);
+            ret = ret && InitializeSettingsFromMetadata(package, packageMetadata.packageName, packageMetadata.settingsType, packageMetadata.licenseURL);
             return ret;
         }
 

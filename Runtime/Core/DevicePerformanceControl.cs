@@ -76,7 +76,7 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// DevicePerformanceControlImpl does not implement AutomaticPerformanceControl
+        /// DevicePerformanceControlImpl does not implement AutomaticPerformanceControl.
         /// </summary>
         public bool AutomaticPerformanceControl { get { return false; } set {} }
 

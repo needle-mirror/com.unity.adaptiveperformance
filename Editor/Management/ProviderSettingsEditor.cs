@@ -37,20 +37,20 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_AutomaticPerformanceModeEnabledLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Auto Performance Mode"), L10n.Tr("Auto Performance Mode controls performance by changing CPU and GPU levels."));
         static GUIContent s_StatsLoggingFrequencyInFramesLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Logging Frequency"), L10n.Tr("Changes the logging frequency."));
         static GUIContent s_IndexerActiveLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Active"), L10n.Tr("Is indexer enabled."));
-        static GUIContent s_IndexerThermalActionDelayLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Thermal Action Delay"), L10n.Tr("Delay after any scaler is applied or unapplied, because of thermal state."));
-        static GUIContent s_IndexerPerformanceActionDelayLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Performance Action Delay"), L10n.Tr("Delay after any scaler is applied or unapplied, because of performance state."));
+        static GUIContent s_IndexerThermalActionDelayLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Thermal Action Delay"), L10n.Tr("Delay after any scaler is applied or unapplied because of thermal state."));
+        static GUIContent s_IndexerPerformanceActionDelayLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Performance Action Delay"), L10n.Tr("Delay after any scaler is applied or unapplied because of performance state."));
 
         static GUIContent s_ScalerActive = EditorGUIUtility.TrTextContent(L10n.Tr("Enabled"), L10n.Tr("Is the Scaler enabled."));
-        static GUIContent s_ScalerScale = EditorGUIUtility.TrTextContent(L10n.Tr("Scale"), L10n.Tr("Scale to control the quality impact for the scaler. No quality change when 1, improved quality >1 and lowered quality <1"));
+        static GUIContent s_ScalerScale = EditorGUIUtility.TrTextContent(L10n.Tr("Scale"), L10n.Tr("Scale to control the quality impact for the scaler. No quality change when 1, improved quality when >1, and lowered quality when <1"));
         static GUIContent s_ScalerVisualImpact = EditorGUIUtility.TrTextContent(L10n.Tr("Visual Impact"), L10n.Tr("Visual impact the scaler has on the application. The higher the more impact the scaler has on the visuals."));
         static GUIContent s_ScalerTarget = EditorGUIUtility.TrTextContent(L10n.Tr("Target"), L10n.Tr("Target for the scaler of the application bottleneck. The target selected has the most impact on the quality control of this scaler."));
-        static GUIContent s_ScalerMaxLevel = EditorGUIUtility.TrTextContent(L10n.Tr("Maximum Level"), L10n.Tr("Maximum level for the scaler. This is tied to the implementation of the scaler to devide the levels into concrete steps."));
+        static GUIContent s_ScalerMaxLevel = EditorGUIUtility.TrTextContent(L10n.Tr("Maximum Level"), L10n.Tr("Maximum level for the scaler. This is tied to the implementation of the scaler to divide the levels into concrete steps."));
         static GUIContent s_ScalerMinBound = EditorGUIUtility.TrTextContent(L10n.Tr("Minimum"), L10n.Tr("Minimum value for the scale boundary."));
         static GUIContent s_ScalerMaxBound = EditorGUIUtility.TrTextContent(L10n.Tr("Maximum"), L10n.Tr("Maximum value for the scale boundary."));
         static GUIContent s_FrameRateLimits = EditorGUIUtility.TrTextContent(L10n.Tr("Framerate"), L10n.Tr("Set the minimum and maximum framerate for the scaler to operate in."));
-        static GUIContent s_BoundryLimits = EditorGUIUtility.TrTextContent(L10n.Tr("Boundry"), L10n.Tr("Set the minimum and maximum boundry for the scaler to operate in."));
+        static GUIContent s_BoundryLimits = EditorGUIUtility.TrTextContent(L10n.Tr("Boundary"), L10n.Tr("Set the minimum and maximum boundary for the scaler to operate in."));
 
-        static GUIContent s_AdaptiveFramerate = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Framerate"), L10n.Tr("Adaptive Framerate enables you to automatically control the applications framerate by the defined minimum and maximum framerate. It uses Application.targetFramerate to control the framerate for your."));
+        static GUIContent s_AdaptiveFramerate = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Framerate"), L10n.Tr("Adaptive Framerate enables you to automatically control the application's framerate by the defined minimum and maximum framerate. It uses Application.targetFramerate to control the framerate for your application."));
         static GUIContent s_AdaptiveResolution = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Resolution"), L10n.Tr("Adaptive Resolution enables you to automatically control the screen resolution of the application by the defined scale. It uses Dynamic Resolution (Vulkan only) and uses Resolution Scale of the Universal Render Pipeline as fallback if the project uses Universal Render Pipeline."));
         static GUIContent s_AdaptiveBatching = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Batching"), L10n.Tr("Adaptive Batching toggles dynamic batching based on the thermal and performance load."));
         static GUIContent s_AdaptiveLOD = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive LOD"), L10n.Tr("Adaptive LOD changes the LOD bias based on the thermal and performance load."));
@@ -60,7 +60,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_AdaptiveShadowDistance = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Shadow Distance"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Shadow Distance changes the Max Shadow Distance Multiplier of the Universal Render Pipeline base on the thermal and performance load."));
         static GUIContent s_AdaptiveShadowmapResolution = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Shadowmap Resolution"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Shadowmap Resolution changes the  Main Light Shadowmap Resolution Multiplier of the Universal Render Pipeline base on the thermal and performance load."));
         static GUIContent s_AdaptiveShadowQuality = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Shadow Quality"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Shadow Quality changes the Shadow Quality Bias of the Universal Render Pipeline base on the thermal and performance load."));
-        static GUIContent s_AdaptiveSorting = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Sorting"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Sorting skips the front to back sorting of the Universal Render Pipeline base on the thermal and performance load."));
+        static GUIContent s_AdaptiveSorting = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Sorting"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Sorting skips the front-to-back sorting of the Universal Render Pipeline based on the thermal and performance load."));
 
         static string s_FrameRateWarning = L10n.Tr("Adaptive Framerate is only supported without VSync. Set VSync Count to \"Don't Sync\" in Quality settings.");
 
@@ -130,7 +130,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
             if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                EditorGUILayout.HelpBox("Adaptive Performance settings cannot be changed when the editor is in play mode.", MessageType.Info);
+                EditorGUILayout.HelpBox("Adaptive Performance settings cannot be changed when the Editor is in Play mode.", MessageType.Info);
                 EditorGUILayout.Space();
             }
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
@@ -232,6 +232,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             string name = scalerSetting.FindPropertyRelative(k_ScalerName).stringValue;
             var isEnabled = renderNotDisabled && !EditorApplication.isPlayingOrWillChangePlaymode;
             var isFrameRateScaler = name == "Adaptive Framerate";
+            var isResolutionScaler = name == "Adaptive Resolution";
             var minBound = scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue;
             var maxBound = scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue;
             var needsFoldout = minBound != -1 || maxBound != -1 || scalerSetting.FindPropertyRelative(k_ScalerScale).floatValue != -1;
@@ -293,8 +294,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 if (scalerSetting.FindPropertyRelative(k_ScalerScale).floatValue != -1)
                     EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerScale), s_ScalerScale, GUILayout.MaxWidth(EditorGUIUtility.labelWidth + EditorGUIUtility.fieldWidth));
 
-                // currently not in use, but might be useful if a scaler offers it to be changeable
-                //EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMaxLevel), s_ScalerMaxLevel,GUILayout.MaxWidth(EditorGUIUtility.labelWidth+EditorGUIUtility.fieldWidth));
+                if (isResolutionScaler)
+                    EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMaxLevel), s_ScalerMaxLevel, GUILayout.MaxWidth(EditorGUIUtility.labelWidth + EditorGUIUtility.fieldWidth));
 
                 if (minBound != -1 && maxBound != -1)
                 {
@@ -303,15 +304,15 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     {
                         EditorGUILayout.Space();
                         EditorGUILayout.LabelField(s_ScalerMinBound, GUILayout.MaxWidth(100));
-                        EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMinBound), GUIContent.none, GUILayout.MaxWidth(80));
-                        EditorGUILayout.MinMaxSlider(ref minBound, ref maxBound, 15, 140);
-                        EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMaxBound), GUIContent.none, GUILayout.MaxWidth(80));
+                        EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMinBound), GUIContent.none, GUILayout.MaxWidth(100));
+                        EditorGUILayout.MinMaxSlider(ref minBound, ref maxBound, isFrameRateScaler ? 15 : 0f, isFrameRateScaler ? 140 : 1f);
+                        EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMaxBound), GUIContent.none, GUILayout.MaxWidth(100));
                         EditorGUILayout.LabelField(s_ScalerMaxBound, GUILayout.MaxWidth(100));
                         EditorGUILayout.Space();
                     }
                     EditorGUILayout.EndHorizontal();
-                    scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue = Mathf.RoundToInt(minBound);
-                    scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue = Mathf.RoundToInt(maxBound);
+                    scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue = isFrameRateScaler ? Mathf.RoundToInt(minBound) : minBound;
+                    scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue = isFrameRateScaler ? Mathf.RoundToInt(maxBound) : maxBound;
                 }
 
                 EditorGUI.indentLevel--;

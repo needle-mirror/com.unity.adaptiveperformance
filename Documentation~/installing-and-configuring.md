@@ -1,24 +1,10 @@
 # Installing Adaptive Performance
 
-## Installing Adaptive Performance 2.0.0-preview
-
-This version of the package is available as a preview, so it is not ready for production use. The features and documentation in this package might change before it is verified for release.
-
-To install the 2.0.0-preview version of Adaptive Performance, use the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html) to install the **Adaptive Performance Samsung Android** package, which includes the Samsung Android subsystem for Adaptive Performance. Unity automatically installs the Adaptive Performance package as a dependency of the Adaptive Performance Samsung Android package.
-
-Requirements:
-
-* Make sure you install Android support for Unity. Unity needs Android support to build to your Samsung device. For more information, see [Adding modules to the Unity Editor](https://docs.unity3d.com/Manual/GettingStartedAddingEditorComponents.html).
-* Switch the target build platform to Android in the [Build Settings](https://docs.unity3d.com/Manual/BuildSettings.html) window.
-* Install and activate the **Adaptive Performance Samsung Android** provider in Adaptive Performance Settings.
-
-## Installing a production version of Adaptive Performance
-
-You can install a production version of the package in one of the following ways:
+You can install the package in one of the following ways:
 
 - From the [Project Settings](#project-settings) window
 - From the [Unity Package Manager](#unity-package-manager)
-- [Manual installation](#manual-installation)
+- Manually from the [Package Manifest](#package-manifest)
 
 ### Project Settings
 
@@ -32,7 +18,7 @@ Use the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.pack
 
 ![Adaptive Performance package listed and selected to install in the Package Manager.](Images/installation-package-manager.png)
 
-### Manual installation
+### Package manifest
 
 You can also install Adaptive Performance manually. To do this, add a reference to Adaptive Performance in your Project's `Packages/manifest.json` file. There are two ways you can reference a specific version of the Adaptive Performance package, depending on how you use it.
 

@@ -18,6 +18,7 @@ public class IndexerVisualisation : MonoBehaviour
     List<ScalerVisualisation> m_ScalerVisualisations;
     List<AdaptivePerformanceScaler> m_AppliedScalers;
     List<AdaptivePerformanceScaler> m_UnappliedScalers;
+    List<AdaptivePerformanceScaler> m_DisabledScalers;
     AdaptivePerformanceIndexer m_Indexer;
 
     private void Start()
@@ -41,6 +42,7 @@ public class IndexerVisualisation : MonoBehaviour
         m_ScalerVisualisations = new List<ScalerVisualisation>();
         m_AppliedScalers = new List<AdaptivePerformanceScaler>();
         m_UnappliedScalers = new List<AdaptivePerformanceScaler>();
+        m_DisabledScalers = new List<AdaptivePerformanceScaler>();
     }
 
     private void Update()
@@ -90,6 +92,10 @@ public class IndexerVisualisation : MonoBehaviour
 
         m_Indexer.GetUnappliedScalers(ref m_UnappliedScalers);
         foreach (var scaler in m_UnappliedScalers)
+            CreateScalerVisualisation(scaler);
+
+        m_Indexer.GetDisabledScalers(ref m_DisabledScalers);
+        foreach (var scaler in m_DisabledScalers)
             CreateScalerVisualisation(scaler);
     }
 

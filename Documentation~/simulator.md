@@ -36,3 +36,13 @@ After you install Adaptive Performance, the **Device Simulator** window will dis
 * Logging Frequency - Control Adaptive Performance logging frequency in frames.
 
 Adaptive Performance also includes an API that you can use to script thermal and bottleneck changes.
+
+### Indexer and Scalers
+
+![Adaptive Performance Device Simulator Scaler settings.](Images/simulator-extension-scaler-settings.png)
+
+Scalers may also be used with the Device Simulator. In this section you will find a list of all the available Scalers. Each one will have the following options.
+
+* A toggle to enable or disable the Scaler.
+* A slider to adjust the value of the Scaler.
+* A text field to enter a value or reflect the current value of the slider.

@@ -16,29 +16,29 @@ namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// Class to handle active loader and subsystem management for Adaptive Performance. This class is to be added as a
-    /// ScriptableObject asset in your project and should only be referenced by the an <see cref="AdaptivePerformanceGeneralSettings"/>
+    /// ScriptableObject asset in your project and should only be referenced by an <see cref="AdaptivePerformanceGeneralSettings"/>
     /// instance for its use.
     ///
-    /// Given a list of loaders, it will attempt to load each loader in the given order. The first
-    /// loader that is successful wins and all remaining loaders are ignored. The loader
-    /// that succeeds is accessible through the <see cref="activeLoader"/> property on the manager.
+    /// Given a list of loaders, it will attempt to load each loader in the given order. Unity will use the first
+    /// loader that is successful and ignore all remaining loaders. The successful loader
+    /// is accessible through the <see cref="activeLoader"/> property on the manager.
     ///
-    /// Depending on configuration the <see cref="AdaptivePerformanceGeneralSettings"/> instance will automatically manage the active loader
-    /// at correct points in the application lifecycle. The user can override certain points in the active loader lifecycle
-    /// and manually manage them by toggling the <see cref="AdaptivePerformanceGeneralSettings.automaticLoading"/> and <see cref="AdaptivePerformanceGeneralSettings.automaticRunning"/>
-    /// properties. Disabling <see cref="AdaptivePerformanceGeneralSettings.automaticLoading"/> implies the the user is responsible for the full lifecycle
-    /// of the Adaptive Performance session normally handled by the <see cref="AdaptivePerformanceGeneralSettings"/> instance. Toggling this to false also toggles
-    /// <see cref="AdaptivePerformanceGeneralSettings.automaticRunning"/> false.
+    /// Depending on configuration, the <see cref="AdaptivePerformanceGeneralSettings"/> instance will automatically manage the active loader
+    /// at the correct points in the application lifecycle. You can override certain points in the active loader lifecycle
+    /// and manually manage them by toggling the <see cref="AdaptivePerformanceManagerSettings.automaticLoading"/> and <see cref="AdaptivePerformanceManagerSettings.automaticRunning"/>
+    /// properties. Disabling <see cref="AdaptivePerformanceManagerSettings.automaticLoading"/> implies that you are responsible for the full lifecycle
+    /// of the Adaptive Performance session normally handled by the <see cref="AdaptivePerformanceGeneralSettings"/> instance. Setting this to false also sets
+    /// <see cref="AdaptivePerformanceManagerSettings.automaticRunning"/> to false.
     ///
-    /// Disabling <see cref="AdaptivePerformanceGeneralSettings.automaticRunning"/> only implies that the user is responsible for starting and stopping
+    /// Disabling <see cref="AdaptivePerformanceManagerSettings.automaticRunning"/> only implies that you are responsible for starting and stopping
     /// the <see cref="activeLoader"/> through the <see cref="StartSubsystems"/> and <see cref="StopSubsystems"/> APIs.
     ///
-    /// Automatic lifecycle management is executed as follows
+    /// Unity executes atomatic lifecycle management as follows:
     ///
-    /// * OnEnable -> <see cref="InitializeLoader"/>. The loader list will be iterated over and the first successful loader will be set as the active loader.
-    /// * Start -> <see cref="StartSubsystems"/>. Ask the active loader to start all subsystems.
-    /// * OnDisable -> <see cref="StopSubsystems"/>. Ask the active loader to stop all subsystems.
-    /// * OnDestroy -> <see cref="DeinitializeLoader"/>. Deinitialize and remove the active loader.
+    /// * OnEnable calls <see cref="InitializeLoader"/> internally. The loader list will be iterated over and the first successful loader will be set as the active loader.
+    /// * Start calls <see cref="StartSubsystems"/> internally. Ask the active loader to start all subsystems.
+    /// * OnDisable calls <see cref="StopSubsystems"/> internally. Ask the active loader to stop all subsystems.
+    /// * OnDestroy calls <see cref="DeinitializeLoader"/> internally. Deinitialize and remove the active loader.
     /// </summary>
     public sealed class AdaptivePerformanceManagerSettings : ScriptableObject
     {
@@ -47,12 +47,11 @@ namespace UnityEngine.AdaptivePerformance
 
         [SerializeField]
         [Tooltip("Determines if the Adaptive Performance Manager instance is responsible for creating and destroying the appropriate loader instance.")]
-        [FormerlySerializedAs("AutomaticLoading")]
         bool m_AutomaticLoading = false;
 
         /// <summary>
         /// Get and set Automatic Loading state for this manager. When this is true, the manager will automatically call
-        /// <see cref="InitializeLoader"/> and <see cref="DeinitializeLoader"/> for you. When false <see cref="automaticRunning"/>
+        /// <see cref="InitializeLoader"/> and <see cref="DeinitializeLoader"/> for you. When false, <see cref="automaticRunning"/>
         /// is also set to false and remains that way. This means that disabling automatic loading disables all automatic behavior
         /// for the manager.
         /// </summary>
@@ -64,13 +63,12 @@ namespace UnityEngine.AdaptivePerformance
 
         [SerializeField]
         [Tooltip("Determines if the Adaptive Performance Manager instance is responsible for starting and stopping subsystems for the active loader instance.")]
-        [FormerlySerializedAs("AutomaticRunning")]
         bool m_AutomaticRunning = false;
 
         /// <summary>
-        /// Get and set automatic running state for this manager. When set to true the manager will call <see cref="StartSubsystems"/>
-        /// and <see cref="StopSubsystems"/> APIs at appropriate times. When set to false, or when <see cref="automaticLoading"/> is false
-        /// then it is up to the user of the manager to handle that same functionality.
+        /// Get and set the automatic running state for this manager. When this is true, the manager will call <see cref="StartSubsystems"/>
+        /// and <see cref="StopSubsystems"/> APIs at appropriate times. When false, or when <see cref="automaticLoading"/> is false,
+        /// it is up to the user of the manager to handle that same functionality.
         /// </summary>
         public bool automaticRunning
         {
@@ -81,7 +79,6 @@ namespace UnityEngine.AdaptivePerformance
 
         [SerializeField]
         [Tooltip("List of Adaptive Performance Loader instances arranged in desired load order.")]
-        [FormerlySerializedAs("Loaders")]
         List<AdaptivePerformanceLoader> m_Loaders = new List<AdaptivePerformanceLoader>();
 
         /// <summary>
@@ -97,8 +94,8 @@ namespace UnityEngine.AdaptivePerformance
 
 
         /// <summary>
-        /// Read only boolean letting us know if initialization is completed. Because initialization is
-        /// handled as a Coroutine, people taking advantage of the auto-lifecycle management of AdaptivePerformanceManager
+        /// Read-only boolean that is true if initialization is completed and false otherwise. Because initialization is
+        /// handled as a Coroutine, applications that use the auto-lifecycle management of AdaptivePerformanceManager
         /// will need to wait for init to complete before checking for an ActiveLoader and calling StartSubsystems.
         /// </summary>
         public bool isInitializationComplete
@@ -110,17 +107,17 @@ namespace UnityEngine.AdaptivePerformance
         static AdaptivePerformanceLoader s_ActiveLoader = null;
 
         ///<summary>
-        /// Return the current singleton active loader instance.
+        /// Returns the current singleton active loader instance.
         ///</summary>
         [HideInInspector]
         public AdaptivePerformanceLoader activeLoader { get { return s_ActiveLoader; } private set { s_ActiveLoader = value; } }
 
         /// <summary>
-        /// Return the current active loader, cast to the requested type. Useful shortcut when you need
+        /// Returns the current active loader, cast to the requested type. Useful shortcut when you need
         /// to get the active loader as something less generic than AdaptivePerformanceLoader.
         /// </summary>
-        /// <typeparam name="T">Requested type of the loader</typeparam>
-        /// <returns>The active loader as requested type, or null.</returns>
+        /// <typeparam name="T">Requested type of the loader.</typeparam>
+        /// <returns>The active loader as requested type, or null if no active loader currently exists.</returns>
         public T ActiveLoaderAs<T>() where T : AdaptivePerformanceLoader
         {
             return activeLoader as T;
@@ -130,11 +127,11 @@ namespace UnityEngine.AdaptivePerformance
         /// Iterate over the configured list of loaders and attempt to initialize each one. The first one
         /// that succeeds is set as the active loader and initialization immediately terminates.
         ///
-        /// When complete <see cref="isInitializationComplete"/> will be set to true. This will mark that it is safe to
-        /// call other parts of the API. This does not guarantee that init successfully created a loader. For that
+        /// When this completes, <see cref="isInitializationComplete"/> will be set to true. This will mark that it is safe to
+        /// call other parts of the API, but does not guarantee that init successfully created a loader. To check that init successfully created a loader,
         /// you need to check that ActiveLoader is not null.
         ///
-        /// Note that there can only be one active loader. Any attempt to initialize a new active loader with one
+        /// **Note**: There can only be one active loader. Any attempt to initialize a new active loader with one
         /// already set will cause a warning to be logged and immediate exit of this function.
         ///
         /// This method is synchronous and on return all state should be immediately checkable.
@@ -153,7 +150,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 if (loader != null)
                 {
-                    if (CheckGraphicsAPICompatibility(loader) && loader.Initialize())
+                    if (loader.Initialize())
                     {
                         activeLoader = loader;
                         m_InitializationComplete = true;
@@ -169,14 +166,14 @@ namespace UnityEngine.AdaptivePerformance
         /// Iterate over the configured list of loaders and attempt to initialize each one. The first one
         /// that succeeds is set as the active loader and initialization immediately terminates.
         ///
-        /// When complete <see cref="isInitializationComplete"/> will be set to true. This will mark that it is safe to
-        /// call other parts of the API. This does not guarantee that init successfully created a loader. For that
+        /// When complete, <see cref="isInitializationComplete"/> will be set to true. This will mark that it is safe to
+        /// call other parts of the API, but does not guarantee that init successfully created a loader. To check that init successfully created a loader,
         /// you need to check that ActiveLoader is not null.
         ///
-        /// Note that there can only be one active loader. Any attempt to initialize a new active loader with one
-        /// already set will cause a warning to be logged and immediate exit of this function.
+        /// **Note:** There can only be one active loader. Any attempt to initialize a new active loader with one
+        /// already set will cause a warning to be logged and this function wil immeditely exit.
         ///
-        /// Iteration is done asynchronously and this method must be called within the context of a Coroutine.
+        /// Iteration is done asynchronously. You must call this method within the context of a Coroutine.
         /// </summary>
         ///
         /// <returns>Enumerator marking the next spot to continue execution at.</returns>
@@ -194,7 +191,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 if (loader != null)
                 {
-                    if (CheckGraphicsAPICompatibility(loader) && loader.Initialize())
+                    if (loader.Initialize())
                     {
                         activeLoader = loader;
                         m_InitializationComplete = true;
@@ -208,27 +205,11 @@ namespace UnityEngine.AdaptivePerformance
             activeLoader = null;
         }
 
-        private bool CheckGraphicsAPICompatibility(AdaptivePerformanceLoader loader)
-        {
-            GraphicsDeviceType deviceType = SystemInfo.graphicsDeviceType;
-            List<GraphicsDeviceType> supportedDeviceTypes = loader.GetSupportedGraphicsDeviceTypes(false);
-
-            // To help with backward compatibility, if the compatibility list is empty we assume that it does not implement the GetSupportedGraphicsDeviceTypes method
-            // Therefore we revert to the previous behavior of building or starting the loader regardless of gfx api settings.
-            if (supportedDeviceTypes.Count > 0 && !supportedDeviceTypes.Contains(deviceType))
-            {
-                Debug.LogWarning(String.Format("The {0} does not support the initialized graphics device, {1}. Please change the preffered Graphics API in PlayerSettings. Attempting to start the next Adaptive Performance loader.", loader.name, deviceType.ToString()));
-                return false;
-            }
-
-            return true;
-        }
-
         /// <summary>
         /// If there is an active loader, this will request the loader to start all the subsystems that it
         /// is managing.
         ///
-        /// You must wait for <see cref="isInitializationComplete"/> to be set to true prior to calling this API.
+        /// You must wait for <see cref="isInitializationComplete"/> to be set to true before calling this API.
         /// </summary>
         public void StartSubsystems()
         {
@@ -236,7 +217,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 Debug.LogWarning(
                     "Call to StartSubsystems without an initialized manager." +
-                    "Please make sure wait for initialization to complete before calling this API.");
+                    "Please make sure to wait for initialization to complete before calling this API.");
                 return;
             }
 
@@ -250,7 +231,7 @@ namespace UnityEngine.AdaptivePerformance
         /// If there is an active loader, this will request the loader to stop all the subsystems that it
         /// is managing.
         ///
-        /// You must wait for <see cref="isInitializationComplete"/> to be set to tru prior to calling this API.
+        /// You must wait for <see cref="isInitializationComplete"/> to be set to true before calling this API.
         /// </summary>
         public void StopSubsystems()
         {
@@ -258,7 +239,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 Debug.LogWarning(
                     "Call to StopSubsystems without an initialized manager." +
-                    "Please make sure wait for initialization to complete before calling this API.");
+                    "Please make sure to wait for initialization to complete before calling this API.");
                 return;
             }
 
@@ -270,12 +251,12 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// If there is an active loader, this function will deinitialize it and remove the active loader instance from
-        /// management. We will automatically call <see cref="StopSubsystems"/> prior to deinitialization to make sure
+        /// management. Unity will automatically call <see cref="StopSubsystems"/> before deinitialization to make sure
         /// that things are cleaned up appropriately.
         ///
-        /// You must wait for <see cref="isInitializationComplete"/> to be set to tru prior to calling this API.
+        /// You must wait for <see cref="isInitializationComplete"/> to be set to true before calling this API.
         ///
-        /// Upon return <see cref="isInitializationComplete"/> will be rest to false;
+        /// On return, <see cref="isInitializationComplete"/> will be set to false.
         /// </summary>
         public void DeinitializeLoader()
         {
@@ -283,7 +264,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 Debug.LogWarning(
                     "Call to DeinitializeLoader without an initialized manager." +
-                    "Please make sure wait for initialization to complete before calling this API.");
+                    "Please make sure to wait for initialization to complete before calling this API.");
                 return;
             }
 

@@ -70,7 +70,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         {
             if (m_SettingsWrapper == null || m_SettingsWrapper.targetObject == null)
             {
-                ScriptableObject settings = Create();
+                ScriptableObject settings = (currentSettings != null) ? currentSettings : Create();
                 InitEditorData(settings);
             }
 
@@ -95,6 +95,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 if (!string.IsNullOrEmpty(assetPath))
                 {
                     assetPath = Path.Combine(assetPath, newAssetName);
+                    settings.hideFlags = HideFlags.HideInInspector;
                     AssetDatabase.CreateAsset(settings, assetPath);
                     EditorBuildSettings.AddConfigObject(m_BuildSettingsKey, settings, true);
                     return settings;

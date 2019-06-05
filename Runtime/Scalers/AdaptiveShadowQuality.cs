@@ -5,6 +5,8 @@ namespace UnityEngine.AdaptivePerformance
     /// </summary>
     public class AdaptiveShadowQuality : AdaptivePerformanceScaler
     {
+        int m_DefaultShadowQualityBias;
+
         /// <summary>
         /// Ensures settings are applied during startup.
         /// </summary>
@@ -14,6 +16,22 @@ namespace UnityEngine.AdaptivePerformance
             if (m_Settings == null)
                 return;
             ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveShadowQuality);
+        }
+
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected override void OnDisabled()
+        {
+            AdaptivePerformanceRenderSettings.ShadowQualityBias = m_DefaultShadowQualityBias;
+        }
+
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected override void OnEnabled()
+        {
+            m_DefaultShadowQualityBias = AdaptivePerformanceRenderSettings.ShadowQualityBias;
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ public abstract class AdaptivePerformanceLoader : ScriptableObject
 
     public virtual bool Deinitialize() { return false; }
 
-    public abstract T GetLoadedSubsystem<T>() where T : IntegratedSubsystem;
+    public abstract T GetLoadedSubsystem<T>() where T : class, ISubsystem;
 
     public abstract ISubsystem GetDefaultSubsystem();
 
@@ -70,7 +70,7 @@ public class MyBuildProcessor : AdaptivePerformanceBuildHelper<MySettings>
 }
 ```
 
-You can override the build processing steps from `IPreprocessBuildWithReport` and `IPostprocessBuildWithReport`, but make sure you call to the base class implementation. If you don’t, your settings don't transfer to the built application.
+You can override the build processing steps from `IPreprocessBuildWithReport` and `IPostprocessBuildWithReport`, but make sure you call to the base class implementation. If you don’t, your settings won't transfer to the built application.
 
 ```csharp
 public class MyBuildProcessor : AdaptivePerformanceBuildHelper<MySettings>
@@ -108,7 +108,6 @@ public class MyBuildProcessor : AdaptivePerformanceBuildHelper<MySettings>
             return null;
 
         return settingsObj;
-
     }
 }
 ```
@@ -130,17 +129,17 @@ The system will use .NET reflection to find all types implementing the **IAdapti
     {
         private class MyLoaderMetadata : IAdaptivePerformanceLoaderMetadata
         {
-            public string loaderName { get; set; }
-            public string loaderType { get; set; }
-            public List<BuildTargetGroup> supportedBuildTargets { get; set; }
+            public string loaderName { get; }
+            public string loaderType { get; }
+            public List<BuildTargetGroup> supportedBuildTargets { get; }
         }
 
         private class MyPackageMetadata : IAdaptivePerformancePackageMetadata
         {
-            public string packageName { get; set; }
-            public string packageId { get; set; }
-            public string settingsType { get; set; }
-            public List<IAdaptivePerformanceLoaderMetadata> loaderMetadata { get; set; }
+            public string packageName { get; }
+            public string packageId { get; }
+            public string settingsType { get; }
+            public List<IAdaptivePerformanceLoaderMetadata> loaderMetadata { get; }
         }
 
         private static IAdaptivePerformancePackageMetadata s_Metadata = new MyPackageMetadata(){
@@ -170,14 +169,13 @@ The system will use .NET reflection to find all types implementing the **IAdapti
                 // Do something here if you need to...
             }
             return false;
-
         }
     }
 ```
 
 ## Package initialization
 
-Implementing the Package Metadata allows the AdaptivePerformance provider management system to automatically create and initialize your loaders and settings instances. The system will pass any new instances of your settings to the `PopulateNewSettingsInstance` method to allow your provider to initialize the new instance data after it's created, if needed.
+Implementing the Package Metadata allows the Adaptive Performance provider management system to automatically create and initialize your loaders and settings instances. The system will pass any new instances of your settings to the `PopulateNewSettingsInstance` method to allow your provider to initialize the new instance data after it's created, if needed.
 
 ## Installing the Adaptive Performance provider management
 
@@ -194,5 +192,4 @@ This version of Adaptive Performance contains the following:
 |**AdaptivePerformanceConfigurationData**|Attribute that allows for build and runtime settings to be hosted in the **Adaptive Performance** section of the **Project Settings** window. All instances use the name supplied in the script as part of the attribute. The management feature uses the **EditorBuildSettings** config object API, stored with the key provided in the attribute, to maintain and manage the lifecycle for one instance of the build settings. To access the configuration settings instance, retrieve the instance associated with the chosen key (as set in the attribute) from **EditorBuildSettings**.|
 |**AdaptivePerformancePackageInitializationBase**|Helper class to derive from that simplifies package initialization. Helps to create default instances of the package's `AdaptivePerformanceLoader` and default settings when you install the package. Initialization only runs once, and you shouldn't depend on the user to create the specified instances on their own.|
 |**AdaptivePerformanceBuildHelper**|Abstract class useful for handling some of the boilerplate around moving settings from the Editor to the runtime. If you derive from this class and specify the appropriate settings type, the system moves settings of that type from `EditorUserBuildSettings` to `PlayerSettings` so they can be used at runtime.|
-|**AdaptivePerformanceGeneralSettings**|Contains settings that apply to all AdaptivePerformance Providers, rather than any single provider.|
-|**Samples folder**|Contains an implementation of all parts of AdaptivePerformance Provider management. You can copy this folder to your Project or package to start implementing AdaptivePerformance provider for your needs.|
+|**AdaptivePerformanceGeneralSettings**|Contains settings that apply to all Adaptive Performance Providers, rather than any single provider.|

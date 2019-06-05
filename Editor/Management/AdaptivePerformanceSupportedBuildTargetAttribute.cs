@@ -4,13 +4,13 @@ using UnityEditor;
 namespace UnityEditor.AdaptivePerformance.Editor
 {
     /// <summary>
-    /// A build attribute to identify which platforms a loader supports.
+    /// Build attribute to identify which platforms a loader supports.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public sealed class AdaptivePerformanceSupportedBuildTargetAttribute : Attribute
     {
         /// <summary>
-        /// String representation of <see href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.html">UnityEditor.Build.BuildTargetGroup</see>
+        /// String representation of <see href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.html">UnityEditor.Build.BuildTargetGroup</see>.
         /// </summary>
         public BuildTargetGroup buildTargetGroup { get; set; }
 

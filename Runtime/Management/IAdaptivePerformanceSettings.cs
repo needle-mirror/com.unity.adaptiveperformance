@@ -18,7 +18,7 @@ namespace UnityEngine.AdaptivePerformance
         bool m_Active = true;
 
         /// <summary>
-        /// Returns `true` if Indexer was active, `false` otherwise.
+        /// Returns true if Indexer was active, false otherwise.
         /// </summary>
         public bool active
         {
@@ -37,7 +37,7 @@ namespace UnityEngine.AdaptivePerformance
         float m_ThermalActionDelay = 10;
 
         /// <summary>
-        /// Delay after any scaler is applied or unapplied, because of thermal state.
+        /// Delay after any scaler is applied or unapplied because of thermal state.
         /// </summary>
         public float thermalActionDelay
         {
@@ -49,7 +49,7 @@ namespace UnityEngine.AdaptivePerformance
         float m_PerformanceActionDelay = 4;
 
         /// <summary>
-        /// Delay after any scaler is applied or unapplied, because of performance state.
+        /// Delay after any scaler is applied or unapplied because of performance state.
         /// </summary>
         public float performanceActionDelay
         {
@@ -78,7 +78,7 @@ namespace UnityEngine.AdaptivePerformance
         };
 
         /// <summary>
-        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to adjust the application update rate using <see cref="Application.TargetFramerate"/>.
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to adjust the application update rate using <see cref="Application.targetFrameRate"/>.
         /// </summary>
         public AdaptivePerformanceScalerSettingsBase AdaptiveFramerate
         {
@@ -86,15 +86,15 @@ namespace UnityEngine.AdaptivePerformance
             set { m_AdaptiveFramerate = value; }
         }
 
-        [SerializeField, Tooltip("Settings for a  scaler used by the Indexer to adjust the resolution of all render targets that allow dynamic resolution.")]
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to adjust the resolution of all render targets that allow dynamic resolution.")]
         AdaptivePerformanceScalerSettingsBase m_AdaptiveResolution = new AdaptivePerformanceScalerSettingsBase
         {
             name = "Adaptive Resolution",
             enabled = false,
-            scale = 1.0f,
+            scale = -1.0f,
             visualImpact = ScalerVisualImpact.Low,
             target =  ScalerTarget.FillRate | ScalerTarget.GPU,
-            maxLevel = 0,
+            maxLevel = 9,
             minBound = 0.5f,
             maxBound = 1,
         };
@@ -113,7 +113,7 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Batching",
             enabled = false,
-            scale = 1.0f,
+            scale = -1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.CPU,
             maxLevel = 1,
@@ -330,10 +330,10 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         [SerializeField, Tooltip("Active")]
-        bool m_Enabled = true;
+        bool m_Enabled = false;
 
         /// <summary>
-        /// Returns `true` if Indexer was active, `false` otherwise.
+        /// Returns true if Indexer was active, false otherwise.
         /// </summary>
         public bool enabled
         {
@@ -341,11 +341,11 @@ namespace UnityEngine.AdaptivePerformance
             set { m_Enabled = value; }
         }
 
-        [SerializeField, Tooltip("Scale to control the quality impact for the scaler. No quality change when 1, improved quality >1 and lowered quality <1.")]
-        float m_Scale = 1.0f;
+        [SerializeField, Tooltip("Scale to control the quality impact for the scaler. No quality change when 1, improved quality when >1, and lowered quality when <1.")]
+        float m_Scale = -1.0f;
 
         /// <summary>
-        /// The scale of the scaler which defines the behaviour of scaling up and down the quality.
+        /// Scale to control the quality impact for the scaler. No quality change when 1, improved quality when bigger 1, and lowered quality when smaller 1.
         /// </summary>
         public float scale
         {
@@ -353,11 +353,11 @@ namespace UnityEngine.AdaptivePerformance
             set { m_Scale = value; }
         }
 
-        [SerializeField, Tooltip("Visual impact the scaler has on the application. The higher the more impact the scaler has on the visuals.")]
+        [SerializeField, Tooltip("Visual impact the scaler has on the application. The higher the value, the more impact the scaler has on the visuals.")]
         ScalerVisualImpact m_VisualImpact = ScalerVisualImpact.Low;
 
         /// <summary>
-        /// Visual impact the scaler has on the application. The higher the more impact the scaler has on the visuals.
+        /// Visual impact the scaler has on the application. The higher the value, the more impact the scaler has on the visuals.
         /// </summary>
         public ScalerVisualImpact visualImpact
         {
@@ -365,11 +365,11 @@ namespace UnityEngine.AdaptivePerformance
             set { m_VisualImpact = value; }
         }
 
-        [SerializeField, Tooltip("Target for the scaler of the application bottleneck. The target selected has the most impact on the quality control of this scaler.")]
+        [SerializeField, Tooltip("Application bottleneck that the scaler targets. The target selected has the most impact on the quality control of this scaler.")]
         ScalerTarget m_Target = ScalerTarget.CPU;
 
         /// <summary>
-        /// Target for the scaler of the application bottleneck. The target selected has the most impact on the quality control of this scaler.
+        /// Application bottleneck that the scaler targets. The target selected has the most impact on the quality control of this scaler.
         /// </summary>
         public ScalerTarget target
         {
@@ -377,11 +377,11 @@ namespace UnityEngine.AdaptivePerformance
             set { m_Target = value; }
         }
 
-        [SerializeField, Tooltip("Maximum level for the scaler. This is tied to the implementation of the scaler to devide the levels into concrete steps.")]
+        [SerializeField, Tooltip("Maximum level for the scaler. This is tied to the implementation of the scaler to divide the levels into concrete steps.")]
         int m_MaxLevel = 1;
 
         /// <summary>
-        /// Maximum level for the scaler. This is tied to the implementation of the scaler to devide the levels into concrete steps.
+        /// Maximum level for the scaler. This is tied to the implementation of the scaler to divide the levels into concrete steps.
         /// </summary>
         public int maxLevel
         {
@@ -390,7 +390,7 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         [SerializeField, Tooltip("Minimum value for the scale boundary.")]
-        float m_MinBound = 1.0f;
+        float m_MinBound = -1.0f;
 
         /// <summary>
         /// Minimum value for the scale boundary.
@@ -402,7 +402,7 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         [SerializeField, Tooltip("Maximum value for the scale boundary.")]
-        float m_MaxBound = 1.0f;
+        float m_MaxBound = -1.0f;
 
         /// <summary>
         /// Maximum value for the scale boundary.
@@ -415,7 +415,7 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// Provider Settings Interface as base class of provider for control of the editor runtime asset instance which stores the Settings.
+    /// Provider Settings Interface as base class of the provider. Used to control the Editor runtime asset instance which stores the Settings.
     /// </summary>
     public class IAdaptivePerformanceSettings : ScriptableObject
     {
@@ -428,7 +428,7 @@ namespace UnityEngine.AdaptivePerformance
         ///  This setting can also be controlled after startup using <see cref="IDevelopmentSettings.Logging"/>.
         ///  Logging is disabled by default.
         /// </summary>
-        /// <value>`true` to enable debug logging, `false` to disable it (default: `false`)</value>
+        /// <value>Set this to true to enable debug logging, or false to disable it. It is false by default.</value>
         public bool logging
         {
             get { return m_Logging; }
@@ -439,9 +439,9 @@ namespace UnityEngine.AdaptivePerformance
         bool m_AutomaticPerformanceModeEnabled = true;
 
         /// <summary>
-        /// The Initial value of <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/>.
+        /// The initial value of <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/>.
         /// </summary>
-        /// <value>`true` to enable Automatic Performance Mode, `false` to disable it (default: `true`)</value>
+        /// <value>Set this to true to enable Automatic Performance Mode, or false to disable it. It is true by default.</value>
         public bool automaticPerformanceMode
         {
             get { return m_AutomaticPerformanceModeEnabled; }
@@ -453,8 +453,8 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Adjust the frequency in frames at which the application logs frame statistics to the console.
-        /// This is only relevant when logging is enabled. See <see cref="Logging"/>.
-        /// This setting can also be controlled after startup using <see cref="IDevelopmentSettings.StatsLoggingFrequencyInFrames"/>.
+        /// This is only relevant when logging is enabled. See <see cref="IDevelopmentSettings.Logging"/>.
+        /// This setting can also be controlled after startup using <see cref="IDevelopmentSettings.LoggingFrequencyInFrames"/>.
         /// </summary>
         /// <value>Logging frequency in frames (default: 50)</value>
         public int statsLoggingFrequencyInFrames
@@ -480,7 +480,7 @@ namespace UnityEngine.AdaptivePerformance
         AdaptivePerformanceScalerSettings m_ScalerSettings;
 
         /// <summary>
-        /// Settings of indexer system.
+        /// Settings of scaler system.
         /// </summary>
         public AdaptivePerformanceScalerSettings scalerSettings
         {

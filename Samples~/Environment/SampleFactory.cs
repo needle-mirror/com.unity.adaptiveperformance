@@ -11,7 +11,8 @@ public class SampleFactory : MonoBehaviour
     public bool RunTest = true;
 
     public int internalObjs = 0;
-    public int spawnSpeed = 1;
+    public float spawnAmount = 0.1f;
+    private float spawnPool = 0;
     private Vector3 Min = new Vector3(-20, 0, -20);
     private Vector3 Max = new Vector3(20, 0, 20);
     private GameObject[] spawnedObjects = new GameObject[2000];
@@ -33,6 +34,7 @@ public class SampleFactory : MonoBehaviour
                 DestroyObject();
             }
         }
+
         spawnedObjectsCounter.text = internalObjs.ToString();
     }
 
@@ -45,7 +47,13 @@ public class SampleFactory : MonoBehaviour
 
     void SpawnObject()
     {
-        for (int i = 0; i < spawnSpeed; i++)
+        if (spawnAmount < 1 && spawnPool < 1)
+        {
+            spawnPool += spawnAmount;
+            return;
+        }
+
+        for (int i = 0; i < spawnAmount; i++)
         {
             var _xAxis = UnityEngine.Random.Range(Min.x, Max.x);
             var _yAxis = UnityEngine.Random.Range(Min.y, Max.y);
@@ -53,6 +61,7 @@ public class SampleFactory : MonoBehaviour
             var _randomPosition = new Vector3(_xAxis, _yAxis, _zAxis);
             spawnedObjects[internalObjs] = Instantiate(prefab, _randomPosition, parent.transform.rotation);
             internalObjs++;
+            if (spawnPool > 1) spawnPool -= 1;
         }
     }
 

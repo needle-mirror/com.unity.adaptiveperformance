@@ -55,7 +55,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
     public sealed class AdaptivePerformanceSubsystemDescriptor : AdaptivePerformanceSubsystemDescriptorBase
     {
         /// <summary>
-        /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during initialization of the subsystem.
+        /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during subsystem initialization.
         /// </summary>
         public struct Cinfo
         {

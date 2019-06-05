@@ -5,6 +5,8 @@ namespace UnityEngine.AdaptivePerformance
     /// </summary>
     public class AdaptiveMSAA : AdaptivePerformanceScaler
     {
+        int m_DefaultAA;
+
         /// <summary>
         /// Ensures settings are applied during startup.
         /// </summary>
@@ -14,6 +16,22 @@ namespace UnityEngine.AdaptivePerformance
             if (m_Settings == null)
                 return;
             ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveMSAA);
+        }
+
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected override void OnDisabled()
+        {
+            AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = m_DefaultAA;
+        }
+
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected override void OnEnabled()
+        {
+            m_DefaultAA = AdaptivePerformanceRenderSettings.AntiAliasingQualityBias;
         }
 
         /// <summary>

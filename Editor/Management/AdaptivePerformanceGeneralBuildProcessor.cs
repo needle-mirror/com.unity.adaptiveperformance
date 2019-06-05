@@ -1,38 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-using UnityEditor.Android;
-using UnityEditor.Build;
-using UnityEditor.Build.Reporting;
-
 using UnityEngine;
-using UnityEngine.Rendering;
+using System.Linq;
+using UnityEditor.Build;
 using UnityEngine.AdaptivePerformance;
+using System.Runtime.CompilerServices;
+using UnityEditor.Build.Reporting;
+using UnityEditor.PackageManager.Requests;
+using UnityEditor.PackageManager;
 
 [assembly: InternalsVisibleTo("Unity.AdaptivePerformance.Editor.Tests")]
 namespace UnityEditor.AdaptivePerformance.Editor
 {
-    class AdaptivePerformanceGeneralBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuildWithReport, IPostGenerateGradleAndroidProject
+    class AdaptivePerformanceGeneralBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuildWithReport
     {
-        class PreInitInfo
-        {
-            public PreInitInfo(IAdaptivePerformanceLoaderPreInit loader, BuildTarget buildTarget, BuildTargetGroup buildTargetGroup)
-            {
-                this.loader = loader;
-                this.buildTarget = buildTarget;
-                this.buildTargetGroup = buildTargetGroup;
-            }
-
-            public IAdaptivePerformanceLoaderPreInit loader;
-            public BuildTarget buildTarget;
-            public BuildTargetGroup buildTargetGroup;
-        }
-
-        static private PreInitInfo preInitInfo = null;
+        static string s_ProviderPackageNotFound = L10n.Tr("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get information during runtime. Please install a provider such as Adaptive Performance Samsung (Android) from the Adaptive Performance Settings.");
+        static string s_Title = L10n.Tr("No Adaptive Performance provider found");
+        static string s_Ok = L10n.Tr("Go to Settings");
+        static string s_Cancel = L10n.Tr("Ignore");
 
         public int callbackOrder
         {
@@ -46,7 +29,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            // Always remember to cleanup preloaded assets after build to make sure we don't
+            CheckInstalledProvider();
+
+            // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
             CleanOldSettings();
 
@@ -59,33 +44,6 @@ namespace UnityEditor.AdaptivePerformance.Editor
             if (settings == null)
                 return;
 
-            // store off some info about the first loader in the list for PreInit boot.config purposes
-            preInitInfo = null;
-            AdaptivePerformanceManagerSettings loaderManager = settings.AssignedSettings;
-            if (loaderManager != null)
-            {
-                List<AdaptivePerformanceLoader> loaders = loaderManager.loaders;
-                if (loaders.Count >= 1)
-                {
-                    preInitInfo = new PreInitInfo(loaders[0] as IAdaptivePerformanceLoaderPreInit, report.summary.platform, report.summary.platformGroup);
-                }
-            }
-
-            if (loaderManager != null)
-            {
-                // chances are that our devices won't fall back to graphics device types later in the list so it's better to assume the device will be created with the first gfx api in the list.
-                // furthermore, we have no way to influence falling back to other graphics API types unless we automatically change settings underneath the user which is no good!
-                GraphicsDeviceType[] deviceTypes = PlayerSettings.GetGraphicsAPIs(report.summary.platform);
-                if (deviceTypes.Length > 0)
-                {
-                    VerifyGraphicsAPICompatibility(loaderManager, deviceTypes[0]);
-                }
-                else
-                {
-                    Debug.LogWarning("No Graphics APIs have been configured in Player Settings.");
-                }
-            }
-
             UnityEngine.Object[] preloadedAssets = PlayerSettings.GetPreloadedAssets();
 
             if (!preloadedAssets.Contains(settings))
@@ -96,106 +54,56 @@ namespace UnityEditor.AdaptivePerformance.Editor
             }
         }
 
-        public static void VerifyGraphicsAPICompatibility(AdaptivePerformanceManagerSettings loaderManager, GraphicsDeviceType selectedDeviceType)
-        {
-            HashSet<GraphicsDeviceType> allLoaderGraphicsDeviceTypes = new HashSet<GraphicsDeviceType>();
-            foreach (var loader in loaderManager.loaders)
-            {
-                List<GraphicsDeviceType> supporteDeviceTypes = loader.GetSupportedGraphicsDeviceTypes(true);
-                // To help with backward compatibility, if we find that any of the compatibility lists are empty we assume that at least one of the loaders does not implement the GetSupportedGraphicsDeviceTypes method
-                // Therefore we revert to the previous behavior of building the app regardless of gfx api settings.
-                if (supporteDeviceTypes.Count == 0)
-                {
-                    allLoaderGraphicsDeviceTypes.Clear();
-                    break;
-                }
-                foreach (var supportedGraphicsDeviceType in supporteDeviceTypes)
-                {
-                    allLoaderGraphicsDeviceTypes.Add(supportedGraphicsDeviceType);
-                }
-            }
-
-
-            if (allLoaderGraphicsDeviceTypes.Count > 0 && !allLoaderGraphicsDeviceTypes.Contains(selectedDeviceType))
-            {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendFormat(
-                    "The selected grpahics API, {0}, is not supported by any of the current loaders. Please change the preferred Graphics API setting in Player Settings.\n",
-                    selectedDeviceType);
-
-                foreach (var loader in loaderManager.loaders)
-                {
-                    stringBuilder.AppendLine(loader.name + " supports:");
-                    foreach (var supportedGraphicsDeviceType in loader.GetSupportedGraphicsDeviceTypes(true))
-                    {
-                        stringBuilder.AppendLine("\t -" + supportedGraphicsDeviceType);
-                    }
-                }
-                throw new BuildFailedException(stringBuilder.ToString());
-            }
-        }
-
         public void OnPostprocessBuild(BuildReport report)
         {
-            // Always remember to cleanup preloaded assets after build to make sure we don't
+            // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
             CleanOldSettings();
-
-            if (preInitInfo == null)
-                return;
-
-            // Android build post-processing is handled in OnPostGenerateGradleAndroidProject
-            if (report.summary.platform != BuildTarget.Android)
-            {
-                foreach (BuildFile file in report.files)
-                {
-                    if (file.role == CommonRoles.bootConfig)
-                    {
-                        try
-                        {
-                            var loader = preInitInfo.loader;
-                            if (loader != null)
-                            {
-                                string preInitLibraryName = loader.GetPreInitLibraryName(preInitInfo.buildTarget,
-                                    preInitInfo.buildTargetGroup);
-                                preInitInfo = null;
-                                UnityEditor.XR.BootOptions.SetXRSDKPreInitLibrary(file.path,
-                                    preInitLibraryName);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            throw new UnityEditor.Build.BuildFailedException(e);
-                        }
-                        break;
-                    }
-                }
-            }
         }
 
-        public void OnPostGenerateGradleAndroidProject(string path)
+        static ListRequest Request;
+
+        /// <summary>
+        /// Requests a list of all installed packages from Package Manager which are processed in CheckInstalledPackages.
+        /// </summary>
+        static void CheckInstalledProvider()
         {
-            if (preInitInfo == null)
-                return;
+            Request = Client.List();    // List packages installed for the Project
+            EditorApplication.update += CheckInstalledPackages;
+        }
 
-            // android builds move the files to a different location than is in the BuildReport, so we have to manually find the boot.config
-            string[] paths = { "src", "main", "assets", "bin", "Data", "boot.config" };
-            string fullPath = System.IO.Path.Combine(path, String.Join(Path.DirectorySeparatorChar.ToString(), paths));
-
-            try
+        /// <summary>
+        /// Processes a list of all installed packages prints a message to the console if no Adaptive Performance Provider package is installed.
+        /// </summary>
+        static void CheckInstalledPackages()
+        {
+            if (Request.IsCompleted)
             {
-                var loader = preInitInfo.loader;
-                if (loader != null)
+                if (Request.Status == StatusCode.Success)
                 {
-                    string preInitLibraryName = loader.GetPreInitLibraryName(preInitInfo.buildTarget,
-                        preInitInfo.buildTargetGroup);
-                    preInitInfo = null;
-                    UnityEditor.XR.BootOptions.SetXRSDKPreInitLibrary(fullPath, preInitLibraryName);
+                    var installedPackageCount = 0;
+
+                    foreach (var package in Request.Result)
+                        if (package.name.StartsWith("com.unity.adaptiveperformance."))
+                            installedPackageCount++;
+
+                    if (installedPackageCount == 0)
+                    {
+                        if (EditorUtility.DisplayDialog(s_Title, s_ProviderPackageNotFound, s_Ok, s_Cancel))
+                        {
+                            PackageManager.UI.Window.Open("com.unity.adaptiveperformance.samsung.android");
+                            SettingsService.OpenProjectSettings("Project/Adaptive Performance");
+                        }
+                        else
+                        {
+                            Debug.LogWarning(s_ProviderPackageNotFound);
+                        }
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                throw new UnityEditor.Build.BuildFailedException(e);
+                else if (Request.Status >= StatusCode.Failure)
+                    Debug.Log(Request.Error.message);
+
+                EditorApplication.update -= CheckInstalledPackages;
             }
         }
     }

@@ -99,6 +99,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 {
                     string fileName = String.Format("{0}.asset", EditorUtilities.TypeNameToString(typeName));
                     string targetPath = Path.Combine(path, fileName);
+                    obj.hideFlags = HideFlags.HideInInspector;
                     AssetDatabase.CreateAsset(obj, targetPath);
                     return obj;
                 }

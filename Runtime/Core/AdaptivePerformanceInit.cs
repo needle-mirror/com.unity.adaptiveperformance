@@ -29,8 +29,6 @@ namespace UnityEngine.AdaptivePerformance
 
         void InstallScalers()
         {
-            var scalerTypes = Assembly.GetExecutingAssembly().GetTypes();
-
             Type ti = typeof(AdaptivePerformanceScaler);
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -38,7 +36,7 @@ namespace UnityEngine.AdaptivePerformance
                 {
                     if (ti.IsAssignableFrom(t) && !t.IsAbstract)
                     {
-                        m_ManagerGameObject.AddComponent(t);
+                        ScriptableObject.CreateInstance(t);
                     }
                 }
             }

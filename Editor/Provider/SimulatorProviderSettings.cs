@@ -10,15 +10,23 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
     [AdaptivePerformanceConfigurationData("Simulator", SimulatorProviderConstants.k_SettingsKey)]
     public class SimulatorProviderSettings : IAdaptivePerformanceSettings
     {
+        static SimulatorProviderSettings m_Settings = null;
+
         /// <summary>
         /// Returns Samsung Provider Settings which are used by Adaptive Performance to apply Provider Settings.
         /// </summary>
         /// <returns>Samsung Provider Settings</returns>
         public static SimulatorProviderSettings GetSettings()
         {
-            SimulatorProviderSettings settings = null;
-            EditorBuildSettings.TryGetConfigObject<SimulatorProviderSettings>(SimulatorProviderConstants.k_SettingsKey, out settings);
-            return settings;
+            if (m_Settings == null)
+            {
+                SimulatorProviderSettings settings;
+                EditorBuildSettings.TryGetConfigObject<SimulatorProviderSettings>(SimulatorProviderConstants.k_SettingsKey, out settings);
+                // Create a copy, as we do not want to save the settings we apply during runtime to our settings in the Editor.
+                m_Settings = ScriptableObject.CreateInstance<SimulatorProviderSettings>();
+                EditorUtility.CopySerialized(settings, m_Settings);
+            }
+            return m_Settings;
         }
     }
 }

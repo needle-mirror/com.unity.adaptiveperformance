@@ -13,28 +13,26 @@ public class VariableRefreshRateControl : MonoBehaviour
     // How long to run the test (in seconds)
     public float timeOut = 80;
 
-    IVariableRefreshRate m_VRR;
+    bool didVRRSupportChange = false;
     float timeOuttimer = 0;
 
     void Start()
     {
-        m_VRR = UnityEngine.AdaptivePerformance.Samsung.Android.VariableRefreshRate.Instance;
         timeOuttimer = timeOut;
 
         Application.targetFrameRate = 60;
         targetRefreshRate.SetValueWithoutNotify(60);
 
-        if (m_VRR == null)
+        if (VariableRefreshRate.Instance == null)
         {
             Debug.Log("[AP VRR] Variable Refresh Rate is not supported on this device.");
             notSupportedPanel.SetActive(true);
-            enabled = false;
             return;
         }
 
-        m_VRR.RefreshRateChanged += UpdateDropdown;
+        VariableRefreshRate.Instance.RefreshRateChanged += UpdateDropdown;
         supportedRefreshRates.onValueChanged.AddListener(delegate {
-            if (!m_VRR.SetRefreshRateByIndex(supportedRefreshRates.value))
+            if (!VariableRefreshRate.Instance.SetRefreshRateByIndex(supportedRefreshRates.value))
                 UpdateDropdown();
         });
 
@@ -46,8 +44,9 @@ public class VariableRefreshRateControl : MonoBehaviour
 
     void Update()
     {
+        notSupportedPanel.SetActive(VariableRefreshRate.Instance == null);
+
         targetRefreshRateLabel.text = $"Target Refresh Rate: {Application.targetFrameRate} Hz";
-        currentRefreshRate.text = $"Current refresh rate: {m_VRR.CurrentRefreshRate} Hz";
 
         timeOuttimer -= Time.deltaTime;
 
@@ -59,6 +58,23 @@ public class VariableRefreshRateControl : MonoBehaviour
             Application.Quit();
 #endif
         }
+
+        if (VariableRefreshRate.Instance == null)
+        {
+            UpdateDropdown();
+            didVRRSupportChange = true;
+            currentRefreshRate.text = $"Current refresh rate: - Hz";
+            return;
+        }
+        else
+        {
+            if (didVRRSupportChange)
+            {
+                didVRRSupportChange = false;
+                UpdateDropdown();
+            }
+        }
+        currentRefreshRate.text = $"Current refresh rate: {VariableRefreshRate.Instance.CurrentRefreshRate} Hz";
     }
 
     void UpdateDropdown()
@@ -66,12 +82,15 @@ public class VariableRefreshRateControl : MonoBehaviour
         var options = new List<Dropdown.OptionData>();
         supportedRefreshRates.ClearOptions();
 
+        if (VariableRefreshRate.Instance == null)
+            return;
+
         var index = -1;
-        for (var i = 0; i < m_VRR.SupportedRefreshRates.Length; ++i)
+        for (var i = 0; i < VariableRefreshRate.Instance.SupportedRefreshRates.Length; ++i)
         {
-            var rr = m_VRR.SupportedRefreshRates[i];
+            var rr = VariableRefreshRate.Instance.SupportedRefreshRates[i];
             options.Add(new Dropdown.OptionData(rr.ToString()));
-            if (rr == m_VRR.CurrentRefreshRate)
+            if (rr == VariableRefreshRate.Instance.CurrentRefreshRate)
                 index = i;
         }
 

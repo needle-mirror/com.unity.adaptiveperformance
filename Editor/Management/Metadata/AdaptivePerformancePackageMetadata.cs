@@ -18,7 +18,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
     public interface IAdaptivePerformanceLoaderMetadata
     {
         /// <summary>
-        /// The user facing name for this loader. Will be used to populate the
+        /// The user-facing name for this loader. Will be used to populate the
         /// list in the Adaptive Performance Provider Management UI.
         /// </summary>
         string loaderName { get; }
@@ -33,23 +33,23 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         string loaderType { get; }
 
         /// <summary>
-        /// The full list of supported buildtargets for this loader. This allows the UI to only show the
+        /// The full list of supported build targets for this loader. This allows the UI to only show the
         /// loaders appropriate for a specific build target.
         ///
-        /// Returning an empty list or a list containing just <see cref="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.Unknown.html">BuildTargetGroup.Unknown</see>. will make this
-        /// loader invisible in the ui.
+        /// Returning an empty list or a list containing just <see href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.Unknown.html">BuildTargetGroup.Unknown</see> will make this
+        /// loader invisible in the UI.
         /// </summary>
         List<BuildTargetGroup> supportedBuildTargets { get; }
     }
 
     /// <summary>
-    /// Top level package metadata interface. Create an instance of this interface to
+    /// Top-level package metadata interface. Create an instance of this interface to
     /// provide metadata information for your package.
     /// </summary>
     public interface IAdaptivePerformancePackageMetadata
     {
         /// <summary>
-        /// User facing package name. Should be the same as the value for the
+        /// User-facing package name. Should be the same as the value for the
         /// displayName keyword in the package.json file.
         /// </summary>
         string packageName { get; }
@@ -62,7 +62,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         string packageId { get; }
 
         /// <summary>
-        /// This is the full type name for the settings type for your package.
+        /// The full type name for the settings type for your package.
         ///
         /// When your package is first installed, the Adaptive Performance Provider Management system will
         /// use this information to create an instance of your settings in Assets/Adaptive Performance/Settings.
@@ -70,11 +70,11 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         string settingsType { get; }
 
         /// <summary>
-        /// This is the full URL for the license for your package.
+        /// The full URL for the license for your package.
         ///
-        /// The full URL is used to inform the user about your package license. Must point to the same
-        /// license as in the package.json file to inform the user in the provider list as it is
-        /// accepted by installing the provider.
+        /// The full URL is used to inform the user that a separate package license exists. Must point to the same
+        /// license as the one in the `package.json` file which displays in the provider list. The user accepts the license
+        /// by installing the provider.
         /// </summary>
         string licenseURL { get; }
 
@@ -88,7 +88,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 
     /// <summary>
     /// Provide access to the metadata store. Currently only usable as a way to assign and remove loaders
-    /// to/from an <see cref="AdaptivePerformanceManagerSettings"/> instance.
+    /// to or from an <see cref="AdaptivePerformanceManagerSettings"/> instance.
     /// </summary>
     [InitializeOnLoad]
     public class AdaptivePerformancePackageMetadataStore
@@ -302,7 +302,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 
         /// <summary>
         /// Assigns a loader of type loaderTypeName to the settings instance. Will instantiate an
-        /// instance if one can't be found in the users project folder before assigning it.
+        /// instance if one can't be found in the user's project folder before assigning it.
         /// </summary>
         /// <param name="settings">An instance of <see cref="AdaptivePerformanceManagerSettings"/> to add the loader to.</param>
         /// <param name="loaderTypeName">The full type name for the loader instance to assign to settings.</param>
@@ -352,7 +352,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 
         /// <summary>
         /// Remove a previously assigned loader from settings. If the loader type is unknown or
-        /// an instance of the loader can't be found in the project folder no action is taken.
+        /// an instance of the loader can't be found in the project folder, no action is taken.
         ///
         /// Removal will not delete the instance from the project folder.
         /// </summary>

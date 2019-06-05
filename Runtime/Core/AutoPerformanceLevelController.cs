@@ -13,7 +13,7 @@ namespace UnityEngine.AdaptivePerformance
         float m_BottleneckUnknownTimestamp = 0.0f;
         bool m_TriedToResolveUnknownBottleneck = false;
         bool m_Enabled = false;
-        string m_featureName = "Auto Performance Control";
+        string m_FeatureName = "Auto Performance Control";
 
         /// <summary>
         /// Target frame time in seconds per frame.
@@ -41,7 +41,7 @@ namespace UnityEngine.AdaptivePerformance
         public float CpuLevelBounceAvoidanceThreshold { get; set; }
 
         /// <summary>
-        /// The interval which the controller uses to make any adjustment in seconds.
+        /// The time interval in seconds that the controller uses to make any adjustments.
         /// </summary>
         public float UpdateInterval { get; set; }
 
@@ -68,7 +68,7 @@ namespace UnityEngine.AdaptivePerformance
             m_ThermalStats = thermalStat;
 
             perfStat.PerformanceBottleneckChangeEvent += (PerformanceBottleneckChangeEventArgs ev) => OnBottleneckChange(ev);
-            AdaptivePerformanceAnalytics.RegisterFeature(m_featureName, m_Enabled);
+            AdaptivePerformanceAnalytics.RegisterFeature(m_FeatureName, m_Enabled);
         }
 
         public bool Enabled
@@ -83,7 +83,7 @@ namespace UnityEngine.AdaptivePerformance
                     return;
 
                 m_Enabled = value;
-                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(m_featureName, m_Enabled);
+                AdaptivePerformanceAnalytics.SendAdaptiveFeatureUpdateEvent(m_FeatureName, m_Enabled);
             }
         }
 

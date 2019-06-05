@@ -19,19 +19,19 @@ namespace UnityEngine.AdaptivePerformance
     public abstract class AdaptivePerformanceLoaderHelper : AdaptivePerformanceLoader
     {
         /// <summary>
-        /// Map of loaded susbsystems. Used so we don't always have to fo to AdaptivePerformanceManger and do a manual
-        /// search to find the instance we loaded.
+        /// Map of loaded susbsystems. Used so Unity doesn't always have to call AdaptivePerformanceManger and do a manual
+        /// search to find the instance it loaded.
         /// </summary>
         protected Dictionary<Type, ISubsystem> m_SubsystemInstanceMap = new Dictionary<Type, ISubsystem>();
 
         /// <summary>
-        /// Gets the loaded subsystem of the specified type. Implementation dependent as only implemetnations
-        /// know what they have loaded and how best to get it..
+        /// Gets the loaded subsystem of the specified type. This is implementation-specific, because implementations contain data on
+        /// what they have loaded and how best to get it.
         /// </summary>
         ///
         /// <typeparam name="T">Type of the subsystem to get.</typeparam>
         ///
-        /// <returns>The loaded subsystem or null if not found.</returns>
+        /// <returns>The loaded subsystem, or null if no subsystem found.</returns>
         public override T GetLoadedSubsystem<T>()
         {
             Type subsystemType = typeof(T);
@@ -41,8 +41,8 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// Start a subsystem instance of a given type. Subsystem assumed to already be loaded from
-        /// a previous call to CreateSubsystem
+        /// Start a subsystem instance of a given type. Subsystem is assumed to already be loaded from
+        /// a previous call to CreateSubsystem.
         /// </summary>
         /// <typeparam name="T">A subclass of <see cref="ISubsystem"/></typeparam>
         protected void StartSubsystem<T>() where T : class, ISubsystem
@@ -53,8 +53,8 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// Stop a subsystem instance of a given type. Subsystem assumed to already be loaded from
-        /// a previous call to CreateSubsystem
+        /// Stop a subsystem instance of a given type. Subsystem is assumed to already be loaded from
+        /// a previous call to CreateSubsystem.
         /// </summary>
         /// <typeparam name="T">A subclass of <see cref="ISubsystem"/></typeparam>
         protected void StopSubsystem<T>() where T : class, ISubsystem
@@ -65,8 +65,8 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// Destroy a subsystem instance of a given type. Subsystem assumed to already be loaded from
-        /// a previous call to CreateSubsystem
+        /// Destroy a subsystem instance of a given type. Subsystem is assumed to already be loaded from
+        /// a previous call to CreateSubsystem.
         /// </summary>
         /// <typeparam name="T">A subclass of <see cref="ISubsystem"/></typeparam>
         protected void DestroySubsystem<T>() where T : class, ISubsystem
@@ -77,10 +77,10 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// Creates a subsystem given a list of descriptors and a specific subsystem id.
+        /// Creates a subsystem with a given list of descriptors and a specific subsystem id.
         /// </summary>
         /// <typeparam name="TDescriptor">The descriptor type being passed in.</typeparam>
-        /// <typeparam name="TSubsystem">The subsystem type being requested</typeparam>
+        /// <typeparam name="TSubsystem">The subsystem type being requested.</typeparam>
         /// <param name="descriptors">List of TDescriptor instances to use for subsystem matching.</param>
         /// <param name="id">The identifier key of the particualr subsystem implementation being requested.</param>
         protected void CreateSubsystem<TDescriptor, TSubsystem>(List<TDescriptor> descriptors, string id)

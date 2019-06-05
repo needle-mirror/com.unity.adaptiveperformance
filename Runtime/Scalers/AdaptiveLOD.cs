@@ -5,7 +5,7 @@ namespace UnityEngine.AdaptivePerformance
     /// </summary>
     public class AdaptiveLOD : AdaptivePerformanceScaler
     {
-        private float m_LodBias;
+        float m_DefaultLodBias;
 
         /// <summary>
         /// Ensures settings are applied during startup.
@@ -18,9 +18,20 @@ namespace UnityEngine.AdaptivePerformance
             ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveLOD);
         }
 
-        private void Start()
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected override void OnDisabled()
         {
-            m_LodBias = QualitySettings.lodBias;
+            QualitySettings.lodBias = m_DefaultLodBias;
+        }
+
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected override void OnEnabled()
+        {
+            m_DefaultLodBias = QualitySettings.lodBias;
         }
 
         /// <summary>
@@ -31,16 +42,16 @@ namespace UnityEngine.AdaptivePerformance
             switch (CurrentLevel)
             {
                 case 0:
-                    QualitySettings.lodBias = m_LodBias;
+                    QualitySettings.lodBias = m_DefaultLodBias;
                     break;
                 case 1:
-                    QualitySettings.lodBias = m_LodBias * 0.8f;
+                    QualitySettings.lodBias = m_DefaultLodBias * 0.8f;
                     break;
                 case 2:
-                    QualitySettings.lodBias = m_LodBias * 0.6f;
+                    QualitySettings.lodBias = m_DefaultLodBias * 0.6f;
                     break;
                 case 3:
-                    QualitySettings.lodBias = m_LodBias * 0.4f;
+                    QualitySettings.lodBias = m_DefaultLodBias * 0.4f;
                     break;
             }
         }

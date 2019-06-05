@@ -36,7 +36,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// UnknownPerformanceLevel is the value of <see cref="IDevicePerformanceControl.GpuLevel"/>, <see cref="PerformanceMetrics.CurrentGpuLevel"/>,
         /// <see cref="IDevicePerformanceControl.CpuLevel"/>, and <see cref="PerformanceMetrics.CurrentCpuLevel"/> if the current performance level is unknown.
-        /// This may happen when AdaptivePerformance is not supported or when the device is in throttling state (see <see cref="WarningLevel.Throttling"/>).
+        /// This can happen when AdaptivePerformance is not supported or when the device is in throttling state (see <see cref="WarningLevel.Throttling"/>).
         /// </summary>
         /// <value>-1</value>
         public const int UnknownPerformanceLevel = -1;
@@ -56,10 +56,10 @@ namespace UnityEngine.AdaptivePerformance
     public interface IAdaptivePerformance
     {
         /// <summary>
-        /// Returns `true` if Adaptive Performance was initialized successfully, `false` otherwise.
+        /// Returns true if Adaptive Performance was initialized successfully, false otherwise.
         /// This means that Adaptive Performance is enabled in StartupSettings and the application runs on a device that supports Adaptive Performance.
         /// </summary>
-        /// <value>`true` when Adaptive Performance is available, `false` otherwise.</value>
+        /// <value>True when Adaptive Performance is available, false otherwise.</value>
         bool Active { get; }
 
         /// <summary>
@@ -87,13 +87,13 @@ namespace UnityEngine.AdaptivePerformance
         IDevelopmentSettings DevelopmentSettings { get; }
 
         /// <summary>
-        /// Access to the Indexer system. <see cref="AdaptivePerformanceIndexer"/>
+        /// Access to the Indexer system. See <see cref="AdaptivePerformanceIndexer"/>
         /// </summary>
         /// <value>Interface to scalers that are active and their associated settings.</value>
         AdaptivePerformanceIndexer Indexer { get; }
 
         /// <summary>
-        /// Access to the Settings. <see cref="IAdaptivePerformanceSettings"/>
+        /// Access to the Settings. See <see cref="IAdaptivePerformanceSettings"/>.
         /// </summary>
         /// <value>Interface to settings that are loaded from the provider settings object during startup.</value>
         IAdaptivePerformanceSettings Settings { get; }

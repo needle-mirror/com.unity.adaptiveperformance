@@ -296,6 +296,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Walls
       objectReference: {fileID: 0}
+    - target: {fileID: 644259587181269601, guid: da535ae8449b90b47bce11cbfb385bf4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 644259587181269614, guid: da535ae8449b90b47bce11cbfb385bf4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -369,6 +374,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AdaptivePerformanceSettings
+      objectReference: {fileID: 0}
+    - target: {fileID: 2247169244268972841, guid: 1f5d93e320ce149149009e8f36bbdba3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4181645440018201191, guid: 1f5d93e320ce149149009e8f36bbdba3,
         type: 3}
@@ -543,7 +553,7 @@ MonoBehaviour:
   spawnedObjectsCounter: {fileID: 13012193}
   RunTest: 1
   internalObjs: 0
-  spawnSpeed: 1
+  spawnAmount: 1
 --- !u!1 &1370009099
 GameObject:
   m_ObjectHideFlags: 0
@@ -1200,6 +1210,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BottleneckVisualization
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154931270016033754, guid: 1387a4baab205b24bb356800288cd0a4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1387a4baab205b24bb356800288cd0a4, type: 3}

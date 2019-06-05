@@ -10,7 +10,7 @@ using UnityEditor;
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
-    /// General settings container used to house the instance of the active settings as well as the manager
+    /// General settings container used to house the instance of the active settings, as well as the manager
     /// instance used to load the loaders with.
     /// </summary>
     public class AdaptivePerformanceGeneralSettings : ScriptableObject
@@ -23,10 +23,10 @@ namespace UnityEngine.AdaptivePerformance
         internal AdaptivePerformanceManagerSettings m_LoaderManagerInstance = null;
 
         [SerializeField]
-        [Tooltip("Check this to automatically start up Adaptive Performance at runtime.")]
+        [Tooltip("Enable this to automatically start up Adaptive Performance at runtime.")]
         internal bool m_InitManagerOnStart = true;
 
-        /// <summary>The current active manager used to manage Adaptive Performance lifetime.</summary>
+        /// <summary>The current active manager used to manage the Adaptive Performance lifetime.</summary>
         public AdaptivePerformanceManagerSettings Manager
         {
             get { return m_LoaderManagerInstance; }
@@ -56,7 +56,7 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// The current active manager used to manage Adaptive Performance lifetime.
+        /// The current active manager used to manage the Adaptive Performance lifetime.
         /// </summary>
         public AdaptivePerformanceManagerSettings AssignedSettings
         {

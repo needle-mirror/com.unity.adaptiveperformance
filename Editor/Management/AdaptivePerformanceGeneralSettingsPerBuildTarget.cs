@@ -80,7 +80,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// <summary>
         /// Set specific settings for a given build target.
         /// </summary>
-        /// <param name="targetGroup">An enum specifying which platform group this build is for.</param>
+        /// <param name="targetGroup">An enum that specifies which platform group this build is for.</param>
         /// <param name="settings">An instance of <see cref="AdaptivePerformanceGeneralSettings"/> to assign for the given key.</param>
         public void SetSettingsForBuildTarget(BuildTargetGroup targetGroup, AdaptivePerformanceGeneralSettings settings)
         {
@@ -91,8 +91,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         }
 
         /// <summary>Get specific settings for a given build target.</summary>
-        /// <param name="targetGroup">An enum specifying which platform group this build is for.</param>
-        /// <returns>The instance of <see cref="AdaptivePerformanceGeneralSettings"/> assigned to the key, or null if not.</returns>
+        /// <param name="targetGroup">An enum that specifies which platform group this build is for.</param>
+        /// <returns>The instance of <see cref="AdaptivePerformanceGeneralSettings"/> assigned to the key, or null if no instance is assigned.</returns>
         public AdaptivePerformanceGeneralSettings SettingsForBuildTarget(BuildTargetGroup targetGroup)
         {
             AdaptivePerformanceGeneralSettings ret = null;
@@ -124,8 +124,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         }
 
         /// <summary>Given a build target, get the general settings container assigned to it.</summary>
-        /// <param name="targetGroup">An enum specifying which platform group this build is for.</param>
-        /// <returns>The instance of <see cref="AdaptivePerformanceGeneralSettings"/> assigned to the key, or null if not.</returns>
+        /// <param name="targetGroup">An enum that specifies which platform group this build is for.</param>
+        /// <returns>The instance of <see cref="AdaptivePerformanceGeneralSettings"/> assigned to the key, or null if no instance is assigned.</returns>
         public static AdaptivePerformanceGeneralSettings AdaptivePerformanceGeneralSettingsForBuildTarget(BuildTargetGroup targetGroup)
         {
             AdaptivePerformanceGeneralSettingsPerBuildTarget buildTargetSettings = null;

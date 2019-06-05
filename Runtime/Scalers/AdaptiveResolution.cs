@@ -4,22 +4,11 @@ namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the resolution of all render targets that allow dynamic resolution.
-    /// If dynamic resolution is not supported by the device or graphics API, rendering pipeline's render scale multiplier will be used as a fallback.
+    /// If a device or graphics API doesn't support a dynamic resolution, it will use the rendering pipeline's render scale multiplier as a fallback.
     /// </summary>
     public class AdaptiveResolution : AdaptivePerformanceScaler
     {
-        /// <summary>
-        /// Returns max level of scaler.
-        /// </summary>
-        public override int MaxLevel => scaleLevels - 1;
-
-        float scaleIncrement = 1.0f;
-        /// <summary>
-        /// Defines how many steps will be used when scaling between the minimum and maximum.
-        /// </summary>
-        public int scaleLevels = 10;
-
-        private static int instanceCount = 0;
+        static int instanceCount = 0;
 
         /// <summary>
         /// Ensures settings are applied during startup.
@@ -32,10 +21,23 @@ namespace UnityEngine.AdaptivePerformance
             ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveResolution);
         }
 
+        /// <summary>
+        /// Callback when scaler gets disabled and removed from indexer
+        /// </summary>
+        protected override void OnDisabled()
+        {
+            OnDestroy();
+        }
+
+        /// <summary>
+        /// Callback when scaler gets enabled and added to the indexer
+        /// </summary>
+        protected override void OnEnabled() {}
+
         void OnValidate()
         {
-            if (scaleLevels < 2)
-                scaleLevels = 2;
+            if (MaxLevel < 1)
+                MaxLevel = 1;
             MaxBound = Mathf.Clamp(MaxBound, 0.25f, 1.0f);
             MinBound = Mathf.Clamp(MinBound, 0.25f, MaxBound);
         }
@@ -60,10 +62,9 @@ namespace UnityEngine.AdaptivePerformance
         {
             ++instanceCount;
             if (instanceCount > 1)
-                Debug.LogWarning("Multiple Adaptive Resolution scalers created, they will interfere with each other.");
+                Debug.LogWarning("Multiple Adaptive Resolution scalers created. They will interfere with each other.");
             if (!IsDynamicResolutionSupported())
-                Debug.Log(string.Format("Dynamic resolution is not supported. Will be using fallback to Render Scale Multiplier"));
-            scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+                Debug.Log(string.Format("Dynamic resolution is not supported. Will be using fallback to Render Scale Multiplier."));
         }
 
         private void OnDestroy()
@@ -85,6 +86,8 @@ namespace UnityEngine.AdaptivePerformance
         protected override void OnLevel()
         {
             float oldScaleFactor = Scale;
+            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+
             Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
 
             // if Gfx API does not support Dynamic resolution, currentCamera.allowDynamicResolution will be false
@@ -94,19 +97,13 @@ namespace UnityEngine.AdaptivePerformance
                     ScalableBufferManager.ResizeBuffers(Scale, Scale);
                 int rezWidth = (int)Mathf.Ceil(ScalableBufferManager.widthScaleFactor * Screen.currentResolution.width);
                 int rezHeight = (int)Mathf.Ceil(ScalableBufferManager.heightScaleFactor * Screen.currentResolution.height);
-                APLog.Debug(string.Format("Adaptive Resolution Scale: {0:F3} Resolution: {1}x{2} ScaleFactor: {3:F3}x{4:F3} Level:{5}/{6}",
-                    Scale,
-                    rezWidth,
-                    rezHeight,
-                    ScalableBufferManager.widthScaleFactor,
-                    ScalableBufferManager.heightScaleFactor,
-                    CurrentLevel,
-                    MaxLevel));
+                APLog.Debug(
+                    $"Adaptive Resolution Scale: {Scale:F3} Resolution: {rezWidth}x{rezHeight} ScaleFactor: {ScalableBufferManager.widthScaleFactor:F3}x{ScalableBufferManager.heightScaleFactor:F3} Level:{CurrentLevel}/{MaxLevel}");
             }
             else
             {
                 AdaptivePerformanceRenderSettings.RenderScaleMultiplier = Scale;
-                APLog.Debug(string.Format("Dynamic resolution is not supported. Using fallback to Render Scale Multiplier : {0:F3}", Scale));
+                APLog.Debug($"Dynamic resolution is not supported. Using fallback to Render Scale Multiplier : {Scale:F3}");
                 // TODO: warn if unsupported render pipeline is used
                 //Debug.Log("You might not use a supported Render Pipeline. Currently only Universal Render Pipeline and Built-in are supported by Adaptive Resolution.");
             }

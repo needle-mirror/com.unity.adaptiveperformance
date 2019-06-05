@@ -1,0 +1,19 @@
+.scaler-toggle {
+    align-items: stretch;
+    justify-content: flex-start;
+    opacity: 1;
+    flex-basis: initial;
+    flex-direction: row;
+    -unity-text-align: upper-right;
+    flex-wrap: nowrap;
+}
+
+.scaler-toggle-label {
+    min-width: 72px;
+    max-width: 200px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: auto;
+    width: 72px;
+    -unity-text-align: upper-right;
+}

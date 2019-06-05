@@ -35,15 +35,6 @@ namespace UnityEngine.AdaptivePerformance.Tests
             return default(T);
         }
 
-        public override List<GraphicsDeviceType> GetSupportedGraphicsDeviceTypes(bool buildingPlayer)
-        {
-            if (supportedDeviceType == GraphicsDeviceType.Null)
-            {
-                return new List<GraphicsDeviceType>();
-            }
-            return new List<GraphicsDeviceType>() { supportedDeviceType };
-        }
-
         protected bool Equals(DummyLoader other)
         {
             return base.Equals(other) && shouldFail == other.shouldFail && id == other.id;

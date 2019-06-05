@@ -129,7 +129,7 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// System used for tracking impact of scaler on cpu and gpu counters.
+    /// System used for tracking impact of scaler on CPU and GPU counters.
     /// </summary>
     internal class AdaptivePerformanceScalerEfficiencyTracker
     {
@@ -161,13 +161,14 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// Higher level implementation of Adaptive performance that tracks performance and thermal state of device and applies <see cref="AdaptivePerformanceScaler"/> according it.
-    /// System acts <see cref="AdaptivePerformanceScaler"/> manager and handles all lifetime of it in scene.
+    /// Higher level implementation of Adaptive performance that tracks performance and thermal states of the device and provides them to <see cref="AdaptivePerformanceScaler"/> which use the information to increase or decrease performance levels.
+    /// System acts as <see cref="AdaptivePerformanceScaler"/> manager and handles the lifetime of the scalers in the scenes.
     /// </summary>
     public class AdaptivePerformanceIndexer
     {
         private List<AdaptivePerformanceScaler> m_UnappliedScalers;
         private List<AdaptivePerformanceScaler> m_AppliedScalers;
+        private List<AdaptivePerformanceScaler> m_DisabledScalers;
         private ThermalStateTracker m_ThermalStateTracker;
         private PerformanceStateTracker m_PerformanceStateTracker;
         private AdaptivePerformanceScalerEfficiencyTracker m_ScalerEfficiencyTracker;
@@ -181,13 +182,13 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Current determined action needed from thermal state.
-        /// Action <see cref="StateAction.Increase"/> will be ignored if <see cref="PerformanceAction"/> is in decrease.
+        /// Action <see cref="StateAction.Increase"/> will be ignored if <see cref="PerformanceAction"/> is decreasing.
         /// </summary>
         public StateAction ThermalAction { get; private set; }
 
         /// <summary>
         /// Current determined action needed from performance state.
-        /// Action <see cref="StateAction.Increase"/> will be ignored if <see cref="ThermalAction"/> is in decrease.
+        /// Action <see cref="StateAction.Increase"/> will be ignored if <see cref="ThermalAction"/> is decreasing.
         /// </summary>
         public StateAction PerformanceAction { get; private set; }
 
@@ -209,6 +210,16 @@ namespace UnityEngine.AdaptivePerformance
         {
             scalers.Clear();
             scalers.AddRange(m_UnappliedScalers);
+        }
+
+        /// <summary>
+        /// Returns all currently disabled scalers.
+        /// </summary>
+        /// <param name="scalers">Output where scalers will be written.</param>
+        public void GetDisabledScalers(ref List<AdaptivePerformanceScaler> scalers)
+        {
+            scalers.Clear();
+            scalers.AddRange(m_DisabledScalers);
         }
 
         /// <summary>
@@ -266,6 +277,7 @@ namespace UnityEngine.AdaptivePerformance
             m_PerformanceStateTracker = new PerformanceStateTracker(120);
             m_UnappliedScalers = new List<AdaptivePerformanceScaler>();
             m_AppliedScalers = new List<AdaptivePerformanceScaler>();
+            m_DisabledScalers = new List<AdaptivePerformanceScaler>();
             m_ScalerEfficiencyTracker = new AdaptivePerformanceScalerEfficiencyTracker();
 
             AdaptivePerformanceAnalytics.RegisterFeature(m_FeatureName, m_Settings.indexerSettings.active);
@@ -275,6 +287,9 @@ namespace UnityEngine.AdaptivePerformance
         {
             if (Holder.Instance == null || !m_Settings.indexerSettings.active)
                 return;
+
+            DeactivateDisabledScalers();
+            ActivateEnabledScalers();
 
             var thermalAction = m_ThermalStateTracker.Update();
             var performanceAction = m_PerformanceStateTracker.Update();
@@ -294,6 +309,11 @@ namespace UnityEngine.AdaptivePerformance
             {
                 UnapplyHighestCostScaler();
                 TimeUntilNextAction = m_Settings.indexerSettings.thermalActionDelay;
+                return;
+            }
+            if (thermalAction == StateAction.Stale && performanceAction == StateAction.Stale)
+            {
+                UnapplyHighestCostScaler();
                 return;
             }
             if (thermalAction == StateAction.Decrease)
@@ -319,6 +339,48 @@ namespace UnityEngine.AdaptivePerformance
                 ApplyLowestCostScaler();
                 TimeUntilNextAction = m_Settings.indexerSettings.performanceActionDelay / 2;
                 return;
+            }
+        }
+
+        void DeactivateDisabledScalers()
+        {
+            for (int i = m_UnappliedScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_UnappliedScalers[i];
+                if (!scaler.Enabled && !m_DisabledScalers.Contains(scaler))
+                {
+                    APLog.Debug($"[Indexer] Deactivated {scaler.Name} scaler.");
+                    scaler.Deactivate();
+                    m_DisabledScalers.Add(scaler);
+                    m_UnappliedScalers.RemoveAt(i);
+                }
+            }
+
+            for (int i = m_AppliedScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_AppliedScalers[i];
+                if (!scaler.Enabled && !m_DisabledScalers.Contains(scaler))
+                {
+                    APLog.Debug($"[Indexer] Deactivated {scaler.Name} scaler.");
+                    scaler.Deactivate();
+                    m_DisabledScalers.Add(scaler);
+                    m_AppliedScalers.RemoveAt(i);
+                }
+            }
+        }
+
+        void ActivateEnabledScalers()
+        {
+            for (int i = m_DisabledScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_DisabledScalers[i];
+                if (scaler.Enabled)
+                {
+                    scaler.Activate();
+                    AddScaler(scaler);
+                    m_DisabledScalers.RemoveAt(i);
+                    APLog.Debug($"[Indexer] Activated {scaler.Name} scaler.");
+                }
             }
         }
 
@@ -377,6 +439,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void ApplyScaler(AdaptivePerformanceScaler scaler)
         {
+            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel}");
             if (scaler.NotLeveled)
             {
                 m_UnappliedScalers.Remove(scaler);
@@ -417,6 +480,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void UnapplyScaler(AdaptivePerformanceScaler scaler)
         {
+            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler.");
             scaler.DecreaseLevel();
             if (scaler.NotLeveled)
             {

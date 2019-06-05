@@ -1,9 +1,9 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.11",
-  "unity": "2019.3",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
+  "version": "2.0.0",
+  "unity": "2019.4",
   "keywords": [
     "mobile",
     "adaptive",
@@ -69,9 +69,9 @@
       "path": "Samples~/Adaptive LOD"
     },
     {
-      "displayName": "Adaptive Lut Sample",
-      "description": "Demonstrates how Adaptive Lut Scaler works.",
-      "path": "Samples~/Adaptive Lut"
+      "displayName": "Adaptive LUT Sample",
+      "description": "Demonstrates how Adaptive LUT Scaler works.",
+      "path": "Samples~/Adaptive LUT"
     },
     {
       "displayName": "Adaptive MSAA Sample",
@@ -95,11 +95,11 @@
     }
   ],
   "upmCi": {
-    "footprint": "f17de34fb08dc2fe42c8b68aeda491bbd42554d9"
+    "footprint": "f337b1783007dd6dd28bc7b1b4881995ffe641c8"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "925e820700a8d312a7281c9badb9a7183dbc3101"
+    "revision": "dcd088fe7d03523519f6dae11ed51e3bbe036cec"
   }
 }

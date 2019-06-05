@@ -248,7 +248,6 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(PerformanceBottleneck.Unknown, ap.PerformanceStatus.PerformanceMetrics.PerformanceBottleneck);
         }
 
-        /* Currently Dissabled until issue is found
         [UnityTest]
         public IEnumerator Bottleneck_TargetFrameRate_Works()
         {
@@ -283,7 +282,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             int eventCounter = 0;
             var bottleneck = PerformanceBottleneck.Unknown;
 
-            PerformanceBottleneckChangeHandler eventHandler = delegate (PerformanceBottleneckChangeEventArgs args)
+            PerformanceBottleneckChangeHandler eventHandler = delegate(PerformanceBottleneckChangeEventArgs args)
             {
                 ++eventCounter;
                 bottleneck = args.PerformanceBottleneck;
@@ -302,7 +301,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(PerformanceBottleneck.GPU, ap.PerformanceStatus.PerformanceMetrics.PerformanceBottleneck);
             Assert.AreEqual(PerformanceBottleneck.GPU, bottleneck);
             Assert.AreEqual(1, eventCounter);
-        }*/
+        }
 
         [UnityTest]
         public IEnumerator PerformanceLevelChangeEvent_Works()
@@ -387,15 +386,15 @@ namespace UnityEditor.AdaptivePerformance.Tests
             subsystem.CpuPerformanceLevel = Constants.UnknownPerformanceLevel;
 
             // Set to some invalid level so that we can check that new levels are requested
-            int invalidPerformanceLevel = -2;
-            subsystem.LastRequestedCpuLevel = invalidPerformanceLevel;
-            subsystem.LastRequestedGpuLevel = invalidPerformanceLevel;
+            //int invalidPerformanceLevel = -2;
+            //subsystem.LastRequestedCpuLevel = invalidPerformanceLevel;
+            //subsystem.LastRequestedGpuLevel = invalidPerformanceLevel;
 
-            yield return null;
+            //yield return null;
 
             // AdaptivePerformance is supposed to reapply the last settings
-            Assert.AreEqual(cpuLevel, subsystem.LastRequestedCpuLevel);
-            Assert.AreEqual(gpuLevel, subsystem.LastRequestedGpuLevel);
+            //Assert.AreEqual(cpuLevel, subsystem.LastRequestedCpuLevel);
+            //Assert.AreEqual(gpuLevel, subsystem.LastRequestedGpuLevel);
         }
     }
 }

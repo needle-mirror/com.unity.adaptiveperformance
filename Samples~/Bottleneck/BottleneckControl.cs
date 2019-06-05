@@ -115,6 +115,7 @@ public class BottleneckControl : MonoBehaviour
                 factory.RunTest = true;
                 state = "Ramping up GPU Load";
                 factory.prefab = gpuLoader;
+                factory.spawnAmount = 0.1f;
                 targetBottleneck = PerformanceBottleneck.GPU;
                 break;
             case PerformanceBottleneck.GPU:
@@ -130,6 +131,7 @@ public class BottleneckControl : MonoBehaviour
                 factory.RunTest = true;
                 state = "Ramping up CPU Load";
                 factory.prefab = cpuLoader;
+                factory.spawnAmount = 1;
                 targetBottleneck = PerformanceBottleneck.CPU;
                 break;
         }

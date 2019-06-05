@@ -1,6 +1,8 @@
 // device simulator is in core unity with Unity 2020.2, before that it's supported via packages.
 #if DEVICE_SIMULATOR_ENABLED //|| UNITY_2020_2_OR_NEWER - not landed in trunk yet, do not enable
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 #if DEVICE_SIMULATOR_ENABLED
 using Unity.DeviceSimulator;
 #else
@@ -60,6 +62,80 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_DevLoggingFrequency = m_ExtensionFoldout.Q<IntegerField>("developer-logging-frequency");
             m_DeveloperFoldout = m_ExtensionFoldout.Q<Foldout>("developer-options");
             m_DeveloperFoldout.value = m_SerializationStates.developerFoldout;
+            m_IndexerFoldout = m_ExtensionFoldout.Q<Foldout>("indexer");
+            m_IndexerFoldout.value = m_SerializationStates.indexerFoldout;
+            m_ScalersFoldout = m_ExtensionFoldout.Q<Foldout>("scalers");
+            m_ScalersFoldout.value = m_SerializationStates.scalersFoldout;
+
+            // Create settings for each one of the scalers
+            Type ti = typeof(AdaptivePerformanceScaler);
+            var scalerTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/ScalerControl.uxml");
+
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type t in asm.GetTypes())
+                {
+                    if (ti.IsAssignableFrom(t) && !t.IsAbstract)
+                    {
+                        var scalerInstance = ScriptableObject.CreateInstance(t) as AdaptivePerformanceScaler;
+                        if (scalerInstance == null)
+                            continue;
+
+                        // Load the UI elements
+                        var container = scalerTree.CloneTree();
+                        var valueSlider = container.Q<Slider>("scaler-slider");
+                        var toggle = container.Q<Toggle>("scaler-toggle");
+                        var valueField = container.Q<IntegerField>("scaler-value");
+
+                        // Set the values and additional config for these elements
+                        toggle.labelElement.text = t.Name;
+                        toggle.value = scalerInstance.Enabled;
+                        toggle.name = $"{t.Name}-scaler-toggle";
+                        valueSlider.value = scalerInstance.CurrentLevel;
+                        valueSlider.name = $"{t.Name}-scaler-slider";
+                        valueSlider.SetEnabled(scalerInstance.Enabled);
+                        valueField.value = scalerInstance.CurrentLevel;
+                        valueField.name = $"{t.Name}-scaler-value";
+                        valueField.SetEnabled(scalerInstance.Enabled);
+
+                        // Now set up the callback actions
+                        toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (scaler == null)
+                                return;
+
+                            scaler.Enabled = evt.newValue;
+                            valueField.SetEnabled(evt.newValue);
+                            valueSlider.SetEnabled(evt.newValue);
+                        });
+
+                        valueSlider.RegisterCallback<ChangeEvent<float>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (scaler == null)
+                                return;
+
+                            scaler.OverrideLevel = (int)Mathf.Clamp(evt.newValue, 0, scaler.MaxLevel);
+                            valueField.SetValueWithoutNotify(scaler.OverrideLevel);
+                        });
+
+                        valueField.RegisterCallback<ChangeEvent<int>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (evt.newValue < 0 || scaler == null)
+                                return;
+
+                            scaler.OverrideLevel = Mathf.Clamp(evt.newValue, 0, scaler.MaxLevel);
+                            valueSlider.SetValueWithoutNotify(scaler.OverrideLevel);
+                            valueField.SetValueWithoutNotify(scaler.OverrideLevel);
+                        });
+
+                        m_ScalersFoldout.Add(container);
+                    }
+                }
+            }
+
 
             m_WarningLevel.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
@@ -291,7 +367,12 @@ namespace UnityEditor.AdaptivePerformance.Editor
         Foldout m_DeveloperFoldout;
         Toggle m_DevLogging;
         IntegerField m_DevLoggingFrequency;
-        SimulatorAdaptivePerformanceSubsystem m_subsystem;
+        Foldout m_IndexerFoldout;
+        Foldout m_ScalersFoldout;
+
+        SimulatorAdaptivePerformanceSubsystem m_Subsystem;
+
+        List<AdaptivePerformanceScaler> m_Scalers = new List<AdaptivePerformanceScaler>();
 
         [SerializeField, HideInInspector]
         AdaptivePerformanceStates m_SerializationStates;
@@ -302,13 +383,17 @@ namespace UnityEditor.AdaptivePerformance.Editor
             public bool thermalFoldout;
             public bool performanceFoldout;
             public bool developerFoldout;
-        };
+            public bool indexerFoldout;
+            public bool scalersFoldout;
+        }
 
         public void OnBeforeSerialize()
         {
             m_SerializationStates.thermalFoldout = m_ThermalFoldout.value;
             m_SerializationStates.performanceFoldout = m_PerformanceFoldout.value;
             m_SerializationStates.developerFoldout = m_DeveloperFoldout.value;
+            m_SerializationStates.indexerFoldout = m_IndexerFoldout.value;
+            m_SerializationStates.scalersFoldout = m_ScalersFoldout.value;
         }
 
         public void OnAfterDeserialize() {}
@@ -316,7 +401,36 @@ namespace UnityEditor.AdaptivePerformance.Editor
         void LogPlayModeState(PlayModeStateChange state)
         {
             if (state == PlayModeStateChange.EnteredPlayMode)
+            {
                 SyncAPSubsystemSettingsToEditor();
+                SyncScalerSettingsToEditor();
+            }
+        }
+
+        void SyncScalerSettingsToEditor()
+        {
+            // Now go through all the scaler sliders and set the actual values. We can only do this properly
+            // once the system has been initialized.
+            Type ti = typeof(AdaptivePerformanceScaler);
+
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type t in asm.GetTypes())
+                {
+                    if (ti.IsAssignableFrom(t) && !t.IsAbstract)
+                    {
+                        var scaler = FindScalerObject(t);
+                        if (scaler == null)
+                            return;
+
+                        var valueSlider = m_ScalersFoldout.Q<Slider>($"{t.Name}-scaler-slider");
+                        var toggle = m_ScalersFoldout.Q<Toggle>($"{t.Name}-scaler-toggle");
+
+                        valueSlider.highValue = scaler.MaxLevel;
+                        toggle.value = scaler.Enabled;
+                    }
+                }
+            }
         }
 
         void SyncAPSubsystemSettingsToEditor()
@@ -395,17 +509,42 @@ namespace UnityEditor.AdaptivePerformance.Editor
             }
         }
 
+        AdaptivePerformanceScaler FindScalerObject(Type scalerType)
+        {
+            if (Holder.Instance == null || Holder.Instance.Indexer == null)
+                return null;
+
+            // We're only going to compile this list once so we need to combine all internal indexer lists of scalers.
+            if (m_Scalers.Count == 0)
+            {
+                // First get unappplied scalers
+                List<AdaptivePerformanceScaler> scalers = new List<AdaptivePerformanceScaler>();
+                Holder.Instance.Indexer.GetUnappliedScalers(ref scalers);
+                m_Scalers.AddRange(scalers);
+
+                // Then add applied scalers
+                Holder.Instance.Indexer.GetAppliedScalers(ref scalers);
+                m_Scalers.AddRange(scalers);
+
+                // Finally add disabled scalers
+                Holder.Instance.Indexer.GetDisabledScalers(ref scalers);
+                m_Scalers.AddRange(scalers);
+            }
+
+            return m_Scalers.Find(s => s.GetType() == scalerType);
+        }
+
         SimulatorAdaptivePerformanceSubsystem Subsystem()
         {
             if (!Application.isPlaying)
                 return null;
 
             var loader = AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader;
-            if (m_subsystem == null && loader != null)
+            if (m_Subsystem == null && loader != null)
             {
-                m_subsystem = loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+                m_Subsystem = loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
             }
-            return m_subsystem;
+            return m_Subsystem;
         }
     }
 }

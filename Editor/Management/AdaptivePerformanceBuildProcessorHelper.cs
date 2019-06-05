@@ -9,23 +9,23 @@ using UnityEngine;
 namespace UnityEditor.AdaptivePerformance.Editor
 {
     /// <summary>
-    /// Base abstract class that provides some common functionality for providers wishing to integrate with management assisted build.
+    /// Base abstract class that provides some common functionality for providers seeking to integrate with management assisted build.
     /// </summary>
     /// <typeparam name="T">The type parameter that will be used as the base type of the settings.</typeparam>
     public abstract class AdaptivePerformanceBuildHelper<T>  : IPreprocessBuildWithReport, IPostprocessBuildWithReport where T : UnityEngine.Object
     {
-        /// <summary>Override of base IPreprocessBuildWithReport</summary>
+        /// <summary>Override of base IPreprocessBuildWithReport.</summary>
         /// <returns>The callback order.</returns>
         public virtual int callbackOrder { get { return 0; } }
 
-        /// <summary>Override of base IPreprocessBuildWithReport</summary>
-        /// <returns>A string specifying the key to be used to set/get settigns in EditorBuildSettings.</returns>
+        /// <summary>Override of base IPreprocessBuildWithReport.</summary>
+        /// <returns>String that specifies the key to be used to set or get settings in EditorBuildSettings.</returns>
         public abstract string BuildSettingsKey { get; }
 
-        /// <summary>Helper functin to return current settings for a specific build target.</summary>
+        /// <summary>Helper function to return current settings for a specific build target.</summary>
         ///
-        /// <param name="buildTargetGroup">An enum specifying which platform group this build is for.</param>
-        /// <returns>A unity object representing the settings instance data for that build target, or null if not found.</returns>
+        /// <param name="buildTargetGroup">An enum that specifies which platform group this build is for.</param>
+        /// <returns>A Unity object that represents the settings instance data for that build target, or null if not found.</returns>
         public virtual UnityEngine.Object SettingsForBuildTargetGroup(BuildTargetGroup buildTargetGroup)
         {
             UnityEngine.Object settingsObj = null;
@@ -43,7 +43,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         void SetSettingsForRuntime(UnityEngine.Object settingsObj)
         {
-            // Always remember to cleanup preloaded assets after build to make sure we don't
+            // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
             CleanOldSettings();
 
@@ -68,21 +68,21 @@ namespace UnityEditor.AdaptivePerformance.Editor
         }
 
         /// <summary>
-        /// Override of base IPreprocessBuildWithReport
+        /// Override of base IPreprocessBuildWithReport.
         /// </summary>
-        /// <param name="report">BuildReport instance passed in from build pipeline.</param>
+        /// <param name="report">BuildReport instance passed in from the build pipeline.</param>
         public virtual void OnPreprocessBuild(BuildReport report)
         {
             SetSettingsForRuntime(SettingsForBuildTargetGroup(report.summary.platformGroup));
         }
 
         /// <summary>
-        /// Override of base IPostprocessBuildWithReport
+        /// Override of base IPostprocessBuildWithReport.
         /// </summary>
         /// <param name="report">BuildReport instance passed in from build pipeline.</param>
         public virtual void OnPostprocessBuild(BuildReport report)
         {
-            // Always remember to cleanup preloaded assets after build to make sure we don't
+            // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
             CleanOldSettings();
         }
