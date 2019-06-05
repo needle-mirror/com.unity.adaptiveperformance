@@ -63,13 +63,13 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
                 {
                     packageName = "Adaptive Performance",
                     packageId = "com.unity.adaptiveperformance",
-                    settingsType = "UnityEditor.AdaptivePerformance.Editor.SimulatorProviderSettings",
+                    settingsType = "UnityEditor.AdaptivePerformance.Simulator.Editor.SimulatorProviderSettings",
                     licenseURL = "https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@latest?subfolder=/license/LICENSE.html",
                     loaderMetadata = new List<IAdaptivePerformanceLoaderMetadata>()
                     {
                         new KnownLoaderMetadata() {
                             loaderName = "Device Simulator Provider",
-                            loaderType = "UnityEditor.AdaptivePerformance.Editor.SimulatorProviderLoader",
+                            loaderType = "UnityEditor.AdaptivePerformance.Simulator.Editor.SimulatorProviderLoader",
                             supportedBuildTargets = new List<BuildTargetGroup>()
                             {
                                 BuildTargetGroup.Standalone

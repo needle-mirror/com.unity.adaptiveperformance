@@ -1,7 +1,7 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.7",
+  "version": "2.0.0-preview.8",
   "unity": "2019.3",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
@@ -55,11 +55,11 @@
     }
   ],
   "upmCi": {
-    "footprint": "67d55acb33dd0f1f416e864d213c94bb0a40b98d"
+    "footprint": "362c869bc946c1f6d0691868c31761b0ff01cc8c"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "7285bd53963419e333c003ad58eeedbeda05a16a"
+    "revision": "ffeda41247f41a7e9afba52fc4a29deb3eb10454"
   }
 }
