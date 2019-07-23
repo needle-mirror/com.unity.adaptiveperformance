@@ -1,3 +1,5 @@
+using System;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
@@ -59,44 +61,32 @@ namespace UnityEngine.AdaptivePerformance
         /// Returns `true` if Adaptive Performance was initialized successfully, `false` otherwise.
         /// This means that Adaptive Performance is enabled in StartupSettings and the application runs on a device that supports Adaptive Performance.
         /// </summary>
-        /// <value>`true` when Adaptive Performance is available, `false` otherwise.</value>
+        /// <value>`true` when Adaptive Performance is available, `false` otherwise</value>
         bool Active { get; }
 
         /// <summary>
         /// Access thermal status information of the device.
         /// </summary>
-        /// <value>Interface to access thermal status information of the device.</value>
+        /// <value>Interface to access thermal status information of the device</value>
         IThermalStatus ThermalStatus { get; }
 
         /// <summary>
         /// Access performance status information of the device and your application.
         /// </summary>
-        /// <value>Interface to access performance status information of the device and your application.</value>
+        /// <value>Interface to access performance status information of the device and your application</value>
         IPerformanceStatus PerformanceStatus { get; }
 
         /// <summary>
         /// Control CPU and GPU performance of the device.
         /// </summary>
-        /// <value>Interface to control CPU and GPU performance levels of the device.</value>
+        /// <value>Interface to control CPU and GPU performance levels of the device</value>
         IDevicePerformanceControl DevicePerformanceControl { get; }
 
         /// <summary>
         /// Access to development (logging) settings.
         /// </summary>
-        /// <value>Interface to control CPU and GPU performance levels of the device.</value>
+        /// <value>Interface to control CPU and GPU performance levels of the device</value>
         IDevelopmentSettings DevelopmentSettings { get; }
-
-        /// <summary>
-        /// Access to the Indexer system. <see cref="AdaptivePerformanceIndexer"/>
-        /// </summary>
-        /// <value>Interface to scalers that are active and their associated settings.</value>
-        AdaptivePerformanceIndexer Indexer { get; }
-
-        /// <summary>
-        /// Access to the Settings. <see cref="IAdaptivePerformanceSettings"/>
-        /// </summary>
-        /// <value>Interface to settings that are loaded from the provider settings object during startup.</value>
-        IAdaptivePerformanceSettings Settings { get; }
     }
 
     /// <summary>

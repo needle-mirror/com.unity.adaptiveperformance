@@ -4,16 +4,10 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace UnityEditor.AdaptivePerformance.Editor
+namespace UnityEditor.AdaptivePerformance
 {
     internal class AdaptivePerformancePostProcess : IPreprocessBuildWithReport
     {
-        static string s_ProviderPackageNotFound = L10n.Tr("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get information during runtime. Please install a provider such as, Adaptive Performance Samsung (Android), via the Adaptive Performance Settings.");
-        static string s_Title = L10n.Tr("No Adaptive Performance provider found");
-        static string s_Ok = L10n.Tr("Go to Settings");
-        static string s_Cancel = L10n.Tr("Ignore");
-
-
         public int callbackOrder { get { return 0; } }
 
         public void OnPreprocessBuild(BuildReport report)
@@ -49,15 +43,10 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                     if (installedPackageCount == 0)
                     {
-                        if (EditorUtility.DisplayDialog(s_Title, s_ProviderPackageNotFound , s_Ok, s_Cancel))
-                        {
-                            PackageManager.UI.Window.Open("com.unity.adaptiveperformance.samsung.android");
-                            SettingsService.OpenProjectSettings("Project/Adaptive Performance");
-                        }
-                        else
-                        {
-                            Debug.LogWarning(s_ProviderPackageNotFound);
-                        }
+                        Debug.LogWarning("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get useful information during runtime. Please install a provider such as, Adaptive Performance Samsung (Android), via the Unity Package Manager.");
+#if UNITY_2019_3_OR_NEWER
+                        PackageManager.UI.Window.Open("com.unity.adaptiveperformance.samsung.android");
+#endif
                     }
                 }
                 else if (Request.Status >= StatusCode.Failure)

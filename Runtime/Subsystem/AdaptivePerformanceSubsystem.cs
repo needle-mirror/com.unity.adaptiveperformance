@@ -34,7 +34,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         GpuPerformanceLevel = 0x10,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
+        /// See <see cref="PerformanceDataRecord.PerformanceLevelControl"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
         /// </summary>
         PerformanceLevelControl = 0x20,
         /// <summary>
@@ -183,7 +183,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// If <see cref="Feature.GpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>) this parameter is ignored.
         /// </param>
         /// <returns>`true` on success. When this fails, it means that the system took control of the active performance levels.</returns>
-        bool SetPerformanceLevel(ref int cpu, ref int gpu);
+        bool SetPerformanceLevel(int cpu, int gpu);
     }
 
     /// <summary>
@@ -244,6 +244,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public virtual string Stats { get { return "";  } }
     }
 
+#if UNITY_2019_2_OR_NEWER
     /// <summary>
     /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
     /// </summary>
@@ -260,4 +261,42 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public bool initialized { get; protected set; }
     }
 #pragma warning restore CS0618
+
+#elif UNITY_2018_3_OR_NEWER
+    /// <summary>
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
+    /// </summary>
+    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Experimental.Subsystem<AdaptivePerformanceSubsystemDescriptor>
+    {
+        /// <summary>
+        /// Returns if the provider subsystem was initialized successfully.
+        /// </summary>
+        public bool initialized { get; protected set; }
+    }
+
+#else
+    /// <summary>
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
+    /// </summary>
+    public abstract class AdaptivePerformanceSubsystemBase
+    {
+        /// <summary>
+        /// Called when the provider subsystem starts.
+        /// </summary>
+        public abstract void Start();
+        /// <summary>
+        /// Called when the provider subsystem stops.
+        /// </summary>
+        public abstract void Stop();
+        /// <summary>
+        /// Called when the provider subsystem gets destroyed.
+        /// </summary>
+        public abstract void Destroy();
+        /// <summary>
+        /// Returns if the provider subsystem was initialized successfully.
+        /// </summary>
+        public bool initialized { get; protected set; }
+    }
+
+#endif
 }

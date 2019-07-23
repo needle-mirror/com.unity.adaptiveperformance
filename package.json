@@ -1,9 +1,9 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.11",
-  "unity": "2019.3",
-  "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
+  "version": "1.1.9",
+  "unity": "2018.3",
+  "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\n This package is installed as a dependency by Adaptive Performance subsystem packages such as the Adaptive Performance Samsung (Android) package. By installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
     "mobile",
     "adaptive",
@@ -14,92 +14,22 @@
     "samsung",
     "ap",
     "provider",
-    "subsystem",
-    "indexer",
-    "scaler",
-    "vrr"
+    "subsystem"
   ],
   "dependencies": {
-    "com.unity.subsystemregistration": "1.1.0"
+    "com.unity.subsystemregistration": "1.0.6"
   },
   "license": "See LICENSE.md file",
   "author": {
     "name": "Unity Technologies Inc.",
     "url": "https://www.unity3d.com"
   },
-  "samples": [
-    {
-      "displayName": "Sample Environment",
-      "description": "The base Environment all Adaptive Performance samples use.",
-      "path": "Samples~/Environment"
-    },
-    {
-      "displayName": "Thermal Sample",
-      "description": "Demonstrates how thermal warnings work.",
-      "path": "Samples~/Thermal"
-    },
-    {
-      "displayName": "Bottleneck Sample",
-      "description": "Demonstrates how the bottleneck detection works.",
-      "path": "Samples~/Bottleneck"
-    },
-    {
-      "displayName": "VRR Sample",
-      "description": "Demonstrates how Variable Refresh Rate displays can be used with Adaptive Performance.",
-      "path": "Samples~/VariableRefreshRate"
-    },
-    {
-      "displayName": "Automatic Performance Control Sample",
-      "description": "Demonstrates how the Automatic Performance Control works.",
-      "path": "Samples~/Automatic Performance Control"
-    },
-    {
-      "displayName": "Adaptive Framerate Sample",
-      "description": "Demonstrates how Adaptive Framrate using target framerate or variable refresh rate works.",
-      "path": "Samples~/Adaptive Framerate"
-    },
-    {
-      "displayName": "Adaptive Batching Sample",
-      "description": "Demonstrates how Adaptive Batching works.",
-      "path": "Samples~/Adaptive Batching"
-    },
-    {
-      "displayName": "Adaptive LOD Sample",
-      "description": "Demonstrates how Adaptive Performance LOD Scaler works.",
-      "path": "Samples~/Adaptive LOD"
-    },
-    {
-      "displayName": "Adaptive Lut Sample",
-      "description": "Demonstrates how Adaptive Lut Scaler works.",
-      "path": "Samples~/Adaptive Lut"
-    },
-    {
-      "displayName": "Adaptive MSAA Sample",
-      "description": "Demonstrates how Adaptive MSAA works.",
-      "path": "Samples~/Adaptive MSAA"
-    },
-    {
-      "displayName": "Adaptive Resolution Sample",
-      "description": "Demonstrates how Adaptive Resolution works.",
-      "path": "Samples~/Adaptive Resolution"
-    },
-    {
-      "displayName": "Adaptive Shadow Sample",
-      "description": "Demonstrates how Adaptive Performance Shadow Scaler, such as Adaptive Shadow Quality, Adaptive Shadow Resolution, Adaptive Shadow Distance and Adaptive Shadow Cascade work.",
-      "path": "Samples~/Adaptive Shadow"
-    },
-    {
-      "displayName": "Adaptive Sorting Sample",
-      "description": "Demonstrates how Adaptive Sorting works.",
-      "path": "Samples~/Adaptive Sorting"
-    }
-  ],
   "upmCi": {
-    "footprint": "f17de34fb08dc2fe42c8b68aeda491bbd42554d9"
+    "footprint": "1f6da0e01eddbe831d8c32016cdcfde3d767ba86"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "925e820700a8d312a7281c9badb9a7183dbc3101"
+    "revision": "b5eaeace861b2106f8508214ee38758e5b86bece"
   }
 }
