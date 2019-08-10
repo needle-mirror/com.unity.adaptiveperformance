@@ -20,7 +20,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Current normalized temperature level in the range of [0, 1].
-        /// A value of 0 means standard operation temperature and the device is not in a throttling state.
+        /// A value of 0 means standard operation temperature and that the device is not in a throttling state.
         /// A value of 1 means that the device has reached maximum temperature and is either going into or is already in throttling state.
         /// </summary>
         /// <value>Value in the range [0, 1].</value>
@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
         /// A value of 1 describes a rapid increase in temperature.
         /// A value of 0 describes a constant temperature.
         /// A value of -1 describes a rapid decrease in temperature.
-        /// Please note that it takes at least 10s until the temperature trend may reflect any changes.
+        /// **Note:** It takes at least 10s until the temperature trend can start reflecting any changes.
         /// </summary>
         /// <value>Value in the range [-1, 1].</value>
         public float TemperatureTrend { get; set; }
@@ -55,7 +55,7 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
-    /// The warning levels are used in the <see cref="ThermalMetrics"/> and describe the thermal status of the device in 3 categories.
+    /// Warning levels are used in the <see cref="ThermalMetrics"/> and describe the thermal status of the device. There are three possible statuses.
     /// </summary>
     public enum WarningLevel
     {
@@ -65,12 +65,12 @@ namespace UnityEngine.AdaptivePerformance
         NoWarning,
 
         /// <summary>
-        /// If throttling is imminent the application should perform adjustments to avoid thermal throttling.
+        /// If throttling is imminent, the application should perform adjustments to avoid thermal throttling.
         /// </summary>
         ThrottlingImminent,
 
         /// <summary>
-        /// If the application is in the throttling state it should make adjustments to go back to normal temperature levels.
+        /// If the application is in the throttling state, it should make adjustments to go back to normal temperature levels.
         /// </summary>
         Throttling,
     }

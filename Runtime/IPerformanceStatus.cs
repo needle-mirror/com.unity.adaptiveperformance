@@ -3,7 +3,7 @@ using System;
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
-    /// Performance bottleneck change event arguments used in the <see cref="PerformanceBottleneckChangeHandler"/>.
+    /// Event arguments for performance bottleneck changes. These are used in the <see cref="PerformanceBottleneckChangeHandler"/>.
     /// </summary>
     public struct PerformanceBottleneckChangeEventArgs
     {
@@ -16,11 +16,11 @@ namespace UnityEngine.AdaptivePerformance
     /// <summary>
     /// You can subscribe to the bottleneck event delegate which sends the <see cref="PerformanceBottleneckChangeEventArgs"/> when the bottleneck changes.
     /// </summary>
-    /// <param name="bottleneckEventArgs">The <see cref="PerformanceBottleneckChangeEventArgs"/> describing the performance bottleneck state.</param>
+    /// <param name="bottleneckEventArgs">The <see cref="PerformanceBottleneckChangeEventArgs"/> that describes the performance bottleneck state.</param>
     public delegate void PerformanceBottleneckChangeHandler(PerformanceBottleneckChangeEventArgs bottleneckEventArgs);
 
     /// <summary>
-    /// Performance level change event arguments used in the <see cref="PerformanceLevelChangeHandler"/>.
+    /// Arguments for the performance level change event. These are used in the <see cref="PerformanceLevelChangeHandler"/>.
     /// </summary>
     public struct PerformanceLevelChangeEventArgs
     {
@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// The difference in CPU levels
-        /// 0 in case the previous or new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
+        /// 0 if the previous or new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
         /// </summary>
         public int CpuLevelDelta { get; set; }
 
@@ -42,7 +42,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// The difference in GPU levels.
-        /// 0 in case either the previous or the new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
+        /// 0 if either the previous or the new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
         /// </summary>
         public int GpuLevelDelta { get; set; }
 
@@ -52,7 +52,7 @@ namespace UnityEngine.AdaptivePerformance
         public PerformanceControlMode PerformanceControlMode { get; set; }
 
         /// <summary>
-        /// `true` if the change was caused by manual adjustments to <see cref="IDevicePerformanceControl.CpuLevel"/> or <see cref="IDevicePerformanceControl.GpuLevel"/> during automatic mode.
+        /// True if the change was caused by manual adjustments to <see cref="IDevicePerformanceControl.CpuLevel"/> or <see cref="IDevicePerformanceControl.GpuLevel"/> during automatic mode, false otherwise.
         /// </summary>
         public bool ManualOverride { get; set; }
     }
@@ -69,12 +69,12 @@ namespace UnityEngine.AdaptivePerformance
     public interface IPerformanceStatus
     {
         /// <summary>
-        /// Allows to query the latest performance metrics.
+        /// Allows you to query the latest performance metrics.
         /// </summary>
         PerformanceMetrics PerformanceMetrics { get; }
 
         /// <summary>
-        /// Allows to query the latest frame timing measurements.
+        /// Allows you to query the latest frame timing measurements.
         /// </summary>
         FrameTiming FrameTiming { get; }
 
@@ -84,7 +84,7 @@ namespace UnityEngine.AdaptivePerformance
         event PerformanceBottleneckChangeHandler PerformanceBottleneckChangeEvent;
 
         /// <summary>
-        /// Subscribe to events and get updates when the the current CPU/GPU level changes.
+        /// Subscribe to events and get updates when the the current CPU or GPU level changes.
         /// </summary>
         event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
     }
@@ -111,7 +111,7 @@ namespace UnityEngine.AdaptivePerformance
         public int CurrentGpuLevel { get; set; }
 
         /// <summary>
-        /// Current performance bottleneck which describes if the program is CPU, GPU or `Application.targetFrameRate` bound.
+        /// Current performance bottleneck which describes if the program is CPU, GPU, or `Application.targetFrameRate` bound.
         /// </summary>
         public PerformanceBottleneck PerformanceBottleneck { get; set; }
     }
@@ -122,17 +122,15 @@ namespace UnityEngine.AdaptivePerformance
     public struct FrameTiming
     {
         /// <summary>
-        /// The overall frame time (in seconds).
-        /// Returns `-1.0f` if no timing information is available.
-        /// This happens for example in the first frame or directly after resume.
+        /// The overall frame time in seconds.
+        /// Returns `-1.0f` if no timing information is available (for example, in the first frame or directly after resume).
         /// </summary>
         /// <value>Frame time in seconds</value>
         public float CurrentFrameTime { get; set; }
 
         /// <summary>
         /// The overall frame time as an average over the past 100 frames (in seconds).
-        /// Returns -1.0f if no timing information is available.
-        /// This happens for example in the first frame or directly after resume.
+        /// Returns -1.0f if no timing information is available (for example, in the first frame or directly after resume).
         /// </summary>
         /// <value>Frame time in seconds</value>
         public float AverageFrameTime { get; set; }
@@ -140,8 +138,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Returns the GPU time of the last completely rendered frame (in seconds).
         /// Returns `-1.0f` if no timing information is available.
-        /// The GPU time only includes the time the GPU spent on rendering a frame.
-        /// This happens for example in the first frame or directly after resume.
+        /// The GPU time only includes the time the GPU spent on rendering a frame (for example, in the first frame or directly after resume).
         /// </summary>
         /// <value>Frame time in seconds</value>
         public float CurrentGpuFrameTime { get; set; }
@@ -149,8 +146,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Returns the overall frame time as an average over the past 100 frames (in seconds).
         /// Returns `-1.0f` if no timing information is available.
-        /// The GPU time only includes the time the GPU spent on rendering a frame.
-        /// This happens for example in the first frame or directly after resume.
+        /// The GPU time only includes the time the GPU spent on rendering a frame (for example, in the first frame or directly after resume).
         /// </summary>
         /// <value>Frame time value in seconds</value>
         public float AverageGpuFrameTime { get; set; }
@@ -158,24 +154,22 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Returns the main thread CPU time of the last frame (in seconds).
         /// The CPU time includes only time the CPU spent executing Unity's main and/or render threads.
-        /// Returns `-1.0f` if no timing information is available.
-        /// This happens for example in the first frame or directly after resume.
+        /// Returns `-1.0f` if no timing information is available (for example, in the first frame or directly after resume).
         /// </summary>
         /// <value>Frame time value in seconds</value>
         public float CurrentCpuFrameTime { get; set; }
 
         /// <summary>
         /// Returns the main thread CPU time as an average over the past 100 frames (in seconds).
-        /// Returns `-1.0f` if this is not available.
+        /// Returns `-1.0f` if this is not available (for example, in the first frame or directly after resume).
         /// The CPU time includes only the time the CPU spent executing Unity's main and/or render threads.
-        /// This happens for example in the first frame or directly after resume.
         /// </summary>
         /// <value>Frame time in seconds</value>
         public float AverageCpuFrameTime { get; set; }
     }
 
     /// <summary>
-    /// The performance bottleneck enum is used to describe what the system is currently limited by.
+    /// The performance bottleneck enum describes what is currently limiting the system.
     /// </summary>
     public enum PerformanceBottleneck
     {
@@ -196,7 +190,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Framerate is limited by `Application.targetFrameRate`.
-        /// In this case, the application should consider lowering performance requirements (see <see cref="IDevicePerformanceControl.SetPerformanceRequirements"/>).
+        /// In this case, you should consider lowering the application's performance requirements (see <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/>).
         /// </summary>
         TargetFrameRate
     }

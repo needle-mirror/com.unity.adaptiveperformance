@@ -26,15 +26,15 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         TemperatureTrend = 0x4,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.CpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel(int, int)"/>
+        /// See <see cref="PerformanceDataRecord.CpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
         /// </summary>
         CpuPerformanceLevel = 0x8,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.GpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel(int, int)"/>
+        /// See <see cref="PerformanceDataRecord.GpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
         /// </summary>
         GpuPerformanceLevel = 0x10,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.PerformanceLevelControl"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
+        /// See <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
         /// </summary>
         PerformanceLevelControl = 0x20,
         /// <summary>
@@ -52,7 +52,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// The performance data record stores all information about the thermal and performance status and uses it to deliver it from the provider subsystem to Adaptive Performance for further processing.
+    /// The performance data record stores all information about the thermal and performance status and delivers it from the provider subsystem to Adaptive Performance for further processing.
     /// </summary>
     public struct PerformanceDataRecord
     {
@@ -65,7 +65,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public Feature ChangeFlags { get; set; }
 
         /// <summary>
-        /// The current normalized temperature level in the range of [0.0, 1.0] or -1.0 when not supported or available right now.
+        /// The current normalized temperature level in the range of [0.0, 1.0], or -1.0 when not supported or not available right now.
         /// A level of 1.0 means that the device is thermal throttling.
         /// The temperature level has changed when the <see cref="Feature.TemperatureLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
@@ -81,7 +81,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public float TemperatureTrend { get; set; }
 
         /// <summary>
-        /// The current warning level as documented in <see cref="WarningLevel"/>
+        /// The current warning level as documented in <see cref="Feature.WarningLevel"/>.
         /// The warning level has changed when <see cref="Feature.WarningLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         /// <value>The current warning level</value>
@@ -89,8 +89,8 @@ namespace UnityEngine.AdaptivePerformance.Provider
 
         /// <summary>
         /// The currently active CPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
-        /// Adaptive performance may also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
-        /// CPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>] or <seealso cref="Constants.UnknownPerformanceLevel"/>.
+        /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
+        /// CPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>], or <seealso cref="Constants.UnknownPerformanceLevel"/>.
         /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// CPU performance level has changed when <see cref="Feature.CpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
@@ -99,15 +99,15 @@ namespace UnityEngine.AdaptivePerformance.Provider
 
         /// <summary>
         /// The currently active GPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
-        /// Adaptive performance may also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
-        /// GPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>] or <seealso cref="Constants.UnknownPerformanceLevel"/>.
+        /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
+        /// GPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>], or <seealso cref="Constants.UnknownPerformanceLevel"/>.
         /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// GPU performance level has changed when <see cref="Feature.GpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public int GpuPerformanceLevel { get; set; }
 
         /// <summary>
-        /// `true` if performance levels may currently be controlled manually and aren't controlled by Adaptive Performance or the operating system.
+        /// True if =performance levels can currently be controlled manually and aren't controlled by Adaptive Performance or the operating system.
         /// Has changed when <see cref="Feature.PerformanceLevelControl"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public bool PerformanceLevelControlAvailable { get; set; }
@@ -132,12 +132,12 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// The interface describes how the Adaptive Performance provider lifecycle behaves.
+    /// This interface describes how the Adaptive Performance provider lifecycle behaves.
     /// </summary>
     public interface IApplicationLifecycle
     {
         /// <summary>
-        /// Called before an application paused.
+        /// Called before an application pauses.
         /// To be called from `MonoBehaviour.OnApplicationPause`.
         /// </summary>
         void ApplicationPause();
@@ -155,7 +155,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
     public interface IDevicePerformanceLevelControl
     {
         /// <summary>
-        /// Maximum supported CPU performance level, it should not change after startup.
+        /// Maximum supported CPU performance level. This should not change after startup.
         /// <see cref="Constants.UnknownPerformanceLevel"/> in case performance levels are not supported.
         /// Value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, 10].
         /// </summary>
@@ -163,7 +163,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         int MaxCpuPerformanceLevel { get; }
 
         /// <summary>
-        /// Maximum supported GPU performance level, it should not change after startup.
+        /// Maximum supported GPU performance level. This should not change after startup.
         /// <see cref="Constants.UnknownPerformanceLevel"/> in case performance levels are not supported.
         /// Value in the range of [<see cref="Constants.MinGpuPerformanceLevel"/>, 10].
         /// </summary>
@@ -172,18 +172,18 @@ namespace UnityEngine.AdaptivePerformance.Provider
 
         /// <summary>
         /// Request a performance level change.
-        /// If <see cref="Constants.UnknownPerformanceLevel"/> is passed the subsystem picks the level to be used.
+        /// If <see cref="Constants.UnknownPerformanceLevel"/> is passed, the subsystem picks the level to be used.
         /// </summary>
         /// <param name="cpu">
-        /// The new performance level. May be <see cref="Constants.UnknownPerformanceLevel"/> or range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>].
-        /// If <see cref="Feature.CpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>) this parameter is ignored.
+        /// The new performance level. Can be <see cref="Constants.UnknownPerformanceLevel"/> or range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>].
+        /// If <see cref="Feature.CpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this parameter is ignored.
         /// </param>
         /// <param name="gpu">
-        /// The new performance level. May be <see cref="Constants.UnknownPerformanceLevel"/> or range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>].
-        /// If <see cref="Feature.GpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>) this parameter is ignored.
+        /// The new performance level. Can be <see cref="Constants.UnknownPerformanceLevel"/> or range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>].
+        /// If <see cref="Feature.GpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this parameter is ignored.
         /// </param>
-        /// <returns>`true` on success. When this fails, it means that the system took control of the active performance levels.</returns>
-        bool SetPerformanceLevel(int cpu, int gpu);
+        /// <returns>Returns true on success. When this fails, it means that the system took control of the active performance levels.</returns>
+        bool SetPerformanceLevel(ref int cpu, ref int gpu);
     }
 
     /// <summary>
@@ -213,17 +213,17 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public abstract PerformanceDataRecord Update();
 
         /// <summary>
-        /// Application life-cycle events to be consumed by subsystem.
-        /// May be `null` in case the subsystem does not need special handling on life-cycle events.
+        /// Application lifecycle events to be consumed by subsystem.
+        /// Can be null if the subsystem does not need special handling on life-cycle events.
         /// The returned reference does not change after startup.
         /// </summary>
-        /// <value>Application life-cycle object</value>
+        /// <value>Application lifecycle object</value>
         public abstract IApplicationLifecycle ApplicationLifecycle { get; }
 
         /// <summary>
-        /// Control CPU/GPU performance levels of the device.
-        /// May be null in case the subsystem does not support controlling CPU/GPU performance levels.
-        /// `null` when <see cref="Feature.PerformanceLevelControl"/> bit is not set in <see cref="Capabilities"/>.
+        /// Control CPU or GPU performance levels of the device.
+        /// Can be null if the subsystem does not support controlling CPU/GPU performance levels.
+        /// Is null when the <see cref="Feature.PerformanceLevelControl"/> bit is not set in <see cref="Capabilities"/>.
         /// The returned reference does not change after startup.
         /// </summary>
         /// <value>Performance level control object</value>
@@ -244,7 +244,6 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public virtual string Stats { get { return "";  } }
     }
 
-#if UNITY_2019_2_OR_NEWER
     /// <summary>
     /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
     /// </summary>
@@ -261,42 +260,4 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public bool initialized { get; protected set; }
     }
 #pragma warning restore CS0618
-
-#elif UNITY_2018_3_OR_NEWER
-    /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
-    /// </summary>
-    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Experimental.Subsystem<AdaptivePerformanceSubsystemDescriptor>
-    {
-        /// <summary>
-        /// Returns if the provider subsystem was initialized successfully.
-        /// </summary>
-        public bool initialized { get; protected set; }
-    }
-
-#else
-    /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
-    /// </summary>
-    public abstract class AdaptivePerformanceSubsystemBase
-    {
-        /// <summary>
-        /// Called when the provider subsystem starts.
-        /// </summary>
-        public abstract void Start();
-        /// <summary>
-        /// Called when the provider subsystem stops.
-        /// </summary>
-        public abstract void Stop();
-        /// <summary>
-        /// Called when the provider subsystem gets destroyed.
-        /// </summary>
-        public abstract void Destroy();
-        /// <summary>
-        /// Returns if the provider subsystem was initialized successfully.
-        /// </summary>
-        public bool initialized { get; protected set; }
-    }
-
-#endif
 }

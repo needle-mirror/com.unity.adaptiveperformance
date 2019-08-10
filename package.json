@@ -1,9 +1,9 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "1.2.0",
+  "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
+  "version": "2.0.1",
   "unity": "2019.4",
-  "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\n This package is installed as a dependency by Adaptive Performance subsystem packages such as the Adaptive Performance Samsung (Android) package. By installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
     "mobile",
     "adaptive",
@@ -14,7 +14,10 @@
     "samsung",
     "ap",
     "provider",
-    "subsystem"
+    "subsystem",
+    "indexer",
+    "scaler",
+    "vrr"
   ],
   "dependencies": {
     "com.unity.subsystemregistration": "1.1.0"
@@ -24,12 +27,79 @@
     "name": "Unity Technologies Inc.",
     "url": "https://www.unity3d.com"
   },
+  "samples": [
+    {
+      "displayName": "Sample Environment",
+      "description": "The base Environment all Adaptive Performance samples use.",
+      "path": "Samples~/Environment"
+    },
+    {
+      "displayName": "Thermal Sample",
+      "description": "Demonstrates how thermal warnings work.",
+      "path": "Samples~/Thermal"
+    },
+    {
+      "displayName": "Bottleneck Sample",
+      "description": "Demonstrates how the bottleneck detection works.",
+      "path": "Samples~/Bottleneck"
+    },
+    {
+      "displayName": "VRR Sample",
+      "description": "Demonstrates how Variable Refresh Rate displays can be used with Adaptive Performance.",
+      "path": "Samples~/VariableRefreshRate"
+    },
+    {
+      "displayName": "Automatic Performance Control Sample",
+      "description": "Demonstrates how the Automatic Performance Control works.",
+      "path": "Samples~/Automatic Performance Control"
+    },
+    {
+      "displayName": "Adaptive Framerate Sample",
+      "description": "Demonstrates how Adaptive Framrate using target framerate or variable refresh rate works.",
+      "path": "Samples~/Adaptive Framerate"
+    },
+    {
+      "displayName": "Adaptive Batching Sample",
+      "description": "Demonstrates how Adaptive Batching works.",
+      "path": "Samples~/Adaptive Batching"
+    },
+    {
+      "displayName": "Adaptive LOD Sample",
+      "description": "Demonstrates how Adaptive Performance LOD Scaler works.",
+      "path": "Samples~/Adaptive LOD"
+    },
+    {
+      "displayName": "Adaptive LUT Sample",
+      "description": "Demonstrates how Adaptive LUT Scaler works.",
+      "path": "Samples~/Adaptive LUT"
+    },
+    {
+      "displayName": "Adaptive MSAA Sample",
+      "description": "Demonstrates how Adaptive MSAA works.",
+      "path": "Samples~/Adaptive MSAA"
+    },
+    {
+      "displayName": "Adaptive Resolution Sample",
+      "description": "Demonstrates how Adaptive Resolution works.",
+      "path": "Samples~/Adaptive Resolution"
+    },
+    {
+      "displayName": "Adaptive Shadow Sample",
+      "description": "Demonstrates how Adaptive Performance Shadow Scaler, such as Adaptive Shadow Quality, Adaptive Shadow Resolution, Adaptive Shadow Distance and Adaptive Shadow Cascade work.",
+      "path": "Samples~/Adaptive Shadow"
+    },
+    {
+      "displayName": "Adaptive Sorting Sample",
+      "description": "Demonstrates how Adaptive Sorting works.",
+      "path": "Samples~/Adaptive Sorting"
+    }
+  ],
   "upmCi": {
-    "footprint": "0633445cbde73d6ff0d79f7d9c8f8621c98ccaa8"
+    "footprint": "acb3fc7629a9390680c81390d5b77589f9a7afd3"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "f62953a92505ddf67ad8cb524c5c97afa9bf9d6e"
+    "revision": "820af83e58a0e4b1dfcd31e038cb49aecfc44662"
   }
 }
