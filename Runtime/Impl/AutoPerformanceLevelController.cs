@@ -24,7 +24,7 @@ namespace UnityEngine.AdaptivePerformance
         public float AllowedCpuActiveTimeRatio { get; set; }
 
         /// <summary>
-        /// AllowedGpuActiveTimeRatio (0.8f) means that controller might lower the GPU level as long as the GPU is active less than 80% of the time.
+        /// AllowedGpuActiveTimeRatio (0.8f) means that the controller might lower the GPU level as long as the GPU is active less than 80% of the time.
         /// </summary>
         public float AllowedGpuActiveTimeRatio { get; set; }
 
@@ -44,7 +44,7 @@ namespace UnityEngine.AdaptivePerformance
         public float UpdateInterval { get; set; }
 
         /// <summary>
-        /// The time in seconds the controller waits while bound to PerformanceBottleneck.TargetFrameRate before it considers lowering CPU or GPU levels.
+        /// The time in seconds that the controller waits while bound to PerformanceBottleneck.TargetFrameRate before it considers lowering CPU or GPU levels.
         /// </summary>
         public float MinTargetFrameRateHitTime { get; set; }
 
@@ -93,7 +93,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void UpdateImpl(float timestamp)
         {
-            // after a change wait at least UpdateInterval seconds before making additional changes
+            // After a change, wait at least UpdateInterval seconds before making additional changes.
             if (timestamp - m_LastChangeTimeStamp < UpdateInterval)
                 return;
 
@@ -108,7 +108,7 @@ namespace UnityEngine.AdaptivePerformance
                         RaiseCpuLevel(timestamp);
                     break;
                 case PerformanceBottleneck.TargetFrameRate:
-                    if (timestamp - m_TargetFrameRateHitTimestamp > MinTargetFrameRateHitTime) // make sure we have been able to hold targetFrameRate for at least 5s before making adjustments that might lower it
+                    if (timestamp - m_TargetFrameRateHitTimestamp > MinTargetFrameRateHitTime) // Make sure we have been able to hold targetFrameRate for at least 5s before making adjustments that might lower it.
                     {
                         if (AllowLowerCpuLevel(timestamp))
                             LowerCpuLevel(timestamp);
@@ -117,7 +117,7 @@ namespace UnityEngine.AdaptivePerformance
                     }
                     break;
                 case PerformanceBottleneck.Unknown:
-                    // after staying at Unknown bottleneck for more than 10s we try to resolve it once by raising levels
+                    // After staying at Unknown bottleneck for more than 10s, we try to resolve it once by raising levels.
                     if (!m_TriedToResolveUnknownBottleneck && timestamp - m_BottleneckUnknownTimestamp > 10.0f)
                     {
                         if (AllowRaiseCpuLevel())
@@ -187,7 +187,7 @@ namespace UnityEngine.AdaptivePerformance
                 if (ft.AverageCpuFrameTime <= 0.0f)
                     return true;
 
-                // Allow lowering CPU level if main thread is active less than AllowedCpuActiveTimeRatio * 100% of the time
+                // Allow lowering CPU level if main thread is active less than AllowedCpuActiveTimeRatio * 100% of the time.
                 if (ft.AverageCpuFrameTime < AllowedCpuActiveTimeRatio * TargetFrameTime)
                     return true;
             }
@@ -205,7 +205,7 @@ namespace UnityEngine.AdaptivePerformance
                 if (ft.AverageGpuFrameTime <= 0.0f)
                     return true;
 
-                // Allow lowering GPU level if main thread is active less than AllowedGpuActiveTimeRatio * 100% of the time
+                // Allow lowering GPU level if main thread is active less than AllowedGpuActiveTimeRatio * 100% of the time.
                 if (ft.AverageGpuFrameTime < AllowedGpuActiveTimeRatio * TargetFrameTime)
                     return true;
             }

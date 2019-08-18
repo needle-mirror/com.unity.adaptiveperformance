@@ -14,7 +14,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Current normalized temperature level in the range of [0, 1]. 
         /// A value of 0 means standard operation temperature and the device is not in a throttling state.
-        /// A value of 1 means that the maximum temperature of the device is reached and the device is going into or is already in throttling state.
+        /// A value of 1 means that the device has reached maximum temperature and is either going into or is already in throttling state.
         /// </summary>
         /// <value>Value in the range [0, 1].</value>
         public float TemperatureLevel { get; set; }

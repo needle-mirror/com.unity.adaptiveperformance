@@ -12,7 +12,7 @@ namespace UnityEngine.AdaptivePerformance
     public struct PerformanceLevelChangeEventArgs
     {
         /// <summary>
-        /// The new CPU level
+        /// The new CPU level.
         /// </summary>
         public int CpuLevel { get; set; }
 
@@ -23,13 +23,13 @@ namespace UnityEngine.AdaptivePerformance
         public int CpuLevelDelta { get; set; }
 
         /// <summary>
-        /// The new GPU level
+        /// The new GPU level.
         /// </summary>
         public int GpuLevel { get; set; }
 
         /// <summary>
         /// The difference in GPU levels.
-        /// 0 in case the previous or new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
+        /// 0 in case either the previous or the new level equals <see cref="Constants.UnknownPerformanceLevel"/>.
         /// </summary>
         public int GpuLevelDelta { get; set; }
 
@@ -39,7 +39,7 @@ namespace UnityEngine.AdaptivePerformance
         public PerformanceControlMode PerformanceControlMode { get; set; }
 
         /// <summary>
-        /// Was the change caused by manual adjustments to <see cref="IDevicePerformanceControl.CpuLevel"/> or <see cref="IDevicePerformanceControl.GpuLevel"/> during automatic mode.
+        /// `true` if the change was caused by manual adjustments to <see cref="IDevicePerformanceControl.CpuLevel"/> or <see cref="IDevicePerformanceControl.GpuLevel"/> during automatic mode.
         /// </summary>
         public bool ManualOverride { get; set; }
     }
@@ -64,7 +64,7 @@ namespace UnityEngine.AdaptivePerformance
         event PerformanceBottleneckChangeHandler PerformanceBottleneckChangeEvent;
 
         /// <summary>
-        /// Subscribe events and get updates when the the current CPU/GPU level changes.
+        /// Subscribe to events and get updates when the the current CPU/GPU level changes.
         /// </summary>
         event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
     }
@@ -167,7 +167,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Framerate is limited by `Application.targetFrameRate`.
-        /// In this case the application should consider lowering performance requirements (see <see cref="IDevicePerformanceControl.SetPerformanceRequirements"/>).
+        /// In this case, the application should consider lowering performance requirements (see <see cref="IDevicePerformanceControl.SetPerformanceRequirements"/>).
         /// </summary>
         TargetFrameRate
     }

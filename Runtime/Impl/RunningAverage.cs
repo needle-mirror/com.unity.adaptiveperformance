@@ -17,14 +17,14 @@ namespace UnityEngine.AdaptivePerformance
             return m_Values.Length;
         }
 
-        public float GetAverage()
+        public float GetAverageOr(float defaultValue)
         {
-            return m_AverageValue;
+            return (m_NumValues > 0) ? m_AverageValue : defaultValue;
         }
 
-        public float GetMostRecentValue()
+        public float GetMostRecentValueOr(float defaultValue)
         {
-            return (m_NumValues > 0) ? m_Values[m_LastIndex] : 0.0f;
+            return (m_NumValues > 0) ? m_Values[m_LastIndex] : defaultValue;
         }
 
         public void AddValue(float NewValue)

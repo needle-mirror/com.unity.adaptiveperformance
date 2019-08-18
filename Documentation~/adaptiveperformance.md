@@ -2,25 +2,23 @@
 
 # About Adaptive Performance
 
-Use *Adaptive Performance* to get feedback about the thermal state of your mobile device and react appropriately. As an example, use the API provided to create applications that react to the thermal trend and events of the device. This ensures constant frame rates over a longer period of time while avoiding thermal throttling, even before throttling happens.
-
-This version of *Adaptive Performance* supports the following subsystems:
-
-* [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html)
-
-At least one subsystem is required to use Adaptive Performance. 
+Adaptive Performance allows you to get feedback about the thermal and power state of your mobile device, and react appropriately. For example, you can create applications that react to temperature trends and events on the device, to ensure constant frame rates over a longer period of time and prevent thermal throttling. 
 
 # Installing Adaptive Performance
 
-This package is automatically installed as dependency if you install a Adaptive Performance subsystem. Please see the list of subsystems in the *Adaptive Performance* about section and see install instruction in the subsystem documentation. 
+Unity automatically installs this package as a dependency if you install an Adaptive Performance subsystem. See the list of subsystems below, and refer to install instructions in each subsystem’s documentation. 
+
+To use Adaptive Performance, you must have at least one subsystem installed. This version of Adaptive Performance supports the following subsystems:
+
+* [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html)
+
+At least one subsystem is required to use Adaptive Performance.
 
 # Using Adaptive Performance
 
-Once the Adaptive Performance is installed in your Unity project a GameObject that implements `IAdaptivePerformance` is automatically created at runtime.
-You can access the instance via `UnityEngine.AdaptivePerformance.Holder.Instance`.
+When you install the Adaptive Performance package, Unity automatically creates a GameObject that implements `IAdaptivePerformance` in your Project at run time. To access the instance, use `UnityEngine.AdaptivePerformance.Holder.Instance`.
 
-You can check if your device is supported with the `Instance.Active` property.
-To get detailed information during runtime, enable debug logging with the `UnityEngine.AdaptivePerformance.StartupSettings.Logging` flag:
+To check if your device supports Adaptive Performance, use the `Instance.Active` property. To get detailed information during runtime, enable debug logging with the `UnityEngine.AdaptivePerformance.StartupSettings.Logging` flag:
 
 ```
 static class AdaptivePerformanceConfig
@@ -35,34 +33,26 @@ static class AdaptivePerformanceConfig
 
 ## Performance Status
 
-Adaptive Performance tracks serveral performance metrics and updates them every frame.
-These metrics can be accesses through the property `Instance.PerformanceStatus`.
+Adaptive Performance tracks several performance metrics and updates them every frame. To access these metrics, use the `Instance.PerformanceStatus`property.
 
 ### Frame timing
 
-Adaptive Performance always tracks the average GPU, CPU and overall frame times and updates them every frame.
-The latest timing data can be accessed through the property `PerformanceStatus.FrameTiming`.
+Adaptive Performance always tracks the average GPU, CPU, and overall frame times, and updates them every frame. You can access the latest timing data using the `PerformanceStatus.FrameTiming` property.
 
-The overall frame time is the delta between frames. It can be used to calculate the current framerate of the application.
-The CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread.
-It does not include the time when Unity might be blocked by the operating system or when Unity needs to wait for the GPU to catch up with rendering.
-The GPU time is the time the GPU is actively processing data to render a frame. It does not include the time when the GPU has to wait for Unity to provide data to render.
+The overall frame time is the time difference between frames. You can use it to calculate the current framerate of the application.
+The CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread. It doesn’t include the times when Unity might be blocked by the operating system, or when Unity needs to wait for the GPU to catch up with rendering. 
+The GPU time is the time the GPU is actively processing data to render a frame. It doesn’t include the time when the GPU has to wait for Unity to provide data to render.
 
 ### Performance bottleneck
 
-Adaptive Performance uses the currently configured target framerate (see `UnityEngine.Application.targetFrameRate` and `QualitySettings`) and the information provided by `FrameTiming` to calculate what is limiting the frame rate of the application.
-If the application is not hitting the desired target framerate then it may be bound by either CPU or GPU processing.
-To get notified whenever the current performance bottleneck of the application changes you can subscribe to the event `PerformanceStatus.PerformanceBottleneckChangeEvent`.
+Adaptive Performance uses the currently configured target frame rate (see `UnityEngine.Application.targetFrameRate` and `QualitySettings`) and the information that `FrameTiming`provides to calculate what is limiting the frame rate of the application. If the application isn’t performing at the desired target framerate, it might be bound by either CPU or GPU processing. You can subscribe with a delegate function to the `PerformanceStatus.PerformanceBottleneckChangeEvent` event to get a notification whenever the current performance bottleneck of the application changes.
 
-You can use the information about the current performance bottleneck to make targeted adjustments to the game content at runtime.
-For example in a GPU bound application lowering the rendering resolution often improves the framerate significantly, while the same change may not make a big different in a purely CPU bound application.
+You can use the information about the current performance bottleneck to make targeted adjustments to the game content at run time. For example, in a GPU-bound application, lowering the rendering resolution often improves the frame rate significantly, but the same change might not make a big difference for a CPU-bound application.
 
 ## Device thermal state feedback
 
-The Adaptive Performance API gives you access to the current thermal warning level of the device (`Instance.ThermalStatus.ThermalMetrics.WarningLevel`) and a more detailed temperature level (`Instance.ThermalStatus.ThermalMetrics.TemperatureLevel`).
-The application can use those values as feedback to make modifications and avoid getting throttled by the operating system.
-
-The following example shows the implementation of Unity component that adjusts the global LOD bias based on Adaptive Performance feedback:
+The Adaptive Performance API gives you access to the current thermal warning level of the device (`Instance.ThermalStatus.ThermalMetrics.WarningLevel`) and a more detailed temperature level (`Instance.ThermalStatus.ThermalMetrics.TemperatureLevel`). The application can make modifications based on these values to avoid the operating system throttling it.
+The following example shows the implementation of a Unity component that uses Adaptive Performance feedback to adjust the global LOD bias:
 
 ```
 using UnityEngine;  
@@ -102,29 +92,22 @@ public class AdaptiveLOD : MonoBehaviour
 
 ## Configuring CPU and GPU performance levels
 
-The CPU and GPU of a mobile device make up for a very large part of the power utilization of a mobile device, especially when running a game.
-Typically, the operating system decides which clock speeds are used for the CPU and GPU.
+The CPU and GPU consume the most power on a mobile device, especially when running a game. Typically, the operating system decides which clock speeds to use for the CPU and GPU. CPU cores and GPUs are less efficient when running at their maximum clock speed. When they run at high clock speeds, the mobile device overheats, and the operating system throttles CPU and GPU frequency to cool down the device.
+By default, Adaptive Performance automatically configures CPU and GPU performance levels based on the current performance bottleneck.
+Alternatively, you can switch to `Manual` mode; to do this, set  `Instance.DevicePerformanceControl.AutomaticPerformanceControl` to `false`. In `Manual` mode, you can use the `Instance.DevicePerformanceControl.CpuLevel` and `Instance.DevicePerformanceControl.GpuLevel` properties to optimize CPU and GPU performance. To check which mode you are currently in, use `Instance.DevicePerformanceControl.PerformanceControlMode`. 
 
-CPU cores and GPUs are less efficient when run at their maximum clock speed. Running at high clock speeds overheats the mobile device easily and the operating system throttles the frequency of the CPU and GPU to cool down the device.
+The application can configure these properties based on the thermal feedback and the frame time data that the Adaptive Performance API provides. It also uses these questions about its current performance requirements:
+- Did the application reach the target frame rate in the previous frames?
+- Is the application in an in-game scene, a loading screen, or a menu?
+- Are device temperatures rising?
+- Is the device close to thermal throttling?
+- Is the device GPU or CPU bound?
 
-By default Adaptive Performance automatically configures CPU and GPU performance levels bases on the current performance bottleneck.
+*Note:* Changing GPU and GPU levels only has an effect as long as the device is not in thermal throttling state (`Instance.WarningLevel` equals `PerformanceWarningLevel.Throttling`).
+In some situations, the device might take control over the CPU and GPU levels. This changes the value of `Instance.DevicePerformanceControl.PerformanceControlMode`
+to `PerformanceControlMode.System`.
 
-Alternatively you can switch to manual mode by setting `Instance.DevicePerformanceControl.AutomaticPerformanceControl` to `true`.
-You can check the current mode with the help of the property `Instance.DevicePerformanceControl.PerformanceControlMode`.
-In `Manual` mode you can use the properties `Instance.DevicePerformanceControl.CpuLevel` and `Instance.DevicePerformanceControl.GpuLevel` to optimize CPU and GPU performance.
-
-The application can configure those properties based on the thermal feedback and frame time data provided by the Adaptive Performance API and the application's special knowledge about the current performance requirements:
-- did the application reach the target frame rate in the previous frames?
-- is the application in an in-game scene, a loading-screen or in a menu?
-- are device temperatures rising?
-- is the device close to thermal throttling?
-- is the device GPU or CPU bound?
-
-Please note that changing GPU and GPU levels only has an effect as long as the device is not in thermal throttling state (`Instance.WarningLevel` equals `PerformanceWarningLevel.Throttling`).
-In some situations the device may take control over CPU and GPU levels. In this case the value of `Instance.DevicePerformanceControl.PerformanceControlMode`
-is `PerformanceControlMode.System`.
-
-For following example show how to configure performance levels based on the current type of scene:
+The following example shows how to configure performance levels based on the current Scene type:
 
 ```
 public void EnterMenu()
@@ -153,16 +136,15 @@ public void ExitMenu()
 # Technical details
 ## Requirements
 
-This version of Adaptive Performance is compatible with the following versions of the Unity Editor:
-
-* 2018.3 and later (2019.1 and later recommended)
-
-At least one Adaptive Performance subsystem is required to use Adaptive Performance. Please read more about the Adaptive Performance subsystem support in the About section.
+This version of Adaptive Performance is compatible with Unity Editor versions 2018.3 and later (2019.1 and later recommended).
+To use Adaptive Performance, you must have at least one subsystem installed. See the [Installing Adaptive Performance](#installing-adaptive-performance) section in this documentation for more details.
 
 ## Document revision history
-This section includes the revision history of the document. The revision history tracks when a document is created, edited, and updated. If you create or update a document, you must add a new row describing the revision.  The Documentation Team also uses this table to track when a document is edited and its editing level. An example is provided:
+This section includes the revision history of the document. The revision history tracks creation, edits, and updates to the document. If you create or update a document, you must add a new row describing the revision. The Documentation Team also uses this table to track when a document is edited and its editing level.
  
 |Date|Reason|
 |---|---|
-|Jun 17, 2019|Work in progress for 1.0 release.|
-|Mar 14, 2019|Document created. Work in progress for initial release.|
+|July 04, 2019|Chief Technical Editor reviewed.|
+|June 21, 2019|Technical writer reviewed.|
+|June 17, 2019|Work in progress for 1.0 release.|
+|March 14, 2019|Document created. Work in progress for initial release.|

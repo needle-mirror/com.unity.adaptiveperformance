@@ -34,7 +34,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// The requested CPU performance level.
         /// Higher levels typically allow CPU cores to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling may happen sooner when the device can not sustain high clock speeds.
+        /// The consequence is that thermal warnings and throttling may happen sooner when the device cannot sustain high clock speeds.
         /// Changes are applied once per frame.
         /// We recommended to set the CpuLevel as low as possible to save power.
         /// The valid value range is [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceControl.MaxCpuPerformanceLevel"/>].
@@ -45,7 +45,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// The requested GPU performance level.
         /// Higher levels typically allow the GPU to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling may happen sooner when the device can not sustain high clock speeds.
+        /// The consequence is that thermal warnings and throttling may happen sooner when the device cannot sustain high clock speeds.
         /// Changes are applied once per frame.
         /// We recommended to set the GpuLevel as low as possible to save power.
         /// The valid value range is [<see cref="Constants.MinGpuPerformanceLevel"/>, <see cref="IDevicePerformanceControl.MaxGpuPerformanceLevel"/>].

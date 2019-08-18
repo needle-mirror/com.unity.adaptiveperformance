@@ -89,7 +89,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// The currently active CPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
         /// Adaptive performance may also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
         /// CPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>] or <seealso cref="Constants.UnknownPerformanceLevel"/>.
-        /// A value <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control over performance levels.
+        /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// CPU performance level has changed when <see cref="Feature.CpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         /// <value></value>
@@ -99,13 +99,13 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// The currently active GPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
         /// Adaptive performance may also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
         /// GPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>] or <seealso cref="Constants.UnknownPerformanceLevel"/>.
-        /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control over performance levels.
+        /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// GPU performance level has changed when <see cref="Feature.GpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public int GpuPerformanceLevel { get; set; }
 
         /// <summary>
-        /// `true` if performance levels may currently be controlled manually and not by Adaptive Performance or the Operating System. 
+        /// `true` if performance levels may currently be controlled manually and aren't controlled by Adaptive Performance or the operating system. 
         /// Has changed when <see cref="Feature.PerformanceLevelControl"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public bool PerformanceLevelControlAvailable { get; set; }
@@ -133,13 +133,13 @@ namespace UnityEngine.AdaptivePerformance.Provider
     {
         /// <summary>
         /// Called before an application paused.
-        /// To be called from `MonoBehaviour.OnApplicationPause`
+        /// To be called from `MonoBehaviour.OnApplicationPause`.
         /// </summary>
         void ApplicationPause();
 
         /// <summary>
         /// Called after an application resumes.
-        /// To be called from `MonoBehaviour.OnApplicationPause`
+        /// To be called from `MonoBehaviour.OnApplicationPause`.
         /// </summary>
         void ApplicationResume();
     }
@@ -174,7 +174,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// The new performance level. May be <see cref="Constants.UnknownPerformanceLevel"/> or range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>].
         /// If <see cref="Feature.GpuPerformanceLevel"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>) this parameter is ignored.
         /// </param>
-        /// <returns>`true` on success. When this fails it means that the system took control over the active performance levels.</returns>
+        /// <returns>`true` on success. When this fails, it means that the system took control of the active performance levels.</returns>
         bool SetPerformanceLevel(int cpu, int gpu);
     }
 
@@ -223,7 +223,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public abstract Version Version { get; }
 
         /// <summary>
-        /// Generates human readable string of subsystem internal stats.
+        /// Generates a human readable string of subsystem internal stats.
         /// Optional and only used for development.
         /// </summary>
         /// <value>String with subsystem specific statistics</value>

@@ -109,8 +109,10 @@ namespace UnityEngine.AdaptivePerformance
         DevicePerformanceControlImpl m_DevicePerfControl;
         AutoPerformanceLevelController m_AutoPerformanceLevelController;
         CpuTimeProvider m_CpuFrameTimeProvider;
+        GpuTimeProvider m_GpuFrameTimeProvider;
         Provider.IApplicationLifecycle m_AppLifecycle;
         TemperatureTrend m_TemperatureTrend;
+        bool m_UseProviderOverallFrameTime = false;
 
         AdaptivePerformanceManager()
         {
@@ -171,7 +173,7 @@ namespace UnityEngine.AdaptivePerformance
 
             if (m_Subsystem != null)
             {
-
+                m_UseProviderOverallFrameTime = m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime);
                 m_DevicePerfControl = new DevicePerformanceControlImpl(m_Subsystem.PerformanceLevelControl);
                 m_AutoPerformanceLevelController = new AutoPerformanceLevelController(m_DevicePerfControl, PerformanceStatus, ThermalStatus);
       
@@ -181,6 +183,11 @@ namespace UnityEngine.AdaptivePerformance
                 {
                     m_CpuFrameTimeProvider = new CpuTimeProvider();
                     StartCoroutine(InvokeEndOfFrame());
+                }
+
+                if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.GpuFrameTime))
+                {
+                    m_GpuFrameTimeProvider = new GpuTimeProvider();
                 }
 
                 m_TemperatureTrend = new TemperatureTrend(m_Subsystem.Capabilities.HasFlag(Provider.Feature.TemperatureTrend));
@@ -249,8 +256,18 @@ namespace UnityEngine.AdaptivePerformance
             // m_RenderThreadCpuTime uses native plugin event to get CPU time of render thread.
             // We don't want to do this at end of frame because it might introduce an unnecessary sync when GraphicsJobs are used.
             // Alternative would be to use Vulkan native plugin API to configure the event.
-            if (m_CpuFrameTimeProvider != null)
-                m_CpuFrameTimeProvider.LateUpdate();
+            if (m_CpuFrameTimeProvider != null || m_GpuFrameTimeProvider != null)
+            {
+                // InvokeEndOfFrame is not executed in non-render frames, so we make sure to also keep this in sync
+                if (WillCurrentFrameRender())
+                {
+                    if (m_CpuFrameTimeProvider != null)
+                        m_CpuFrameTimeProvider.LateUpdate();
+    
+                    if (m_GpuFrameTimeProvider != null)
+                        m_GpuFrameTimeProvider.Measure();
+                }
+            }
         }
 
         public void Update()
@@ -277,6 +294,17 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
 
+        private void AccumulateTimingValue(ref float accu, float newValue)
+        {
+            if (accu < 0.0f)
+                return; // already invalid
+
+            if (newValue >= 0.0f)
+                accu += newValue;
+            else
+                accu = -1.0f; // set invalid
+        }
+
         private void UpdateSubsystem()
         {
             Provider.PerformanceDataRecord updateResult = m_Subsystem.Update();
@@ -289,11 +317,19 @@ namespace UnityEngine.AdaptivePerformance
             if (!m_JustResumed)
             {
                 // Update overall frame time
-                m_OverallFrameTime.AddValue(m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime) ? updateResult.OverallFrameTime : Time.unscaledDeltaTime);
-                AddNonNegativeValue(m_GpuFrameTime, updateResult.GpuFrameTime);
-                AddNonNegativeValue(m_CpuFrameTime, m_CpuFrameTimeProvider != null ? m_CpuFrameTimeProvider.CpuFrameTime : updateResult.CpuFrameTime);
+                if (!m_UseProviderOverallFrameTime)
+                    AccumulateTimingValue(ref m_OverallFrameTimeAccu, Time.unscaledDeltaTime);
+
+                if (WillCurrentFrameRender())
+                {
+                    AddNonNegativeValue(m_OverallFrameTime, m_UseProviderOverallFrameTime ? updateResult.OverallFrameTime : m_OverallFrameTimeAccu);
+                    AddNonNegativeValue(m_GpuFrameTime, m_GpuFrameTimeProvider == null ? updateResult.GpuFrameTime : m_GpuFrameTimeProvider.GpuFrameTime);
+                    AddNonNegativeValue(m_CpuFrameTime, m_CpuFrameTimeProvider == null ? updateResult.CpuFrameTime : m_CpuFrameTimeProvider.CpuFrameTime);
+
+                    m_OverallFrameTimeAccu = 0.0f;
+                }
+
                 m_TemperatureTrend.Update(updateResult.TemperatureTrend, updateResult.TemperatureLevel, updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel), Time.time);
-               
             }
             else
             {
@@ -304,20 +340,26 @@ namespace UnityEngine.AdaptivePerformance
             m_ThermalMetrics.TemperatureTrend = m_TemperatureTrend.ThermalTrend;
 
             // Update frame timing info and calculate performance bottleneck
-            m_FrameTiming.AverageFrameTime = m_OverallFrameTime.GetAverage();
-            m_FrameTiming.CurrentFrameTime = m_OverallFrameTime.GetMostRecentValue();
-            m_FrameTiming.AverageGpuFrameTime = m_GpuFrameTime.GetAverage();
-            m_FrameTiming.CurrentGpuFrameTime = m_GpuFrameTime.GetMostRecentValue();
-            m_FrameTiming.AverageCpuFrameTime = m_CpuFrameTime.GetAverage();
-            m_FrameTiming.CurrentCpuFrameTime = m_CpuFrameTime.GetMostRecentValue();
+            const float invalidTimingValue = -1.0f;
+            m_FrameTiming.AverageFrameTime = m_OverallFrameTime.GetAverageOr(invalidTimingValue);
+            m_FrameTiming.CurrentFrameTime = m_OverallFrameTime.GetMostRecentValueOr(invalidTimingValue);
+            m_FrameTiming.AverageGpuFrameTime = m_GpuFrameTime.GetAverageOr(invalidTimingValue);
+            m_FrameTiming.CurrentGpuFrameTime = m_GpuFrameTime.GetMostRecentValueOr(invalidTimingValue);
+            m_FrameTiming.AverageCpuFrameTime = m_CpuFrameTime.GetAverageOr(invalidTimingValue);
+            m_FrameTiming.CurrentCpuFrameTime = m_CpuFrameTime.GetMostRecentValueOr(invalidTimingValue);
 
             float targerFrameRate = EffectiveTargetFrameRate();
             float targetFrameTime = -1.0f;
             if (targerFrameRate > 0)
                 targetFrameTime = 1.0f / targerFrameRate;
 
+            bool triggerPerformanceBottleneckChangeEvent = false;
+            bool triggerThermalEventEvent = false;
+            var performanceBottleneckChangeEventArgs = new PerformanceBottleneckChangeEventArgs();
+
             if (m_OverallFrameTime.GetNumValues() == m_OverallFrameTime.GetSampleWindowSize() &&
-                m_GpuFrameTime.GetNumValues() == m_GpuFrameTime.GetSampleWindowSize())
+                m_GpuFrameTime.GetNumValues() == m_GpuFrameTime.GetSampleWindowSize() &&
+                m_CpuFrameTime.GetNumValues() == m_CpuFrameTime.GetSampleWindowSize())
             {
                 PerformanceBottleneck bottleneck = BottleneckUtil.DetermineBottleneck(m_PerformanceMetrics.PerformanceBottleneck, m_FrameTiming.AverageCpuFrameTime,
                     m_FrameTiming.AverageGpuFrameTime, m_FrameTiming.AverageFrameTime, targetFrameTime);
@@ -325,24 +367,15 @@ namespace UnityEngine.AdaptivePerformance
                 if (bottleneck != m_PerformanceMetrics.PerformanceBottleneck)
                 {
                     m_PerformanceMetrics.PerformanceBottleneck = bottleneck;
-                    var args = new PerformanceBottleneckChangeEventArgs();
-                    args.PerformanceBottleneck = bottleneck;
-
-                    if (PerformanceBottleneckChangeEvent != null)
-                        PerformanceBottleneckChangeEvent.Invoke(args);
+                    performanceBottleneckChangeEventArgs.PerformanceBottleneck = bottleneck;
+                    triggerPerformanceBottleneckChangeEvent = (PerformanceBottleneckChangeEvent != null);
                 }
             }
 
-
-            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.WarningLevel) ||
-                updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
-                updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend))
-            {
-                if (ThermalEvent != null)
-                {
-                    ThermalEvent.Invoke(m_ThermalMetrics);
-                }
-            }
+            triggerThermalEventEvent = (ThermalEvent != null) &&
+                (updateResult.ChangeFlags.HasFlag(Provider.Feature.WarningLevel) ||
+                 updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
+                 updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend));
 
             // Update PerformanceControlMode
             if (updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceLevelControl))
@@ -391,6 +424,12 @@ namespace UnityEngine.AdaptivePerformance
             m_PerformanceMetrics.CurrentGpuLevel = m_DevicePerfControl.CurrentGpuLevel;
 
             m_NewUserPerformanceLevelRequest = false;
+
+            // PerformanceLevelChangeEvent triggers before those since it's useful for the user to know when the auto cpu/gpu level controller already made adjustments
+            if (triggerThermalEventEvent)
+                ThermalEvent.Invoke(m_ThermalMetrics);
+            if (triggerPerformanceBottleneckChangeEvent)
+                PerformanceBottleneckChangeEvent(performanceBottleneckChangeEventArgs);
         }
 
         private static float AndroidDefaultFrameRate()
@@ -399,21 +438,43 @@ namespace UnityEngine.AdaptivePerformance
             return 30.0f;
         }
 
+        private static int RenderFrameInterval()
+        {
+#if UNITY_2019_3_OR_NEWER
+            return UnityEngine.Rendering.OnDemandRendering.renderFrameInterval;
+#else
+            return 1;
+#endif
+        }
+
+        private static bool WillCurrentFrameRender()
+        {
+#if UNITY_2019_3_OR_NEWER
+            return UnityEngine.Rendering.OnDemandRendering.willCurrentFrameRender;
+#else
+            return true;
+#endif
+        }
+
         public static float EffectiveTargetFrameRate()
         {
+#if UNITY_2019_3_OR_NEWER && !UNITY_EDITOR
+            return UnityEngine.Rendering.OnDemandRendering.effectiveRenderFrameRate;
+#endif // UNITY_2019_3_OR_NEWER
+
             int vsyncCount = QualitySettings.vSyncCount;
             if (vsyncCount == 0)
             {
                 var targetFrameRate = Application.targetFrameRate;
                 if (targetFrameRate >= 0)
-                    return targetFrameRate;
+                    return ((float)targetFrameRate) / RenderFrameInterval();
 #if UNITY_EDITOR
                 switch(UnityEditor.EditorUserBuildSettings.activeBuildTarget)
                 {
                     default:
                         return -1.0f;
                     case UnityEditor.BuildTarget.Android:
-                        return AndroidDefaultFrameRate();
+                        return AndroidDefaultFrameRate() / RenderFrameInterval();
                 }
 #elif UNITY_ANDROID
                 return AndroidDefaultFrameRate();
@@ -421,8 +482,9 @@ namespace UnityEngine.AdaptivePerformance
                 return -1.0f;
 #endif
             }
-
-            float displayRefreshRate = 60.0f;
+            else
+            {
+                float displayRefreshRate = 60.0f;
 
 #if !UNITY_EDITOR
             int refreshRate = Screen.currentResolution.refreshRate;
@@ -430,7 +492,8 @@ namespace UnityEngine.AdaptivePerformance
                 displayRefreshRate = (float)refreshRate;
 #endif
 
-            return displayRefreshRate / vsyncCount;
+                return displayRefreshRate / (vsyncCount * RenderFrameInterval());
+            }
         }
 
         public void OnDestroy()
@@ -466,6 +529,7 @@ namespace UnityEngine.AdaptivePerformance
         private int m_FrameCount = 0;
 
         private RunningAverage m_OverallFrameTime = new RunningAverage();   // In seconds
+        private float m_OverallFrameTimeAccu = 0.0f;
         private RunningAverage m_GpuFrameTime = new RunningAverage();   // In seconds
         private RunningAverage m_CpuFrameTime = new RunningAverage();   // In seconds
     }
