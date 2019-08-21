@@ -541,8 +541,8 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
                     kpi.packageId = package.name;
 
                     kpi.verifiedVersion = package.versions.verified;
-                    if (string.IsNullOrEmpty(kpi.verifiedVersion))
-                        kpi.verifiedVersion = package.versions.latestCompatible;
+                    if (string.IsNullOrEmpty(kpi.verifiedVersion) || kpi.verifiedVersion.StartsWith("1."))
+                        kpi.verifiedVersion = package.versions.latest;
                     knownPackageInfos.Add(kpi);
                     installablePackages.Add(package.name);
                 }

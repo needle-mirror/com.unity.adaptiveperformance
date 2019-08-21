@@ -40,7 +40,7 @@ namespace UnityEngine.AdaptivePerformance
 
         public StateAction Update()
         {
-            float thermalTrend = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureTrend;;
+            float thermalTrend = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureTrend;
 
             var thermalLevel = Holder.Instance.ThermalStatus.ThermalMetrics.TemperatureLevel;
             var warning = Holder.Instance.ThermalStatus.ThermalMetrics.WarningLevel;

@@ -97,6 +97,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         Dictionary<string, ScalerSettingInformation> m_Scalers = new Dictionary<string, ScalerSettingInformation>();
 
+        bool m_PreviousHierarchyMode;
+
         /// <summary>
         /// Starts the display block of the base settings. Needs to be called if DisplayBaseRuntimeSettings() or DisplayBaseDeveloperSettings() gets called. Needs to be concluded by a call to DisplayBaseSettingsEnd().
         /// </summary>
@@ -109,6 +111,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 return false;
 
             serializedObject.Update();
+
+            m_PreviousHierarchyMode = EditorGUIUtility.hierarchyMode;
+            EditorGUIUtility.hierarchyMode = false;
 
             if (m_LoggingProperty == null)
                 m_LoggingProperty = serializedObject.FindProperty(k_Logging);
@@ -145,6 +150,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
             EditorGUILayout.EndBuildTargetSelectionGrouping(); // Start happens in provider Editor
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();
+
+            EditorGUIUtility.hierarchyMode = m_PreviousHierarchyMode;
 
             serializedObject.ApplyModifiedProperties();
         }
