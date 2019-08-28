@@ -142,9 +142,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
         {
         }
 
-        override public void Destroy()
-        {
-        }
+#if UNITY_2019_3_OR_NEWER
+        protected override void OnDestroy() {}
+#else
+        public override void Destroy() {}
+#endif
 
         private PerformanceDataRecord updateResult;
 
@@ -159,8 +161,14 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public override IApplicationLifecycle ApplicationLifecycle { get { return null; } }
         public override IDevicePerformanceLevelControl PerformanceLevelControl { get { return this; } }
 
+        public int LastRequestedCpuLevel { get; set; }
+        public int LastRequestedGpuLevel { get; set; }
+
         public bool SetPerformanceLevel(int cpuLevel, int gpuLevel)
         {
+            LastRequestedCpuLevel = cpuLevel;
+            LastRequestedGpuLevel = gpuLevel;
+ 
             if (!AcceptsPerformanceLevel)
             {
                 CpuPerformanceLevel = AdaptivePerformance.Constants.UnknownPerformanceLevel;

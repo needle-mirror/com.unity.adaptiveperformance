@@ -349,4 +349,35 @@ class AdaptivePerformanceTests
         Assert.AreEqual(0.3f, metrics.TemperatureLevel, 0.0001f);
         Assert.AreEqual(0.5f, metrics.TemperatureTrend, 0.0001f);
     }
+
+    [UnityTest]
+    public IEnumerator PerformanceLevels_Are_Reapplied_After_Timeout()
+    {
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var ap = AdaptivePerformance.Holder.Instance;
+
+        subsystem.AcceptsPerformanceLevel = true;
+
+        int gpuLevel = 0;
+        int cpuLevel = 0;
+        ap.DevicePerformanceControl.CpuLevel = gpuLevel;
+        ap.DevicePerformanceControl.GpuLevel = cpuLevel;
+
+        yield return null;
+
+        // Samsung Subsystem would do this when "timeout" happens (setLevels changes levels back to default after 10min)
+        subsystem.GpuPerformanceLevel = AdaptivePerformance.Constants.UnknownPerformanceLevel;
+        subsystem.CpuPerformanceLevel = AdaptivePerformance.Constants.UnknownPerformanceLevel;
+
+        // Set to some invalid level so that we can check that new levels are requested
+        int invalidPerformanceLevel = -2;
+        subsystem.LastRequestedCpuLevel = invalidPerformanceLevel;
+        subsystem.LastRequestedGpuLevel = invalidPerformanceLevel;
+
+        yield return null;
+
+        // AdaptivePerformance is supposed to reapply the last settings
+        Assert.AreEqual(cpuLevel, subsystem.LastRequestedCpuLevel);
+        Assert.AreEqual(gpuLevel, subsystem.LastRequestedGpuLevel);
+    }
 }

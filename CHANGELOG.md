@@ -4,6 +4,14 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2019-08-29
+
+### Compatibility with Subsystem 
+- Subsystem API changes in Unity 2019.3
+
+### Change default performance levels
+- The default performance levels are changed to the maximum levels in automatic and manual mode
+
 ## [1.0.0] - 2019-08-19
 
 ### Ensure compatiblity with On Demand Rendering (Unity 2019.3 feature)

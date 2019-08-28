@@ -6,6 +6,11 @@ namespace UnityEngine.AdaptivePerformance
         public DevicePerformanceControlImpl(Provider.IDevicePerformanceLevelControl performanceLevelControl)
         {
             m_PerformanceLevelControl = performanceLevelControl;
+            PerformanceControlMode = PerformanceControlMode.Automatic;
+            CurrentCpuLevel = Constants.UnknownPerformanceLevel;
+            CurrentGpuLevel = Constants.UnknownPerformanceLevel;
+            CpuLevel = Constants.UnknownPerformanceLevel;
+            GpuLevel = Constants.UnknownPerformanceLevel;
         }
 
         public bool Update(out PerformanceLevelChangeEventArgs changeArgs)
@@ -81,7 +86,7 @@ namespace UnityEngine.AdaptivePerformance
 
         public int GpuLevel { get; set; }
 
-        public int CurrentCpuLevel { get; private set; }
-        public int CurrentGpuLevel { get; private set; }
+        public int CurrentCpuLevel { get; set; }
+        public int CurrentGpuLevel { get; set; }
     }
 }

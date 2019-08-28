@@ -192,11 +192,14 @@ namespace UnityEngine.AdaptivePerformance
 
                 m_TemperatureTrend = new TemperatureTrend(m_Subsystem.Capabilities.HasFlag(Provider.Feature.TemperatureTrend));
 
+                // Request maximum performance by default
                 if (m_RequestedCpuLevel == Constants.UnknownPerformanceLevel)
                     m_RequestedCpuLevel = m_DevicePerfControl.MaxCpuPerformanceLevel;
-
                 if (m_RequestedGpuLevel == Constants.UnknownPerformanceLevel)
                     m_RequestedGpuLevel = m_DevicePerfControl.MaxGpuPerformanceLevel;
+
+                // Override to get maximum performance by default in 'auto' mode
+                m_NewUserPerformanceLevelRequest = true;
 
                 if (m_Subsystem.PerformanceLevelControl == null)
                     m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.System;
@@ -309,8 +312,6 @@ namespace UnityEngine.AdaptivePerformance
         {
             Provider.PerformanceDataRecord updateResult = m_Subsystem.Update();
 
-            m_PerformanceMetrics.CurrentCpuLevel = updateResult.CpuPerformanceLevel;
-            m_PerformanceMetrics.CurrentGpuLevel = updateResult.GpuPerformanceLevel;
             m_ThermalMetrics.WarningLevel = updateResult.WarningLevel;
             m_ThermalMetrics.TemperatureLevel = updateResult.TemperatureLevel;
 
@@ -376,6 +377,12 @@ namespace UnityEngine.AdaptivePerformance
                 (updateResult.ChangeFlags.HasFlag(Provider.Feature.WarningLevel) ||
                  updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
                  updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend));
+
+            // The Subsystem may have changed the current levels (e.g. "timeout" of Samsung subsystem)
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.CpuPerformanceLevel))
+                m_DevicePerfControl.CurrentCpuLevel = updateResult.CpuPerformanceLevel;
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.GpuPerformanceLevel))
+                m_DevicePerfControl.CurrentGpuLevel = updateResult.GpuPerformanceLevel;
 
             // Update PerformanceControlMode
             if (updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceLevelControl))
