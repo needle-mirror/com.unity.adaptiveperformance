@@ -144,7 +144,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 if (providerData[i].id == subsystem.SubsystemDescriptor.id) { 
                     providerData[i].version = subsystem.Version.ToString();
-                    providerData[i].enabled = subsystem.running && subsystem.initialized;
+                    providerData[i].enabled = subsystem.initialized;
                 }
             }
             s_AdaptivePerformanceEvent.UpdateFeatureData();
