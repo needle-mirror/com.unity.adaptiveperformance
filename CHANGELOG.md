@@ -4,6 +4,14 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2019-11-07
+
+### Adaptive Performance Simulator and Extension
+- Add Adaptive Performance Simulator and Device Simulator extension to simulate Adaptive Performance events in the editor using the device simulator package. 
+
+### Bump Min supported Version
+- Adaptive Performance Device Simulator extension requires features of Unity 2019 and min support version was updated to 2019.1
+
 ## [1.0.1] - 2019-08-29
 
 ### Compatibility with Subsystem 

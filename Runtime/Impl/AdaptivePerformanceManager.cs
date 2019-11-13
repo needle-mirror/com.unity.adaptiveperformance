@@ -291,7 +291,7 @@ namespace UnityEngine.AdaptivePerformance
                     APLog.Debug("Average GPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageGpuFrameTime * 1000.0f, m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
                     APLog.Debug("Average CPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageCpuFrameTime * 1000.0f, m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
                     APLog.Debug("Average frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageFrameTime * 1000.0f, m_FrameTiming.CurrentFrameTime * 1000.0f);
-                    APLog.Debug("Bottleneck {0}", m_PerformanceMetrics.PerformanceBottleneck);
+                    APLog.Debug("Bottleneck {0}, ThermalTrend {1}", m_PerformanceMetrics.PerformanceBottleneck, m_ThermalMetrics.TemperatureTrend);
                     APLog.Debug("FPS = {0}", 1.0f / m_FrameTiming.AverageFrameTime);
                 }
             }
@@ -334,7 +334,7 @@ namespace UnityEngine.AdaptivePerformance
             }
             else
             {
-                m_TemperatureTrend.Reset(updateResult.TemperatureTrend, updateResult.TemperatureLevel, Time.time);
+                m_TemperatureTrend.Reset();
                 m_JustResumed = false;
             }
 
@@ -467,7 +467,7 @@ namespace UnityEngine.AdaptivePerformance
         {
 #if UNITY_2019_3_OR_NEWER && !UNITY_EDITOR
             return UnityEngine.Rendering.OnDemandRendering.effectiveRenderFrameRate;
-#endif // UNITY_2019_3_OR_NEWER
+#else
 
             int vsyncCount = QualitySettings.vSyncCount;
             if (vsyncCount == 0)
@@ -501,6 +501,7 @@ namespace UnityEngine.AdaptivePerformance
 
                 return displayRefreshRate / (vsyncCount * RenderFrameInterval());
             }
+#endif // UNITY_2019_3_OR_NEWER
         }
 
         public void OnDestroy()
