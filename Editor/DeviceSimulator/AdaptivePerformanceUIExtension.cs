@@ -140,12 +140,12 @@ namespace UnityEditor.AdaptivePerformance
                 if (newCPULevel < cpuLevel.lowValue)
                 {
                     newCPULevel = cpuLevel.lowValue;
-                    cpuLevelField.value = newCPULevel;
+                    cpuLevelField.SetValueWithoutNotify(newCPULevel);
                 }
                 if (newCPULevel > cpuLevel.highValue)
                 {
                     newCPULevel = cpuLevel.highValue;
-                    cpuLevelField.value = newCPULevel;
+                    cpuLevelField.SetValueWithoutNotify(newCPULevel);
                 }
 
                 cpuLevel.value = newCPULevel;
@@ -173,12 +173,12 @@ namespace UnityEditor.AdaptivePerformance
                 if (newGPULevel < gpuLevel.lowValue)
                 {
                     newGPULevel = gpuLevel.lowValue;
-                    gpuLevelField.value = newGPULevel;
+                    gpuLevelField.SetValueWithoutNotify(newGPULevel);
                 }
                 if (newGPULevel > gpuLevel.highValue)
                 {
                     newGPULevel = gpuLevel.highValue;
-                    gpuLevelField.value = newGPULevel;
+                    gpuLevelField.SetValueWithoutNotify(newGPULevel);
                 }
 
                 gpuLevel.value = newGPULevel;
@@ -217,7 +217,6 @@ namespace UnityEditor.AdaptivePerformance
             });
 
             EditorApplication.playModeStateChanged += LogPlayModeState;
-            statusFlag.visible = true;
             thermalFoldout.SetEnabled(false);
             performanceFoldout.SetEnabled(false);
             developerFoldout.SetEnabled(false);
@@ -246,7 +245,8 @@ namespace UnityEditor.AdaptivePerformance
         {
             if (state == PlayModeStateChange.EnteredPlayMode)
             {
-                statusFlag.SetEnabled(false);
+                statusFlag.style.visibility = Visibility.Hidden;
+                statusFlag.style.position = Position.Absolute;
                 thermalFoldout.SetEnabled(true);
                 performanceFoldout.SetEnabled(true);
                 developerFoldout.SetEnabled(true);
@@ -254,7 +254,8 @@ namespace UnityEditor.AdaptivePerformance
             }
             else
             {
-                statusFlag.SetEnabled(true);
+                statusFlag.style.visibility = Visibility.Visible;
+                statusFlag.style.position = Position.Relative;
                 thermalFoldout.SetEnabled(false);
                 performanceFoldout.SetEnabled(false);
                 developerFoldout.SetEnabled(false);
@@ -289,12 +290,25 @@ namespace UnityEditor.AdaptivePerformance
             bottleneck.value = perfMetrics.PerformanceBottleneck;
             devLogging.value = devSettings.Logging;
             devLoggingFrequency.value = devSettings.LoggingFrequencyInFrames;
+            // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
+            SetBottleneck((PerformanceBottleneck)bottleneck.value, Subsystem());
         }
 
         private void SetBottleneck(PerformanceBottleneck performanceBottleneck, SimulatorAdaptivePerformanceSubsystem subsystem)
         {
-            var currentTargetFramerateHalfMS = 1.0f / Application.targetFrameRate / 2.0f;
-            var currentTargetFramerateMS = 1.0f / Application.targetFrameRate;
+            if (subsystem == null)
+                return;
+
+            var targetFrameRate = Application.targetFrameRate;
+
+            // default target framerate is -1 to use default platform framerate so we assume it's 60
+            if(targetFrameRate == -1)
+            {
+                targetFrameRate = 60;
+            }
+
+            var currentTargetFramerateHalfMS = 1.0f / targetFrameRate / 2.0f;
+            var currentTargetFramerateMS = 1.0f / targetFrameRate;
             switch (performanceBottleneck)
             {
                 case PerformanceBottleneck.CPU: // averageOverallFrametime > targetFramerate && averageCpuFrametime >= averageOverallFrametime
