@@ -31,6 +31,21 @@ static class AdaptivePerformanceConfig
 }
 ```
 
+Unity enables AdaptivePerformance by default once you install the package and if it finds a suitable subsystem. To disable Adaptive Performance, use the `UnityEngine.AdaptivePerformance.StartupSettings.Logging` flag:
+
+```
+static class AdaptivePerformanceConfig
+{
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void Setup()
+	{
+		UnityEngine.AdaptivePerformance.StartupSettings.Enable = false;
+    }
+}
+```
+
+For a description of the detailed startup behavior of a subsystem please read the subsystem documentation.   
+
 ## Performance Status
 
 Adaptive Performance tracks several performance metrics and updates them every frame. To access these metrics, use the `Instance.PerformanceStatus`property.
@@ -144,6 +159,7 @@ This section includes the revision history of the document. The revision history
  
 |Date|Reason|
 |---|---|
+|December 13, 2019|Update of the section: Using Adaptive Performance.|
 |July 04, 2019|Chief Technical Editor reviewed.|
 |June 21, 2019|Technical writer reviewed.|
 |June 17, 2019|Work in progress for 1.0 release.|

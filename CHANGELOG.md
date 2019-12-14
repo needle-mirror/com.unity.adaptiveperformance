@@ -6,11 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [1.1.0] - 2019-11-07
 
-### Adaptive Performance Simulator and Extension
-- Add Adaptive Performance Simulator and Device Simulator extension to simulate Adaptive Performance events in the editor using the device simulator package. 
-
-### Bump Min supported Version
-- Adaptive Performance Device Simulator extension requires features of Unity 2019 and min support version was updated to 2019.1
+### Fix warnings and logging
+- Fixed initial version log to represent the correct version (subsystem)
+- Fixed non reachable code warning. 
 
 ## [1.0.1] - 2019-08-29
 

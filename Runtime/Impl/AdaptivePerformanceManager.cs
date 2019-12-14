@@ -130,7 +130,7 @@ namespace UnityEngine.AdaptivePerformance
             {
                 m_Subsystem = subsystem;
 
-                APLog.Debug("version={0}", m_Subsystem.Version);
+                APLog.Debug("Subsystem version={0}", m_Subsystem.Version);
 
                 return true;
             }
@@ -147,7 +147,10 @@ namespace UnityEngine.AdaptivePerformance
             APLog.enabled = StartupSettings.Logging;
             LoggingFrequencyInFrames = StartupSettings.StatsLoggingFrequencyInFrames;
             if (!StartupSettings.Enable)
+            {
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
                 return;
+            }
 
             if (InitializeSubsystem(StartupSettings.PreferredSubsystem))
             {
@@ -214,10 +217,12 @@ namespace UnityEngine.AdaptivePerformance
 
                 UpdateSubsystem();
             }
+            AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
         }
 
         private void LogThermalEvent(ThermalMetrics ev)
         {
+            AdaptivePerformanceAnalytics.SendAdaptivePerformanceThermalEvent(ev);
             APLog.Debug("[thermal event] temperature level: {0}, warning level: {1}, thermal trend: {2}", ev.TemperatureLevel, ev.WarningLevel, ev.TemperatureTrend);
         }
 
