@@ -1,0 +1,25 @@
+{
+    "name": "Unity.AdaptivePerformance.Simulator.Extension",
+    "references": [
+        "GUID:e091ee923bff9460cb43c3f7d5553e73",
+        "GUID:7dbf32976982c98448af054f2512cb79",
+        "GUID:4e3d788a04c14f749821b3416e12f019"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.device-simulator",
+            "expression": "",
+            "define": "DEVICE_SIMULATOR_ENABLED"
+        }
+    ],
+    "noEngineReferences": false
+}

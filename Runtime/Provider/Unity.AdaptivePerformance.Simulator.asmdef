@@ -1,0 +1,17 @@
+{
+    "name": "Unity.AdaptivePerformance.Simulator",
+    "references": [
+        "Unity.AdaptivePerformance"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
