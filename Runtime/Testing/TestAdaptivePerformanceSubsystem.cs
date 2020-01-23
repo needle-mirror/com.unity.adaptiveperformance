@@ -148,7 +148,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public override void Destroy() {}
 #endif
 
-        private PerformanceDataRecord updateResult;
+        private PerformanceDataRecord updateResult = new PerformanceDataRecord();
 
         override public PerformanceDataRecord Update()
         {

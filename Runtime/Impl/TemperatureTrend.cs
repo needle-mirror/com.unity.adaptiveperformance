@@ -138,7 +138,6 @@ namespace UnityEngine.AdaptivePerformance
 
             if (newTemperatureTimestamp - oldestTimeStamp > MaxTimeSeconds)
             {
-                float oldestTemperature = m_Temperature[m_OldestValueIndex];
                 PopOldestValue();
                 updateTrend = true;
             }

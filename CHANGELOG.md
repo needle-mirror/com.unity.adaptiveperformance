@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fix warnings and logging
 - Fixed initial version log to represent the correct version (subsystem)
 - Fixed non reachable code warning. 
+- Fixed .net 3.5 breaking warning of unused variables and unassigned variables. 
 
 ## [1.0.1] - 2019-08-29
 
