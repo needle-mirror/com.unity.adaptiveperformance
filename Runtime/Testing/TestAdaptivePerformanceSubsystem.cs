@@ -3,15 +3,24 @@ using UnityEngine.Scripting;
 
 namespace UnityEngine.AdaptivePerformance.Provider
 {
+    /// <summary>
+    /// Only for internal use. The subsystem is used for tests only and simulates adaptive performance events. 
+    /// </summary>
     [Preserve]
     public class TestAdaptivePerformanceSubsystem : AdaptivePerformanceSubsystem, IDevicePerformanceLevelControl
     {
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public Feature ChangeFlags
         {
             get { return updateResult.ChangeFlags; }
             set { updateResult.ChangeFlags = value; }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float TemperatureLevel
         {
             get { return updateResult.TemperatureLevel; }
@@ -22,6 +31,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float TemperatureTrend
         {
             get { return updateResult.TemperatureTrend; }
@@ -32,6 +44,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public WarningLevel WarningLevel
         {
             get { return updateResult.WarningLevel; }
@@ -42,6 +57,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int CpuPerformanceLevel
         {
             get { return updateResult.CpuPerformanceLevel; }
@@ -52,6 +70,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int GpuPerformanceLevel
         {
             get { return updateResult.GpuPerformanceLevel; }
@@ -62,6 +83,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextGpuFrameTime
         {
             get { return updateResult.GpuFrameTime; }
@@ -71,6 +95,10 @@ namespace UnityEngine.AdaptivePerformance.Provider
                 updateResult.ChangeFlags |= Provider.Feature.GpuFrameTime;
             }
         }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextCpuFrameTime
         {
             get { return updateResult.CpuFrameTime; }
@@ -81,6 +109,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextOverallFrameTime
         {
             get { return updateResult.OverallFrameTime; }
@@ -91,6 +122,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public bool AcceptsPerformanceLevel
         {
             get { return updateResult.PerformanceLevelControlAvailable; }
@@ -101,6 +135,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override Version Version
         {
             get
@@ -108,7 +145,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
                 return new Version(1, 0);
             }
         }
- 
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         public static TestAdaptivePerformanceSubsystem Initialize()
         {
             var desc = RegisterDescriptor();
@@ -118,14 +159,27 @@ namespace UnityEngine.AdaptivePerformance.Provider
             return subsystem as TestAdaptivePerformanceSubsystem;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int MaxCpuPerformanceLevel { get { return 4; } }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int MaxGpuPerformanceLevel { get { return 2; } }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public Feature InitCapabilities
         {
             set { Capabilities = value; }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public TestAdaptivePerformanceSubsystem()
         {
             Capabilities = Feature.CpuPerformanceLevel | Feature.GpuPerformanceLevel | Feature.PerformanceLevelControl |
@@ -133,23 +187,39 @@ namespace UnityEngine.AdaptivePerformance.Provider
             updateResult.PerformanceLevelControlAvailable = true;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         override public void Start()
         {
             initialized = true;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         override public void Stop()
         {
         }
 
 #if UNITY_2019_3_OR_NEWER
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         protected override void OnDestroy() {}
 #else
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override void Destroy() {}
 #endif
 
         private PerformanceDataRecord updateResult = new PerformanceDataRecord();
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         override public PerformanceDataRecord Update()
         {
             updateResult.ChangeFlags &= Capabilities;
@@ -158,12 +228,31 @@ namespace UnityEngine.AdaptivePerformance.Provider
             return result;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override IApplicationLifecycle ApplicationLifecycle { get { return null; } }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override IDevicePerformanceLevelControl PerformanceLevelControl { get { return this; } }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int LastRequestedCpuLevel { get; set; }
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int LastRequestedGpuLevel { get; set; }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <param name="cpuLevel"></param>
+        /// <param name="gpuLevel"></param>
+        /// <returns></returns>
         public bool SetPerformanceLevel(int cpuLevel, int gpuLevel)
         {
             LastRequestedCpuLevel = cpuLevel;

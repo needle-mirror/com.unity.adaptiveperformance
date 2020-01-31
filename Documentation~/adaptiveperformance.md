@@ -151,7 +151,7 @@ public void ExitMenu()
 # Technical details
 ## Requirements
 
-This version of Adaptive Performance is compatible with Unity Editor versions 2018.3 and later (2019.1 and later recommended).
+This version of Adaptive Performance is compatible with Unity Editor versions 2018 LTS and later (2019 LTS and later recommended).
 To use Adaptive Performance, you must have at least one subsystem installed. See the [Installing Adaptive Performance](#installing-adaptive-performance) section in this documentation for more details.
 
 ## Document revision history

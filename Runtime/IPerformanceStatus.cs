@@ -2,13 +2,26 @@ using System;
 
 namespace UnityEngine.AdaptivePerformance
 {
+    /// <summary>
+    /// Performance bottleneck change event arguments used in the <see cref="PerformanceBottleneckChangeHandler"/>. 
+    /// </summary>
     public struct PerformanceBottleneckChangeEventArgs
     {
+        /// <summary>
+        /// The performance bottleneck reported in the event. 
+        /// </summary>
         public PerformanceBottleneck PerformanceBottleneck { get; set; }
     }
 
+    /// <summary>
+    /// You can subscribe to the bottleneck event delegate which sends the <see cref="PerformanceBottleneckChangeEventArgs"/> when the bottleneck changes. 
+    /// </summary>
+    /// <param name="bottleneckEventArgs">The <see cref="PerformanceBottleneckChangeEventArgs"/> describing the performance bottleneck state.</param>
     public delegate void PerformanceBottleneckChangeHandler(PerformanceBottleneckChangeEventArgs bottleneckEventArgs);
 
+    /// <summary>
+    /// Performance level change event arguments used in the <see cref="PerformanceLevelChangeHandler"/>. 
+    /// </summary>
     public struct PerformanceLevelChangeEventArgs
     {
         /// <summary>
@@ -44,8 +57,15 @@ namespace UnityEngine.AdaptivePerformance
         public bool ManualOverride { get; set; }
     }
 
+    /// <summary>
+    /// You can subscribe to the performance level event delegate which sends the <see cref="PerformanceLevelChangeEventArgs"/> when the performance level changes.
+    /// </summary>
+    /// <param name="levelChangeEventArgs">The performance level change event is sent to the delegate via the level change event argument.</param>
     public delegate void PerformanceLevelChangeHandler(PerformanceLevelChangeEventArgs levelChangeEventArgs);
 
+    /// <summary>
+    /// You can use the performance status interface to obtain performance metrics, frame timing, and subscribe to bottleneck and performance event changes. 
+    /// </summary>
     public interface IPerformanceStatus
     {
         /// <summary>
@@ -69,6 +89,9 @@ namespace UnityEngine.AdaptivePerformance
         event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
     }
 
+    /// <summary>
+    /// PerformanceMetrics store the current bottleneck, CPU, and GPU levels 
+    /// </summary>
     public struct PerformanceMetrics
     {
         /// <summary>
@@ -93,6 +116,9 @@ namespace UnityEngine.AdaptivePerformance
         public PerformanceBottleneck PerformanceBottleneck { get; set; }
     }
 
+    /// <summary>
+    /// FrameTiming stores timing information about CPU, GPU, and the overall frame time. 
+    /// </summary>
     public struct FrameTiming
     {
         /// <summary>
@@ -148,6 +174,9 @@ namespace UnityEngine.AdaptivePerformance
         public float AverageCpuFrameTime { get; set; }
     }
 
+    /// <summary>
+    /// The performance bottleneck enum is used to describe what the system is currently limited by. 
+    /// </summary>
     public enum PerformanceBottleneck
     {
         /// <summary>

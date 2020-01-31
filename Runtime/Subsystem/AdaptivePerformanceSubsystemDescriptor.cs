@@ -21,6 +21,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
     [Preserve]
     internal static class AdaptivePerformanceSubsystemRegistry
     {
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <param name="cinfo"></param>
+        /// <returns></returns>
         public static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor(AdaptivePerformanceSubsystemDescriptor.Cinfo cinfo)
         {
             var desc = new AdaptivePerformanceSubsystemDescriptor(cinfo);
@@ -40,6 +45,10 @@ namespace UnityEngine.AdaptivePerformance.Provider
             return null;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         public static List<AdaptivePerformanceSubsystemDescriptor> GetRegisteredDescriptors()
         {
             var perfDescriptors = new List<AdaptivePerformanceSubsystemDescriptor>();
@@ -49,16 +58,31 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
 #else
-
+    /// <summary>
+    /// Used as Subsystem base class for backwards comptibility. 
+    /// </summary>
     [Preserve]
     public class AdaptivePerformanceSubsystemDescriptorBase
     {
+        /// <summary>
+        /// Creates a subsystem and registers it in Unity used for backwards comptibility. 
+        /// </summary>
+        /// <returns></returns>
         public AdaptivePerformanceSubsystem Create()
         {
             return Activator.CreateInstance(subsystemImplementationType) as AdaptivePerformanceSubsystem;
         }
 
+        /// <summary>
+        /// ID of the subsystem in human readable form. 
+        /// </summary>
+        /// <returns></returns>
         public string id { get; set; }
+
+        /// <summary>
+        /// Implementation type of the subsystem. 
+        /// </summary>
+        /// <returns></returns>
         public Type subsystemImplementationType { get; set; }
     }
 
@@ -88,22 +112,42 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
 #endif
-
+    /// <summary>
+    /// The Adaptive Performance Subsystem Descriptor is used for describing the subsystem so it can be picked up by the subsystem management system. 
+    /// </summary>
     [Preserve]
     public sealed class AdaptivePerformanceSubsystemDescriptor : AdaptivePerformanceSubsystemDescriptorBase
     {
+        /// <summary>
+        /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during initialization of the subsystem. 
+        /// </summary>
         public struct Cinfo
         {
+            /// <summary>
+            /// The ID stores the name of the subsystem used to identify it in the subsystem registry. 
+            /// </summary>
             public string id { get; set; }
+            /// <summary>
+            /// The subsystem implementation type stores the the type used for initialization in the subsystem registry. 
+            /// </summary>
             public Type subsystemImplementationType { get; set; }
         }
 
+        /// <summary>
+        /// Constructor to fill the subsystem descriptor with all information to register the subsystem successfully.
+        /// </summary>
+        /// <param name="cinfo">Pass in the information about the subsystem.</param>
         public AdaptivePerformanceSubsystemDescriptor(Cinfo cinfo)
         {
             id = cinfo.id;
             subsystemImplementationType = cinfo.subsystemImplementationType;
         }
 
+        /// <summary>
+        /// Register the subsystem with the subsystem registry and make it available to use during runtime.
+        /// </summary>
+        /// <param name="cinfo">Pass in the information about the subsystem.</param>
+        /// <returns>Returns an active subsytem descriptor.</returns>
         public static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor(Cinfo cinfo)
         {
             return AdaptivePerformanceSubsystemRegistry.RegisterDescriptor(cinfo);

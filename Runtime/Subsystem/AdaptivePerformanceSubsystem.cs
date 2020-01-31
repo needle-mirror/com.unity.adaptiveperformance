@@ -52,6 +52,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
         OverallFrameTime = 0x100
     }
 
+    /// <summary>
+    /// The performance data record stores all information about the thermal and performance status and uses it to deliver it from the provider subsystem to Adaptive Performance for further processing. 
+    /// </summary>
     public struct PerformanceDataRecord
     {
         /// <summary>
@@ -129,6 +132,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public float OverallFrameTime { get; set; }
     }
 
+    /// <summary>
+    /// The interface describes how the Adaptive Performance provider lifecycle behaves. 
+    /// </summary>
     public interface IApplicationLifecycle
     {
         /// <summary>
@@ -144,6 +150,9 @@ namespace UnityEngine.AdaptivePerformance.Provider
         void ApplicationResume();
     }
 
+    /// <summary>
+    /// The device performance level control lets you change CPU and GPU levels and informs you about the current levels.
+    /// </summary>
     public interface IDevicePerformanceLevelControl
     {
         /// <summary>
@@ -178,8 +187,14 @@ namespace UnityEngine.AdaptivePerformance.Provider
         bool SetPerformanceLevel(int cpu, int gpu);
     }
 
+    /// <summary>
+    /// Use the Adaptive Performance Subsystem class to create your custom provider subsystem to deliver data from your provider to Adaptive Performance.
+    /// </summary>
     public abstract class AdaptivePerformanceSubsystem : AdaptivePerformanceSubsystemBase
     {
+        /// <summary>
+        /// Main constructor, not used in the subsystem specifically.
+        /// </summary>
         protected AdaptivePerformanceSubsystem()
         {
         }
@@ -231,29 +246,56 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
 #if UNITY_2019_2_OR_NEWER
-
-public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Subsystem<AdaptivePerformanceSubsystemDescriptor>
-{
-    override public bool running { get { return initialized; } }
-    public bool initialized { get; protected set; } 
-}
+    /// <summary>
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
+    /// </summary>
+    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Subsystem<AdaptivePerformanceSubsystemDescriptor>
+    {
+        /// <summary>
+        /// Returns if the provider subsystem is currently running. 
+        /// </summary>
+        override public bool running { get { return initialized; } }
+        /// <summary>
+        /// Returns if the provider subsystem was initialized successfully. 
+        /// </summary>
+        public bool initialized { get; protected set; } 
+    }
 
 #elif UNITY_2018_3_OR_NEWER
-
-public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Experimental.Subsystem<AdaptivePerformanceSubsystemDescriptor>
-{
-    public bool initialized { get; protected set; } 
-}
+    /// <summary>
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
+    /// </summary>
+    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Experimental.Subsystem<AdaptivePerformanceSubsystemDescriptor>
+    {
+        /// <summary>
+        /// Returns if the provider subsystem was initialized successfully. 
+        /// </summary>
+        public bool initialized { get; protected set; } 
+    }
 
 #else
-
-public abstract class AdaptivePerformanceSubsystemBase
-{
-    public abstract void Start();
-    public abstract void Stop();
-    public abstract void Destroy();
-    public bool initialized { get; protected set; } 
-}
+    /// <summary>
+    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability. 
+    /// </summary>
+    public abstract class AdaptivePerformanceSubsystemBase
+    {
+        /// <summary>
+        /// Called when the provider subsystem starts. 
+        /// </summary>
+        public abstract void Start();
+        /// <summary>
+        /// Called when the provider subsystem stops. 
+        /// </summary>
+        public abstract void Stop();
+        /// <summary>
+        /// Called when the provider subsystem gets destroyed. 
+        /// </summary>
+        public abstract void Destroy();
+        /// <summary>
+        /// Returns if the provider subsystem was initialized successfully. 
+        /// </summary>
+        public bool initialized { get; protected set; } 
+    }
 
 #endif
 
