@@ -3,6 +3,8 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
+using UnityEngine.AdaptivePerformance.Simulator;
+
 using AdaptivePerformance = UnityEngine.AdaptivePerformance;
 
 public static class AdaptivePerformanceTestSetup
@@ -12,7 +14,8 @@ public static class AdaptivePerformanceTestSetup
     {
         AdaptivePerformance.StartupSettings.Enable = true;
         AdaptivePerformance.StartupSettings.Logging = false;
-        AdaptivePerformance.StartupSettings.PreferredSubsystem = AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem.Initialize();
+        AdaptivePerformance.StartupSettings.PreferredSubsystem = SimulatorAdaptivePerformanceSubsystem.Initialize();
+
         AdaptivePerformance.StartupSettings.AutomaticPerformanceControl = false;
     }
 }
@@ -23,7 +26,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Applies_Cpu_Level()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = true;
@@ -41,7 +44,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Applies_Gpu_Level()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = true;
@@ -59,7 +62,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Unknown_GpuLevel_In_Throttling_State()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = false;
@@ -76,7 +79,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Unknown_CpuLevel_In_Throttling_State()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = false;
@@ -92,7 +95,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Ignores_Invalid_Cpu_Level()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = true;
@@ -108,7 +111,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Ignores_Invalid_Gpu_Level()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = true;
@@ -124,7 +127,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator TemperatureChangeEvent_Values_Are_Applied()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.TemperatureLevel = 0.0f;
@@ -139,7 +142,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator WarningLevel_Is_Applied()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.WarningLevel = AdaptivePerformance.WarningLevel.ThrottlingImminent;
@@ -164,7 +167,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Provider_FrameTimes_Work()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.NextGpuFrameTime = 0.033f;
@@ -184,7 +187,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator GpuBound_When_GpuTime_Is_High()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         for (int i = 0; i < AdaptivePerformance.Constants.DefaultAverageFrameCount; ++i)
@@ -201,7 +204,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator CpuBound_When_CpuTime_Is_High()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         for (int i = 0; i < AdaptivePerformance.Constants.DefaultAverageFrameCount; ++i)
@@ -218,7 +221,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Unknown_Bottleneck_When_GpuTime_And_CpuTime_Are_Equal()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         for (int i = 0; i < AdaptivePerformance.Constants.DefaultAverageFrameCount; ++i)
@@ -235,7 +238,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator Bottleneck_TargetFrameRate_Works()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         for (int i = 0; i < AdaptivePerformance.Constants.DefaultAverageFrameCount; ++i)
@@ -252,7 +255,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator PerformanceBottleneckChangeEvent_Works()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         for (int i = 0; i < AdaptivePerformance.Constants.DefaultAverageFrameCount; ++i)
@@ -290,7 +293,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator PerformanceLevelChangeEvent_Works()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         var ctrl = ap.DevicePerformanceControl;
@@ -330,7 +333,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator ThermalEvent_Works()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
         var thermals = ap.ThermalStatus;
        
@@ -353,7 +356,7 @@ class AdaptivePerformanceTests
     [UnityTest]
     public IEnumerator PerformanceLevels_Are_Reapplied_After_Timeout()
     {
-        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as AdaptivePerformance.Provider.TestAdaptivePerformanceSubsystem;
+        var subsystem = AdaptivePerformance.StartupSettings.PreferredSubsystem as SimulatorAdaptivePerformanceSubsystem;
         var ap = AdaptivePerformance.Holder.Instance;
 
         subsystem.AcceptsPerformanceLevel = true;

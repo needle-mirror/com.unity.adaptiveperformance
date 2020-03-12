@@ -10,7 +10,7 @@ using UnityEngine.AdaptivePerformance;
 
 namespace UnityEditor.AdaptivePerformance
 {
-    public class AdaptivePerformanceUIExtension : IDeviceSimulatorExtension
+    public class AdaptivePerformanceUIExtension : IDeviceSimulatorExtension, ISerializationCallbackReceiver
     {
         public string extensionTitle { get { return "Adaptive Performance"; } }
 
@@ -19,19 +19,19 @@ namespace UnityEditor.AdaptivePerformance
             m_ExtensionFoldout = visualElement as Foldout;
             Assert.IsNotNull(m_ExtensionFoldout);
 
-            m_ExtensionFoldout.value = true;
-
             var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/AdaptivePerformanceExtension.uxml");
             m_ExtensionFoldout.Add(tree.CloneTree());
 
-            m_StatusFlag = m_ExtensionFoldout.Q<TextField>("flag-status");
+            //m_StatusFlag = m_ExtensionFoldout.Q<TextField>("flag-status");
             m_ThermalFoldout = m_ExtensionFoldout.Q<Foldout>("thermal");
+            m_ThermalFoldout.value = m_SerializationStates.thermalFoldout;
             m_WarningLevel = m_ExtensionFoldout.Q<EnumField>("thermal-warning-level");
             m_TemperatureLevel = m_ExtensionFoldout.Q<Slider>("thermal-temperature-level");
             m_TemperatureLevelField = m_ExtensionFoldout.Q<FloatField>("thermal-temperature-level-field");
             m_TemperatureTrend = m_ExtensionFoldout.Q<Slider>("thermal-temperature-trend");
             m_TemperatureTrendField = m_ExtensionFoldout.Q<FloatField>("thermal-temperature-trend-field");
             m_PerformanceFoldout = m_ExtensionFoldout.Q<Foldout>("performance");
+            m_PerformanceFoldout.value = m_SerializationStates.performanceFoldout;
             m_ControlAutoMode = m_ExtensionFoldout.Q<Toggle>("performance-control-auto-mode");
             m_CpuLevel = m_ExtensionFoldout.Q<SliderInt>("performance-cpu-level");
             m_CpuLevelField = m_ExtensionFoldout.Q<IntegerField>("performance-cpu-level-field");
@@ -41,7 +41,7 @@ namespace UnityEditor.AdaptivePerformance
             m_DevLogging = m_ExtensionFoldout.Q<Toggle>("developer-logging");
             m_DevLoggingFrequency = m_ExtensionFoldout.Q<IntegerField>("developer-logging-frequency");
             m_DeveloperFoldout = m_ExtensionFoldout.Q<Foldout>("developer-options");
-
+            m_DeveloperFoldout.value = m_SerializationStates.developerFoldout;
 
             m_WarningLevel.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
@@ -122,17 +122,22 @@ namespace UnityEditor.AdaptivePerformance
 
                 var ctrl = ap.DevicePerformanceControl;
                 ctrl.AutomaticPerformanceControl = evt.newValue;
-            });
-            m_CpuLevel.RegisterCallback<ChangeEvent<int>>(evt =>
-            {
-                // sync value field
-                m_CpuLevelField.value = evt.newValue;
 
                 SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
                 if (subsystem == null)
                     return;
 
-                subsystem.CpuPerformanceLevel = evt.newValue;
+                subsystem.AcceptsPerformanceLevel = true;
+            });
+            m_CpuLevel.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                // sync value field
+                m_CpuLevelField.value = evt.newValue;
+             
+                var ap = Holder.Instance;
+                if (ap == null)
+                    return;
+                ap.DevicePerformanceControl.CpuLevel = evt.newValue;
             });
             m_CpuLevelField.RegisterCallback<ChangeEvent<int>>(evt =>
             {
@@ -150,22 +155,20 @@ namespace UnityEditor.AdaptivePerformance
 
                 m_CpuLevel.value = newCPULevel;
 
-                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
-                if (subsystem == null)
+                var ap = Holder.Instance;
+                if (ap == null)
                     return;
-
-                subsystem.CpuPerformanceLevel = newCPULevel;
+                ap.DevicePerformanceControl.CpuLevel = newCPULevel;
             });
             m_GpuLevel.RegisterCallback<ChangeEvent<int>>(evt =>
             {
                 // sync value field
                 m_GpuLevelField.value = evt.newValue;
 
-                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
-                if (subsystem == null)
+                var ap = Holder.Instance;
+                if (ap == null)
                     return;
-
-                subsystem.GpuPerformanceLevel = evt.newValue;
+                ap.DevicePerformanceControl.GpuLevel = evt.newValue;
             });
             m_GpuLevelField.RegisterCallback<ChangeEvent<int>>(evt =>
             {
@@ -182,12 +185,12 @@ namespace UnityEditor.AdaptivePerformance
                 }
 
                 m_GpuLevel.value = newGPULevel;
-
-                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
-                if (subsystem == null)
+           
+                var ap = Holder.Instance;
+                if (ap == null)
                     return;
+                ap.DevicePerformanceControl.GpuLevel = newGPULevel;
 
-                subsystem.GpuPerformanceLevel = newGPULevel;
             });
             m_Bottleneck.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
@@ -217,15 +220,11 @@ namespace UnityEditor.AdaptivePerformance
             });
 
             EditorApplication.playModeStateChanged += LogPlayModeState;
-            m_ThermalFoldout.SetEnabled(false);
-            m_PerformanceFoldout.SetEnabled(false);
-            m_DeveloperFoldout.SetEnabled(false);
 
             SyncAPSubsystemSettingsToEditor();
         }
 
         Foldout m_ExtensionFoldout;
-        TextField m_StatusFlag;
         Foldout m_ThermalFoldout;
         EnumField m_WarningLevel;
         Slider m_TemperatureLevel;
@@ -243,25 +242,30 @@ namespace UnityEditor.AdaptivePerformance
         Toggle m_DevLogging;
         IntegerField m_DevLoggingFrequency;
 
+        [SerializeField, HideInInspector]
+        AdaptivePerformanceStates m_SerializationStates;
+
+        [System.Serializable]
+        internal struct AdaptivePerformanceStates
+        {
+            public bool thermalFoldout;
+            public bool performanceFoldout;
+            public bool developerFoldout;
+        };
+
+        public void OnBeforeSerialize()
+        {
+            m_SerializationStates.thermalFoldout = m_ThermalFoldout.value;
+            m_SerializationStates.performanceFoldout = m_PerformanceFoldout.value;
+            m_SerializationStates.developerFoldout = m_DeveloperFoldout.value;
+        }
+
+        public void OnAfterDeserialize() {}
+
         void LogPlayModeState(PlayModeStateChange state)
         {
             if (state == PlayModeStateChange.EnteredPlayMode)
-            {
-                m_StatusFlag.style.visibility = Visibility.Hidden;
-                m_StatusFlag.style.position = Position.Absolute;
-                m_ThermalFoldout.SetEnabled(true);
-                m_PerformanceFoldout.SetEnabled(true);
-                m_DeveloperFoldout.SetEnabled(true);
                 SyncAPSubsystemSettingsToEditor();
-            }
-            else
-            {
-                m_StatusFlag.style.visibility = Visibility.Visible;
-                m_StatusFlag.style.position = Position.Relative;
-                m_ThermalFoldout.SetEnabled(false);
-                m_PerformanceFoldout.SetEnabled(false);
-                m_DeveloperFoldout.SetEnabled(false);
-            }
         }
 
         void SyncAPSubsystemSettingsToEditor()

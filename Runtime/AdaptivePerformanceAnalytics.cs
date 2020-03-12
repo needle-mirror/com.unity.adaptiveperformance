@@ -140,11 +140,14 @@ namespace UnityEngine.AdaptivePerformance
 
             s_AdaptivePerformanceEvent.UpdateGeneralEventData();
             var providerData = s_AdaptivePerformanceEvent.providerData;
-            for (var i = 0; i < providerData.Length; ++i)
-            {
-                if (providerData[i].id == subsystem.SubsystemDescriptor.id) { 
-                    providerData[i].version = subsystem.Version.ToString();
-                    providerData[i].enabled = subsystem.running && subsystem.initialized;
+            if(subsystem != null) 
+            { 
+                for (var i = 0; i < providerData.Length; ++i)
+                {
+                    if (providerData[i].id == subsystem.SubsystemDescriptor.id) { 
+                        providerData[i].version = subsystem.Version.ToString();
+                        providerData[i].enabled = subsystem.initialized;
+                    }
                 }
             }
             s_AdaptivePerformanceEvent.UpdateFeatureData();

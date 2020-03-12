@@ -2,6 +2,10 @@ using System;
 
 namespace UnityEngine.AdaptivePerformance
 {
+    /// <summary>
+    /// The device performance control interface handles all control elements related to the device performance. You can
+	/// change the <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/> settings or retrieve information about the <see cref="CpuLevel"/> and <see cref="GpuLevel"/>. 
+    /// </summary>
     public interface IDevicePerformanceControl
     {
         /// <summary>
@@ -54,6 +58,9 @@ namespace UnityEngine.AdaptivePerformance
         int GpuLevel { get; set; }
     }
 
+    /// <summary>
+	/// Enum used to describe the performance control mode used by Adaptive Performance. Can be read from <see cref="IDevicePerformanceControl.PerformanceControlMode"/>.
+	/// </summary>
     public enum PerformanceControlMode
     {
         /// <summary>

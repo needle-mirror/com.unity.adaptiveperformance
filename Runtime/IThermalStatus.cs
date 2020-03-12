@@ -2,8 +2,15 @@ using System;
 
 namespace UnityEngine.AdaptivePerformance
 {
+    /// <summary>
+    /// You can subscribe to the thermal event delegate which sends the <see cref="ThermalMetrics"/> when the thermal state changes.
+    /// </summary>
+    /// <param name="thermalMetrics"></param>
     public delegate void ThermalEventHandler(ThermalMetrics thermalMetrics);
 
+    /// <summary>
+    /// ThermalMetrics stores the thermal state as <see cref="TemperatureLevel"/>, <see cref="TemperatureTrend"/>, and <see cref="WarningLevel"/>. 
+    /// </summary>
     public struct ThermalMetrics
     {
         /// <summary>
@@ -30,6 +37,9 @@ namespace UnityEngine.AdaptivePerformance
         public float TemperatureTrend { get; set; }
     }
 
+    /// <summary>
+    /// Use the thermal status interface to receive thermal status events and thermal metrics of the device.
+    /// </summary>
     public interface IThermalStatus
     {
         /// <summary>
@@ -44,6 +54,9 @@ namespace UnityEngine.AdaptivePerformance
         event ThermalEventHandler ThermalEvent;
     }
 
+    /// <summary>
+    /// The warning levels are used in the <see cref="ThermalMetrics"/> and describe the thermal status of the device in 3 categories. 
+    /// </summary>
     public enum WarningLevel
     {
         /// <summary>

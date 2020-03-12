@@ -9,15 +9,24 @@ using UnityEngine.AdaptivePerformance.Provider;
 #endif
 namespace UnityEngine.AdaptivePerformance.Simulator
 {
+    /// <summary>
+    /// The subsystem is used for simulating Adaptive Performance in the Editor with the Device Simulator. It is also used for Adaptive Performance tests and can be used to simulate Adaptive Performance when it is not available on the hardware you work with. 
+    /// </summary>
     [Preserve]
     public class SimulatorAdaptivePerformanceSubsystem : AdaptivePerformanceSubsystem, IApplicationLifecycle, IDevicePerformanceLevelControl
     {
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public Feature ChangeFlags
         {
             get { return updateResult.ChangeFlags; }
             set { updateResult.ChangeFlags = value; }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float TemperatureLevel
         {
             get { return updateResult.TemperatureLevel; }
@@ -28,6 +37,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float TemperatureTrend
         {
             get { return updateResult.TemperatureTrend; }
@@ -38,6 +50,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public WarningLevel WarningLevel
         {
             get { return updateResult.WarningLevel; }
@@ -48,6 +63,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int CpuPerformanceLevel
         {
             get { return updateResult.CpuPerformanceLevel; }
@@ -58,6 +76,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public int GpuPerformanceLevel
         {
             get { return updateResult.GpuPerformanceLevel; }
@@ -68,6 +89,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextGpuFrameTime
         {
             get { return updateResult.GpuFrameTime; }
@@ -77,6 +101,10 @@ namespace UnityEngine.AdaptivePerformance.Simulator
                 updateResult.ChangeFlags |= Provider.Feature.GpuFrameTime;
             }
         }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextCpuFrameTime
         {
             get { return updateResult.CpuFrameTime; }
@@ -87,6 +115,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public float NextOverallFrameTime
         {
             get { return updateResult.OverallFrameTime; }
@@ -97,6 +128,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Is needed when you want to simulate performance changes. To change AutomaticPerformanceControl you have to set AcceptsPerformanceLevel to `true`.
+        /// </summary>
         public bool AcceptsPerformanceLevel
         {
             get { return updateResult.PerformanceLevelControlAvailable; }
@@ -107,6 +141,9 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override Version Version
         {
             get
@@ -115,14 +152,39 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             }
         }
 
-        public int MaxCpuPerformanceLevel { get { return 6; } }
-        public int MaxGpuPerformanceLevel { get { return 4; } }
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        public int MaxCpuPerformanceLevel
+        {
+            get
+            {
+                return 6;
+            }
+        }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        public int MaxGpuPerformanceLevel
+        {
+            get
+            {
+                return 4;
+            }
+        }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public Feature InitCapabilities
         {
             set { Capabilities = value; }
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public SimulatorAdaptivePerformanceSubsystem()
         {
             Capabilities = Feature.CpuPerformanceLevel | Feature.GpuPerformanceLevel | Feature.PerformanceLevelControl |
@@ -130,22 +192,38 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             updateResult.PerformanceLevelControlAvailable = true;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         override public void Start()
         {
             initialized = true;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         override public void Stop()
         {
         }
 #if UNITY_2019_3_OR_NEWER
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         protected override void OnDestroy() { }
 #else
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override void Destroy() { }
 #endif
 
-        private PerformanceDataRecord updateResult;
+        private PerformanceDataRecord updateResult = new PerformanceDataRecord();
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         override public PerformanceDataRecord Update()
         {
             updateResult.ChangeFlags &= Capabilities;
@@ -154,19 +232,50 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             return result;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public void ApplicationPause()
         {
         }
     
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public void ApplicationResume()
         {
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override IApplicationLifecycle ApplicationLifecycle { get { return null; } }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
         public override IDevicePerformanceLevelControl PerformanceLevelControl { get { return this; } }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        public int LastRequestedCpuLevel { get; set; }
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        public int LastRequestedGpuLevel { get; set; }
+
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <param name="cpuLevel"></param>
+        /// <param name="gpuLevel"></param>
+        /// <returns></returns>
         public bool SetPerformanceLevel(int cpuLevel, int gpuLevel)
         {
+            LastRequestedCpuLevel = cpuLevel;
+            LastRequestedGpuLevel = gpuLevel;
+
             if (!AcceptsPerformanceLevel)
             {
                 CpuPerformanceLevel = AdaptivePerformance.Constants.UnknownPerformanceLevel;
@@ -177,6 +286,10 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             return cpuLevel >= 0 && gpuLevel >= 0 && cpuLevel <= MaxCpuPerformanceLevel && gpuLevel <= MaxGpuPerformanceLevel;
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor()
         {
@@ -187,6 +300,10 @@ namespace UnityEngine.AdaptivePerformance.Simulator
             });
         }
 
+        /// <summary>
+        /// Only for internal use.
+        /// </summary>
+        /// <returns></returns>
         public static SimulatorAdaptivePerformanceSubsystem Initialize()
         {
             var desc = RegisterDescriptor();

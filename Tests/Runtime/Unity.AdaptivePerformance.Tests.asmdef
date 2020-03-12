@@ -1,11 +1,22 @@
 {
     "name": "Unity.AdaptivePerformance.Tests",
     "references": [
-        "Unity.AdaptivePerformance"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Unity.AdaptivePerformance",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.AdaptivePerformance.Simulator"
     ],
     "includePlatforms": [],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

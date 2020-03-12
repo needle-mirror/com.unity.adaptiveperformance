@@ -94,6 +94,9 @@ namespace UnityEngine.AdaptivePerformance
     /// </summary>
     public static class Holder
     {
+        /// <summary>
+        /// Global access to the default AdaptivePerformance interface to access the main manager object.
+        /// </summary>
         static public IAdaptivePerformance Instance { get; internal set; }
     }
 }
