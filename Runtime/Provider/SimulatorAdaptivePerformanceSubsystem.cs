@@ -4,9 +4,7 @@ using System;
 using UnityEngine.Scripting;
 using UnityEngine.AdaptivePerformance.Provider;
 
-#if UNITY_2018_3_OR_NEWER
 [assembly: AlwaysLinkAssembly]
-#endif
 namespace UnityEngine.AdaptivePerformance.Simulator
 {
     /// <summary>
@@ -206,17 +204,11 @@ namespace UnityEngine.AdaptivePerformance.Simulator
         override public void Stop()
         {
         }
-#if UNITY_2019_3_OR_NEWER
+
         /// <summary>
         /// Only for internal use.
         /// </summary>
         protected override void OnDestroy() { }
-#else
-        /// <summary>
-        /// Only for internal use.
-        /// </summary>
-        public override void Destroy() { }
-#endif
 
         private PerformanceDataRecord updateResult = new PerformanceDataRecord();
 

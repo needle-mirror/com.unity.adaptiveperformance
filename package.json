@@ -1,8 +1,8 @@
 {
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
-  "version": "2.0.0-preview.2",
-  "unity": "2020.1",
+  "version": "2.0.0-preview.4",
+  "unity": "2019.3",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\n This package is installed as a dependency by Adaptive Performance subsystem packages such as the Adaptive Performance Samsung (Android) package. By installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
   "keywords": [
     "mobile",
@@ -25,9 +25,9 @@
     "url": "https://www.unity3d.com"
   },
   "repository": {
-    "footprint": "f601c5586e254e590d26cc50628dd81f146a2397",
+    "footprint": "87ec5e9b6ad5079db6acf1bfe7a60239789fe322",
     "type": "git",
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
-    "revision": "855f841583e15c2ce19fb829bac4d23731939ffc"
+    "revision": "0dbc4268f447bd342f64edb70ddbf7d1368147b4"
   }
 }

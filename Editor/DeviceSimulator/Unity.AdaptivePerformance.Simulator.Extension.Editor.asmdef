@@ -17,7 +17,7 @@
     "versionDefines": [
         {
             "name": "com.unity.device-simulator",
-            "expression": "",
+            "expression": "2.1.0-preview",
             "define": "DEVICE_SIMULATOR_ENABLED"
         }
     ],

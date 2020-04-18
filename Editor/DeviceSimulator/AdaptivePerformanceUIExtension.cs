@@ -1,6 +1,5 @@
 #if DEVICE_SIMULATOR_ENABLED
 using System;
-using NUnit.Framework;
 using Unity.DeviceSimulator;
 using UnityEngine;
 using UnityEditor.UIElements;
@@ -17,7 +16,6 @@ namespace UnityEditor.AdaptivePerformance
         public void OnExtendDeviceSimulator(VisualElement visualElement)
         {
             m_ExtensionFoldout = visualElement as Foldout;
-            Assert.IsNotNull(m_ExtensionFoldout);
 
             var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/AdaptivePerformanceExtension.uxml");
             m_ExtensionFoldout.Add(tree.CloneTree());

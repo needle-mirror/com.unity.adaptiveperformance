@@ -1,5 +1,3 @@
-﻿using System.Linq;
-using UnityEditor;
 using UnityEditor.PackageManager.Requests;
 using UnityEditor.PackageManager;
 using UnityEditor.Build;
@@ -45,7 +43,8 @@ namespace UnityEditor.AdaptivePerformance
                   
                     if(installedPackageCount == 0)
                     { 
-                        Debug.LogWarning("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get useful information. Please install a provider such as, AP Samsung (Android), via the Unity Package Manager.");
+                        Debug.LogWarning("No Adaptive Performance provider package installed. Adaptive Performance requires a provider to get useful information during runtime. Please install a provider such as, Adaptive Performance Samsung (Android), via the Unity Package Manager.");
+                        PackageManager.UI.Window.Open("com.unity.adaptiveperformance.samsung.android");
                     }
                 }
                 else if (Request.Status >= StatusCode.Failure)

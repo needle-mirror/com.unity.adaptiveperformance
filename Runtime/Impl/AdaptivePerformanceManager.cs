@@ -1,9 +1,3 @@
-#if UNITY_2019_2_OR_NEWER
-using UnityEngine;
-#else
-using UnityEngine.Experimental;
-#endif
-
 namespace UnityEngine.AdaptivePerformance
 {
     internal static class EnumExt
@@ -142,7 +136,7 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
 
-        public void Start()
+        public void Awake()
         {
             APLog.enabled = StartupSettings.Logging;
             LoggingFrequencyInFrames = StartupSettings.StatsLoggingFrequencyInFrames;
@@ -452,25 +446,17 @@ namespace UnityEngine.AdaptivePerformance
 
         private static int RenderFrameInterval()
         {
-#if UNITY_2019_3_OR_NEWER
-            return UnityEngine.Rendering.OnDemandRendering.renderFrameInterval;
-#else
-            return 1;
-#endif
+            return Rendering.OnDemandRendering.renderFrameInterval;
         }
 
         private static bool WillCurrentFrameRender()
         {
-#if UNITY_2019_3_OR_NEWER
-            return UnityEngine.Rendering.OnDemandRendering.willCurrentFrameRender;
-#else
-            return true;
-#endif
+            return Rendering.OnDemandRendering.willCurrentFrameRender;
         }
 
         public static float EffectiveTargetFrameRate()
         {
-#if UNITY_2019_3_OR_NEWER && !UNITY_EDITOR
+#if !UNITY_EDITOR
             return UnityEngine.Rendering.OnDemandRendering.effectiveRenderFrameRate;
 #else
 
@@ -480,16 +466,9 @@ namespace UnityEngine.AdaptivePerformance
                 var targetFrameRate = Application.targetFrameRate;
                 if (targetFrameRate >= 0)
                     return ((float)targetFrameRate) / RenderFrameInterval();
-#if UNITY_EDITOR
-                switch(UnityEditor.EditorUserBuildSettings.activeBuildTarget)
-                {
-                    default:
-                        return -1.0f;
-                    case UnityEditor.BuildTarget.Android:
-                        return AndroidDefaultFrameRate() / RenderFrameInterval();
-                }
-#elif UNITY_ANDROID
-                return AndroidDefaultFrameRate();
+
+#if UNITY_ANDROID
+                return AndroidDefaultFrameRate() / RenderFrameInterval();
 #else
                 return -1.0f;
 #endif
@@ -497,16 +476,9 @@ namespace UnityEngine.AdaptivePerformance
             else
             {
                 float displayRefreshRate = 60.0f;
-
-#if !UNITY_EDITOR
-            int refreshRate = Screen.currentResolution.refreshRate;
-            if (refreshRate > 0)
-                displayRefreshRate = (float)refreshRate;
-#endif
-
                 return displayRefreshRate / (vsyncCount * RenderFrameInterval());
             }
-#endif // UNITY_2019_3_OR_NEWER
+#endif
         }
 
         public void OnDestroy()
