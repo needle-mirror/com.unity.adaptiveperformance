@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
-
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.AdaptivePerformance;
@@ -167,6 +167,40 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
             Assert.IsFalse(SettingsHasLoaderOfType(m_Settings, loaderTypeName));
 
             Assert.IsTrue(TestLoaderBase.WasUnassigned);
+        }
+
+        [UnityTest]
+        public IEnumerator TestInvalidPackageErrorsOut()
+        {
+#if !UNITY_2020_2_OR_NEWER
+            AdaptivePerformancePackageMetadataStore.InstallPackageAndAssignLoaderForBuildTarget("com.unity.invalid.package.id", String.Empty, BuildTargetGroup.Standalone);
+
+            LogAssert.Expect(LogType.Error, new Regex(@"cannot be found"));
+
+            while (AdaptivePerformancePackageMetadataStore.isDoingQueueProcessing)
+            {
+                yield return null;
+            }
+#else
+            yield return null;
+#endif //UNITY_2020_2_OR_NEWER
+        }
+
+        [UnityTest]
+        public IEnumerator TestNoPackageIdErrorsOut()
+        {
+#if !UNITY_2020_2_OR_NEWER
+            AdaptivePerformancePackageMetadataStore.InstallPackageAndAssignLoaderForBuildTarget("", String.Empty, BuildTargetGroup.Standalone);
+
+            LogAssert.Expect(LogType.Error, new Regex(@"no package id"));
+
+            while (AdaptivePerformancePackageMetadataStore.isDoingQueueProcessing)
+            {
+                yield return null;
+            }
+#else
+            yield return null;
+#endif //UNITY_2020_2_OR_NEWER
         }
     }
 }

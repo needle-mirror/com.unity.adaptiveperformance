@@ -200,14 +200,26 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         static Dictionary<string, IAdaptivePerformancePackage> s_Packages = new Dictionary<string, IAdaptivePerformancePackage>();
         static SearchRequest s_SearchRequest = null;
 
-        internal static bool isCheckingInstallationRequirements => EditorPrefs.HasKey(k_WaitingPackmanQuery);
-        internal static bool isRebuildingCache => EditorPrefs.HasKey(k_RebuildCache);
-        internal static bool isInstallingPackages => EditorPrefs.HasKey(k_InstallingPackage);
-        internal static bool isUninstallingPackages => EditorPrefs.HasKey(k_UninstallingPackage);
-        internal static bool isAssigningLoaders => EditorPrefs.HasKey(k_AssigningPackage);
+        const string k_DefaultSessionStateString = "AP_DEFAULT_SESSION_STATE";
+        static bool SessionStateHasStoredData(string queueName)
+        {
+            return SessionState.GetString(queueName, k_DefaultSessionStateString) != k_DefaultSessionStateString;
+        }
 
-        internal static bool isDoingQueueProcessing =>
-            isCheckingInstallationRequirements || isRebuildingCache || isInstallingPackages || isUninstallingPackages || isAssigningLoaders;
+        internal static bool isCheckingInstallationRequirements => SessionStateHasStoredData(k_WaitingPackmanQuery);
+        internal static bool isRebuildingCache => SessionStateHasStoredData(k_RebuildCache);
+        internal static bool isInstallingPackages => SessionStateHasStoredData(k_InstallingPackage);
+        internal static bool isUninstallingPackages => SessionStateHasStoredData(k_UninstallingPackage);
+        internal static bool isAssigningLoaders => SessionStateHasStoredData(k_AssigningPackage);
+
+        internal static bool isDoingQueueProcessing
+        {
+            get
+            {
+                return isCheckingInstallationRequirements || isRebuildingCache || isInstallingPackages || isUninstallingPackages || isAssigningLoaders;
+            }
+        }
+
 
         internal struct LoaderBuildTargetQueryResult
         {
@@ -561,9 +573,9 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         {
             LoaderAssignmentRequests reqs;
 
-            if (EditorPrefs.HasKey(queueName))
+            if (SessionStateHasStoredData(queueName))
             {
-                string fromJson = EditorPrefs.GetString(queueName);
+                string fromJson = SessionState.GetString(queueName, k_DefaultSessionStateString);
                 reqs = JsonUtility.FromJson<LoaderAssignmentRequests>(fromJson);
             }
             else
@@ -574,13 +586,13 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 
             reqs.activeRequests.Add(request);
             string json = JsonUtility.ToJson(reqs);
-            EditorPrefs.SetString(queueName, json);
+            SessionState.SetString(queueName, json);
         }
 
         static void SetRequestsInQueue(LoaderAssignmentRequests reqs, string queueName)
         {
             string json = JsonUtility.ToJson(reqs);
-            EditorPrefs.SetString(queueName, json);
+            SessionState.SetString(queueName, json);
         }
 
         static LoaderAssignmentRequests GetAllRequestsInQueue(string queueName)
@@ -588,11 +600,11 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
             var reqs = new LoaderAssignmentRequests();
             reqs.activeRequests = new List<LoaderAssignmentRequest>();
 
-            if (EditorPrefs.HasKey(queueName))
+            if (SessionStateHasStoredData(queueName))
             {
-                string fromJson = EditorPrefs.GetString(queueName);
+                string fromJson = SessionState.GetString(queueName, k_DefaultSessionStateString);
                 reqs = JsonUtility.FromJson<LoaderAssignmentRequests>(fromJson);
-                EditorPrefs.DeleteKey(queueName);
+                SessionState.EraseString(queueName);
             }
 
             return reqs;
@@ -615,12 +627,16 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
             EditorApplication.update -= RebuildCache;
 
             if (IsEditorInPlayMode())
+            {
                 return; // Use the cached data that should have been passed in the play state change.
+            }
 
             LoaderAssignmentRequests reqs = GetAllRequestsInQueue(k_RebuildCache);
 
             if (reqs.activeRequests == null || reqs.activeRequests.Count == 0)
+            {
                 return;
+            }
 
             var req = reqs.activeRequests[0];
             reqs.activeRequests.Remove(req);
@@ -756,33 +772,50 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
                             request.installationState = InstallationState.Assigning;
                             QueueLoaderRequest(request);
                         }
-                    }
-                    else
-                    {
-                        if (String.IsNullOrEmpty(request.packageId))
+                        else
                         {
-                            request.logMessage = $"Error installing package {request.packageId}. Error Code: {request.packageAddRequest.Status} Error Message: {request.packageAddRequest.Error.message}";
+                            request.logMessage = $"Missing loader type. Unable to assign loader.";
                             request.logLevel = LogLevel.Error;
                             request.installationState = InstallationState.Log;
                             QueueLoaderRequest(request);
                         }
                     }
                 }
+                else if (request.packageAddRequest.IsCompleted && request.packageAddRequest.Status != StatusCode.Success)
+                {
+                    if (String.IsNullOrEmpty(request.packageId))
+                    {
+                        request.logMessage = $"Error installing package with no package id.";
+                    }
+                    else
+                    {
+                        request.logMessage = $"Error Message: {request.packageAddRequest?.Error?.message ?? "UNKNOWN" }.\nError installing package {request.packageId ?? "UNKNOWN PACKAGE ID" }.";
+                    }
+
+                    request.logLevel = LogLevel.Error;
+                    request.installationState = InstallationState.Log;
+                    QueueLoaderRequest(request);
+                }
                 else if (request.timeOut < Time.realtimeSinceStartup)
                 {
                     if (String.IsNullOrEmpty(request.packageId))
                     {
-                        request.logMessage = $"Error installing package {request.packageId}. Package installation timed out. Check Package Manager UI to see if the package is installed and/or retry your operation.";
-                        request.logLevel = LogLevel.Error;
-
-                        if (request.packageAddRequest.IsCompleted)
-                        {
-                            request.logMessage += $" Error message: {request.packageAddRequest.Error.message}";
-                        }
-
-                        request.installationState = InstallationState.Log;
-                        QueueLoaderRequest(request);
+                        request.logMessage = $"Time out while installing pacakge with no package id.";
                     }
+                    else
+                    {
+                        request.logMessage = $"Error installing package {request.packageId}. Package installation timed out. Check Package Manager UI to see if the package is installed and/or retry your operation.";
+                    }
+
+                    request.logLevel = LogLevel.Error;
+
+                    if (request.packageAddRequest.IsCompleted)
+                    {
+                        request.logMessage += $" Error message: {request.packageAddRequest.Error.message}";
+                    }
+
+                    request.installationState = InstallationState.Log;
+                    QueueLoaderRequest(request);
                 }
                 else
                 {

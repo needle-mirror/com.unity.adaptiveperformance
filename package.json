@@ -2,7 +2,7 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "unity": "2019.4",
   "keywords": [
     "mobile",
@@ -17,16 +17,14 @@
     "subsystem",
     "indexer",
     "scaler",
-    "vrr"
+    "vrr",
+    "indexer",
+    "scaler"
   ],
   "dependencies": {
     "com.unity.subsystemregistration": "1.1.0"
   },
   "license": "See LICENSE.md file",
-  "author": {
-    "name": "Unity Technologies Inc.",
-    "url": "https://www.unity3d.com"
-  },
   "samples": [
     {
       "displayName": "Sample Environment",
@@ -92,14 +90,19 @@
       "displayName": "Adaptive Sorting Sample",
       "description": "Demonstrates how Adaptive Sorting works.",
       "path": "Samples~/Adaptive Sorting"
+    },
+    {
+      "displayName": "Adaptive Transparency Sample",
+      "description": "Demonstrates how removing transparent objects works.",
+      "path": "Samples~/Adaptive Transparency"
     }
   ],
   "upmCi": {
-    "footprint": "52a9877fe719e0b4add395d991a7b443d533953f"
+    "footprint": "8db862a3052efcb751f500ed2f75ebfa9ec68c99"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "88a38869046b7b6ee9b29fb512bc46edb86278a8"
+    "revision": "49909be82378c50277eeb25195002965c019ca61"
   }
 }

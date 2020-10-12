@@ -307,6 +307,28 @@ namespace UnityEngine.AdaptivePerformance
             get { return m_AdaptiveSorting; }
             set { m_AdaptiveSorting = value; }
         }
+
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to disable transparent objects rendering")]
+        AdaptivePerformanceScalerSettingsBase m_AdaptiveTransparency = new AdaptivePerformanceScalerSettingsBase
+        {
+            name = "Adaptive Transparency",
+            enabled = false,
+            scale = -1,
+            visualImpact = ScalerVisualImpact.High,
+            target =  ScalerTarget.GPU,
+            maxLevel = 1,
+            minBound = -1,
+            maxBound = -1,
+        };
+
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to disable transparent objects rendering.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptiveTransparency
+        {
+            get { return m_AdaptiveTransparency; }
+            set { m_AdaptiveTransparency = value; }
+        }
     }
     /// <summary>
     /// Settings of indexer system.

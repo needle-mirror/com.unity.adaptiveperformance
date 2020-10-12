@@ -1,12 +1,11 @@
-// device simulator is in core unity with Unity 2020.2, before that it's supported via packages.
-#if DEVICE_SIMULATOR_ENABLED //|| UNITY_2020_2_OR_NEWER - not landed in trunk yet, do not enable
+#if DEVICE_SIMULATOR_ENABLED || UNITY_2021_1_OR_NEWER
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-#if DEVICE_SIMULATOR_ENABLED
+#if UNITY_2021_1_OR_NEWER
+using UnityEditor.DeviceSimulation;
+#elif DEVICE_SIMULATOR_ENABLED
 using Unity.DeviceSimulator;
-#else
-using UnityEditor.DeviceSimulator;
 #endif
 using UnityEngine;
 using UnityEditor.UIElements;
@@ -17,26 +16,28 @@ using UnityEngine.AdaptivePerformance;
 namespace UnityEditor.AdaptivePerformance.Editor
 {
     public class AdaptivePerformanceUIExtension :
-        #if DEVICE_SIMULATOR_ENABLED
+#if UNITY_2021_1_OR_NEWER
+        DeviceSimulatorPlugin
+#elif DEVICE_SIMULATOR_ENABLED
         IDeviceSimulatorExtension
-        #else
-        DeviceSimulatorExtension
-        #endif
+#endif
         , ISerializationCallbackReceiver
     {
-#if !DEVICE_SIMULATOR_ENABLED
-        override
+#if UNITY_2021_1_OR_NEWER
+        override public string title
+#elif DEVICE_SIMULATOR_ENABLED
+        public string extensionTitle
 #endif
-        public string extensionTitle { get { return "Adaptive Performance"; } }
+        { get { return "Adaptive Performance"; } }
 
-#if DEVICE_SIMULATOR_ENABLED
+#if UNITY_2021_1_OR_NEWER
+        override public VisualElement OnCreateUI()
+        {
+            m_ExtensionFoldout = new VisualElement();
+#elif DEVICE_SIMULATOR_ENABLED
         public void OnExtendDeviceSimulator(VisualElement visualElement)
         {
             m_ExtensionFoldout = visualElement;
-#else
-        override public VisualElement OnCreateExtensionUI()
-        {
-            m_ExtensionFoldout = new VisualElement();
 #endif
             var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/AdaptivePerformanceExtension.uxml");
             m_ExtensionFoldout.Add(tree.CloneTree());
@@ -64,6 +65,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_DeveloperFoldout.value = m_SerializationStates.developerFoldout;
             m_IndexerFoldout = m_ExtensionFoldout.Q<Foldout>("indexer");
             m_IndexerFoldout.value = m_SerializationStates.indexerFoldout;
+            m_ThermalAction = m_IndexerFoldout.Q<EnumField>("indexer-thermal-action");
+            m_PerformanceAction = m_IndexerFoldout.Q<EnumField>("indexer-performance-action");
             m_ScalersFoldout = m_ExtensionFoldout.Q<Foldout>("scalers");
             m_ScalersFoldout.value = m_SerializationStates.scalersFoldout;
 
@@ -339,11 +342,103 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 devSettings.LoggingFrequencyInFrames = evt.newValue;
             });
 
+            m_ThermalAction.RegisterCallback<ChangeEvent<Enum>>(evt =>
+            {
+                var ap = Holder.Instance;
+                if (ap == null)
+                    return;
+
+                var indexer = ap.Indexer;
+                if (indexer == null)
+                    return;
+
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                var temperatureTrend = 0.0f;
+                var warningLevel = WarningLevel.NoWarning;
+                var temperatureLevel = 0.0f;
+
+                switch (evt.newValue)
+                {
+                    case StateAction.Stale:
+                        temperatureTrend = 0;
+                        warningLevel = WarningLevel.Throttling;
+                        temperatureLevel = 0.7f;
+                        break;
+                    case StateAction.Decrease:
+                        temperatureTrend = 0.3f;
+                        warningLevel = WarningLevel.Throttling;
+                        temperatureLevel = 0.7f;
+                        break;
+                    case StateAction.FastDecrease:
+                        temperatureTrend = 0.6f;
+                        warningLevel = WarningLevel.Throttling;
+                        temperatureLevel = 1.0f;
+                        break;
+                    case StateAction.Increase:
+                        temperatureTrend = 0;
+                        warningLevel = WarningLevel.NoWarning;
+                        temperatureLevel = 0.2f;
+                        break;
+                }
+
+                // Set subsystem values
+                subsystem.TemperatureLevel = temperatureLevel;
+                subsystem.TemperatureTrend = temperatureTrend;
+                subsystem.WarningLevel = warningLevel;
+
+                // Update the UI to match
+                m_TemperatureLevel.SetValueWithoutNotify(temperatureLevel);
+                m_TemperatureTrend.SetValueWithoutNotify(temperatureTrend);
+                m_WarningLevel.SetValueWithoutNotify(warningLevel);
+            });
+
+            m_PerformanceAction.RegisterCallback<ChangeEvent<Enum>>(evt =>
+            {
+                var ap = Holder.Instance;
+                if (ap == null)
+                    return;
+
+                var indexer = ap.Indexer;
+                if (indexer == null)
+                    return;
+
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                var targetFrameRate = Application.targetFrameRate;
+                if (m_OriginalTargetFramerate == 0)
+                    m_OriginalTargetFramerate = targetFrameRate;
+
+                // default target framerate is -1 to use default platform framerate so we assume it's 60
+                if (targetFrameRate == -1)
+                    targetFrameRate = 60;
+
+                var frameMs = Holder.Instance.PerformanceStatus.FrameTiming.AverageFrameTime;
+                switch (evt.newValue)
+                {
+                    case StateAction.Increase:
+                    case StateAction.Stale:
+                        targetFrameRate = m_OriginalTargetFramerate;
+                        break;
+                    case StateAction.Decrease:
+                        targetFrameRate = (int)((1.0f + 0.2f) / frameMs);
+                        break;
+                    case StateAction.FastDecrease:
+                        targetFrameRate = (int)((1.0f + 0.4f) / frameMs);
+                        break;
+                }
+
+                Application.targetFrameRate = targetFrameRate;
+            });
+
             EditorApplication.playModeStateChanged += LogPlayModeState;
 
             SyncAPSubsystemSettingsToEditor();
-
-#if !DEVICE_SIMULATOR_ENABLED
+#if UNITY_2021_1_OR_NEWER
             return m_ExtensionFoldout;
 #endif
         }
@@ -368,11 +463,15 @@ namespace UnityEditor.AdaptivePerformance.Editor
         Toggle m_DevLogging;
         IntegerField m_DevLoggingFrequency;
         Foldout m_IndexerFoldout;
+        EnumField m_ThermalAction;
+        EnumField m_PerformanceAction;
         Foldout m_ScalersFoldout;
 
         SimulatorAdaptivePerformanceSubsystem m_Subsystem;
 
         List<AdaptivePerformanceScaler> m_Scalers = new List<AdaptivePerformanceScaler>();
+
+        int m_OriginalTargetFramerate = 0;
 
         [SerializeField, HideInInspector]
         AdaptivePerformanceStates m_SerializationStates;
@@ -465,6 +564,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_Bottleneck.value = perfMetrics.PerformanceBottleneck;
             m_DevLogging.value = devSettings.Logging;
             m_DevLoggingFrequency.value = devSettings.LoggingFrequencyInFrames;
+            m_ThermalAction.value = ap.Indexer.ThermalAction;
+            m_PerformanceAction.value = ap.Indexer.PerformanceAction;
 
             // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
             SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
@@ -486,13 +587,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
             switch (performanceBottleneck)
             {
                 case PerformanceBottleneck.CPU: // averageOverallFrametime > targetFramerate && averageCpuFrametime >= averageOverallFrametime
-                    subsystem.NextCpuFrameTime = currentTargetFramerateMS;
+                    subsystem.NextCpuFrameTime = currentTargetFramerateMS + 0.001f;
                     subsystem.NextGpuFrameTime = currentTargetFramerateHalfMS;
                     subsystem.NextOverallFrameTime = currentTargetFramerateMS + 0.001f;
                     break;
                 case PerformanceBottleneck.GPU: // averageOverallFrametime > targetFramerate && averageGpuFrametime >= averageOverallFrametime
                     subsystem.NextCpuFrameTime = currentTargetFramerateHalfMS;
-                    subsystem.NextGpuFrameTime = currentTargetFramerateMS;
+                    subsystem.NextGpuFrameTime = currentTargetFramerateMS + 0.001f;
                     subsystem.NextOverallFrameTime = currentTargetFramerateMS + 0.001f;
                     break;
                 case PerformanceBottleneck.TargetFrameRate: // averageOverallFrametime == targetFramerate

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
 using UnityEngine.AdaptivePerformance.Samsung.Android;
+#endif
 
 public class VariableRefreshRateControl : MonoBehaviour
 {
@@ -13,7 +15,10 @@ public class VariableRefreshRateControl : MonoBehaviour
     // How long to run the test (in seconds)
     public float timeOut = 80;
 
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
     bool didVRRSupportChange = false;
+#endif
+
     float timeOuttimer = 0;
 
     void Start()
@@ -23,6 +28,7 @@ public class VariableRefreshRateControl : MonoBehaviour
         Application.targetFrameRate = 60;
         targetRefreshRate.SetValueWithoutNotify(60);
 
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         if (VariableRefreshRate.Instance == null)
         {
             Debug.Log("[AP VRR] Variable Refresh Rate is not supported on this device.");
@@ -35,6 +41,9 @@ public class VariableRefreshRateControl : MonoBehaviour
             if (!VariableRefreshRate.Instance.SetRefreshRateByIndex(supportedRefreshRates.value))
                 UpdateDropdown();
         });
+#else
+        notSupportedPanel.SetActive(true);
+#endif
 
         targetRefreshRate.onValueChanged.AddListener(delegate {
             Application.targetFrameRate = (int)targetRefreshRate.value;
@@ -44,8 +53,9 @@ public class VariableRefreshRateControl : MonoBehaviour
 
     void Update()
     {
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         notSupportedPanel.SetActive(VariableRefreshRate.Instance == null);
-
+#endif
         targetRefreshRateLabel.text = $"Target Refresh Rate: {Application.targetFrameRate} Hz";
 
         timeOuttimer -= Time.deltaTime;
@@ -58,7 +68,7 @@ public class VariableRefreshRateControl : MonoBehaviour
             Application.Quit();
 #endif
         }
-
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         if (VariableRefreshRate.Instance == null)
         {
             UpdateDropdown();
@@ -75,17 +85,19 @@ public class VariableRefreshRateControl : MonoBehaviour
             }
         }
         currentRefreshRate.text = $"Current refresh rate: {VariableRefreshRate.Instance.CurrentRefreshRate} Hz";
+#endif
     }
 
     void UpdateDropdown()
     {
         var options = new List<Dropdown.OptionData>();
         supportedRefreshRates.ClearOptions();
+        var index = -1;
 
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         if (VariableRefreshRate.Instance == null)
             return;
 
-        var index = -1;
         for (var i = 0; i < VariableRefreshRate.Instance.SupportedRefreshRates.Length; ++i)
         {
             var rr = VariableRefreshRate.Instance.SupportedRefreshRates[i];
@@ -93,7 +105,7 @@ public class VariableRefreshRateControl : MonoBehaviour
             if (rr == VariableRefreshRate.Instance.CurrentRefreshRate)
                 index = i;
         }
-
+#endif
         supportedRefreshRates.AddOptions(options);
         supportedRefreshRates.SetValueWithoutNotify(index);
     }

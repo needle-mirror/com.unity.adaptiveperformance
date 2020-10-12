@@ -114,11 +114,11 @@ namespace UnityEngine.AdaptivePerformance
             Trend = trend;
 
             // It is underperforming heavily, we need to increase performance
-            if (trend >= 0.30)
+            if (Trend >= 0.30)
                 return StateAction.FastDecrease;
 
             // It is underperforming, we need to increase performance
-            if (trend >= 0.15)
+            if (Trend >= 0.15)
                 return StateAction.Decrease;
 
             // TODO: we need to way identify overperforming as currently AverageFrameTime is returned with vsync

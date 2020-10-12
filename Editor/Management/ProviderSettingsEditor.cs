@@ -61,6 +61,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_AdaptiveShadowmapResolution = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Shadowmap Resolution"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Shadowmap Resolution changes the  Main Light Shadowmap Resolution Multiplier of the Universal Render Pipeline base on the thermal and performance load."));
         static GUIContent s_AdaptiveShadowQuality = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Shadow Quality"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Shadow Quality changes the Shadow Quality Bias of the Universal Render Pipeline base on the thermal and performance load."));
         static GUIContent s_AdaptiveSorting = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Sorting"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Sorting skips the front-to-back sorting of the Universal Render Pipeline based on the thermal and performance load."));
+        static GUIContent s_AdaptiveTransparency = EditorGUIUtility.TrTextContent(L10n.Tr("Adaptive Transparency"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Transparency skips transparent objects render pass."));
 
         static string s_FrameRateWarning = L10n.Tr("Adaptive Framerate is only supported without VSync. Set VSync Count to \"Don't Sync\" in Quality settings.");
 
@@ -359,6 +360,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     return s_AdaptiveShadowQuality;
                 case "Adaptive Sorting":
                     return s_AdaptiveSorting;
+                case "Adaptive Transparency":
+                    return s_AdaptiveTransparency;
                 default:
                     return new GUIContent("");
             }

@@ -26,15 +26,13 @@ The following samples require Universal Render Pipeline:
 - [Adaptive MSAA Sample](#adaptive-msaa-sample)
 - [Adaptive Shadow Sample](#adaptive-shadow-sample)
 - [Adaptive Sorting Sample](#adaptive-sorting-sample)
-
+- [Adaptive Transparency Sample](#adaptive-transparency-sample)
 
 ## Sample Environment
 The sample environment is required for most of the samples, because the samples share the same assets. You should install the sample environment before installing any other samples to have the necessary base structure available.
 
 ## Thermal Sample
 ![Thermal Sample](Images/Samples/samples-thermal.png)
-
-
 
 This sample demonstrates how to register and respond to thermal state change events from the Adaptive Performance API. The thermal states can be difficult to trigger when a device is just sitting on a desk, because devices are designed to prevent overheating. You might need to set the device on something warm, keep it in your hands, or find another way to prevent heat loss on the device to see the effects.
 
@@ -264,6 +262,21 @@ The Adaptive Sorting sample uses the Scaler Visualization Prefab and enables you
 
 Changes are not visible on-screen for this demo, please use a graphics performance analyzer to see the differences. In the Editor Stats you can see a change in SetPass calls.
 
+## Adaptive Transparency Sample
+![Adaptive Transparency Sample](Images/Samples/samples-adaptivetransparency.png)
+
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+The Adaptive Transparency sample shows how all transparent objects rendering can be disabled.
+
+This feature uses the Indexer system to make decisions on when to disable transparent objects rendering to maintain performance and thermal stability.
+
+### Options
+The Adaptive Transparency sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
+
+- Enable or disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
 # Technical details
 ## Requirements
 
@@ -275,10 +288,20 @@ To enable proper timing for Adaptive Performance, you need to enable the **Frame
 
 If you want to use `Application.targetFrameRate` to limit the target frame rate, set the **VSync Count** option under **Edit &gt; Project Settings &gt; Quality &gt; Other** to **Don't Sync**.
 
+![Adaptive Transparency Sample](Images/Samples/settings-qualitylevels.png)
+
+Unity has several quality levels in the quality settings. We recommend to switch the **VSync Count** to **Don't Sync** for each quality level. This will avoid issues with Adaptive Performance features like Adaptive Framerate and limiting the target framerate with `Application.targetFrameRate`.
+
+### Optimized Frame Pacing
+
+Adapitve Performance and Variable Refresh Rate is not compatible with framce pacing and we recommend to dissable **Optimized Frame Pacing** under **Edit &gt; Project Settings &gt; Player &gt; Resolution and Presentation**.
+
 ### Universal Render Pipeline
 You need to use Universal Render Pipeline in your project for some samples. The Scalers used in those samples directly change settings in the Universal Render Pipeline and therefore will not have any effect when using any other Render Pipeline.
 
 Adaptive Performance requires Universal Render Pipeline versions `7.5`, `8.2`, `10.0` and later. Install it via the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html).
+
+**Note:** In Universal Render Pipeline versions `7.5`, Adaptive Performance is disabled by default, you need to enable it in the Universal Render Pipeline Quality Asset.
 
 To use the Universal Render Pipeline Settings we ship with the samples you have to follow following steps:
 

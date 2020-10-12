@@ -248,18 +248,24 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(PerformanceBottleneck.Unknown, ap.PerformanceStatus.PerformanceMetrics.PerformanceBottleneck);
         }
 
-        // currently dissabled due to ubuntu test errors
-        /*[UnityTest]
+        [UnityTest]
         public IEnumerator Bottleneck_TargetFrameRate_Works()
         {
             var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
             var ap = Holder.Instance;
+            // There is a bug in the editor where target framerate can be 0 and the test will fail and we skip the test. -1 is default in Editor and is not supported either.
+            if (AdaptivePerformanceManager.EffectiveTargetFrameRate() <= 0)
+            {
+                Assert.AreEqual(null, null);
+                yield break;
+            }
 
+            // very low frame numbers, to avoid failing test
             for (int i = 0; i < Constants.DefaultAverageFrameCount; ++i)
             {
-                subsystem.NextGpuFrameTime = 0.010f;
-                subsystem.NextCpuFrameTime = 0.010f;
-                subsystem.NextOverallFrameTime = 0.010f;
+                subsystem.NextCpuFrameTime = 0.0001f;
+                subsystem.NextGpuFrameTime = 0.0002f;
+                subsystem.NextOverallFrameTime = 0.001f;
                 yield return null;
             }
 
@@ -271,18 +277,17 @@ namespace UnityEditor.AdaptivePerformance.Tests
         {
             var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
             var ap = Holder.Instance;
-
-            for (int i = 0; i < Constants.DefaultAverageFrameCount; ++i)
-            {
-                subsystem.NextGpuFrameTime = 0.010f;
-                subsystem.NextCpuFrameTime = 0.010f;
-                subsystem.NextOverallFrameTime = 0.010f;
-                yield return null;
-            }
-
             int eventCounter = 0;
             var bottleneck = PerformanceBottleneck.Unknown;
 
+            // Change to Undefined bottleneck so we can have one change (as often it's defined due to the other tests)
+            for (int i = 0; i < Constants.DefaultAverageFrameCount; ++i)
+            {
+                subsystem.NextCpuFrameTime = 0.4f;
+                subsystem.NextGpuFrameTime = 0.4f;
+                subsystem.NextOverallFrameTime = 0.9f;
+                yield return null;
+            }
             PerformanceBottleneckChangeHandler eventHandler = delegate(PerformanceBottleneckChangeEventArgs args)
             {
                 ++eventCounter;
@@ -290,19 +295,18 @@ namespace UnityEditor.AdaptivePerformance.Tests
             };
 
             ap.PerformanceStatus.PerformanceBottleneckChangeEvent += eventHandler;
-
+            // very high frame numbers, to avoid failing test on very slow machines (where targetframe rate is very high
             for (int i = 0; i < Constants.DefaultAverageFrameCount; ++i)
             {
-                subsystem.NextGpuFrameTime = 0.050f;
-                subsystem.NextCpuFrameTime = 0.010f;
-                subsystem.NextOverallFrameTime = 0.050f;
+                subsystem.NextCpuFrameTime = 0.1f;
+                subsystem.NextGpuFrameTime = 0.9f;
+                subsystem.NextOverallFrameTime = 0.9f;
                 yield return null;
             }
-
             Assert.AreEqual(PerformanceBottleneck.GPU, ap.PerformanceStatus.PerformanceMetrics.PerformanceBottleneck);
             Assert.AreEqual(PerformanceBottleneck.GPU, bottleneck);
             Assert.AreEqual(1, eventCounter);
-        }*/
+        }
 
         [UnityTest]
         public IEnumerator PerformanceLevelChangeEvent_Works()

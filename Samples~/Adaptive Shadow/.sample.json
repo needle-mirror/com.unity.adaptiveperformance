@@ -3,6 +3,6 @@
   "description": "Demonstrates how Adaptive Performance Shadow Scaler, such as Adaptive Shadow Quality, Adaptive Shadow Resolution, Adaptive Shadow Distance and Adaptive Shadow Cascade work.",
   "createSeparatePackage": true,
   "dependencies": {
-    "com.unity.render-pipelines.universal": "8.2.0"
+    "com.unity.render-pipelines.universal": "7.5.1"
   }
 }

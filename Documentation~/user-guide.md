@@ -161,6 +161,7 @@ Universal Render Pipeline Scalers (These Scalers only work with `com.unity.rende
 - AdaptiveShadowQuality
 - AdaptiveShadowmapResolution
 - AdaptiveSorting
+- AdaptiveTransparency
 
 See the [Adaptive Performance samples](samples-guide.md) for more information about Scalers.
 

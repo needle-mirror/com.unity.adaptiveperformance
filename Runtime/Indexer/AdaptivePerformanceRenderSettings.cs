@@ -90,5 +90,15 @@ namespace UnityEngine.AdaptivePerformance
             get;
             set;
         }
+
+        /// <summary>
+        /// Whether transparent objects should be rendered
+        /// When enabled, there is less rendering overdraw, but entire objects can disappear.
+        /// </summary>
+        public static bool SkipTransparentObjects
+        {
+            get;
+            set;
+        }
     }
 }

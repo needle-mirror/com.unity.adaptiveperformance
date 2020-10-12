@@ -7,7 +7,7 @@ using UnityEngine.AdaptivePerformance.Provider;
 namespace UnityEditor.AdaptivePerformance.Simulator.Editor
 {
     /// <summary>
-    /// SimulatorProviderLoader implements the loader for the Adaptive Performance Device Simulator extension.
+    /// SimulatorProviderLoader implements the loader for the Adaptive Performance Device Simulator plugin.
     /// </summary>
     [AdaptivePerformanceSupportedBuildTargetAttribute(BuildTargetGroup.Standalone)]
     public class SimulatorProviderLoader : AdaptivePerformanceLoaderHelper

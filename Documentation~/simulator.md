@@ -1,6 +1,6 @@
-# Adaptive Performance Simulator extension
+# Adaptive Performance Simulator plugin
 
-Adaptive Performance adds a section of controls to the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest) window to let you simulate thermal and bottleneck events in the Editor. This should help you to test your Adaptive Performance implementations in the Editor without the need to deploy your app to a device. The extension uses the `SimulatorAdaptivePerformanceSubsystem` to simulate the events.
+Adaptive Performance adds a section of controls to the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest) window to let you simulate thermal and bottleneck events in the Editor. This should help you to test your Adaptive Performance implementations in the Editor without the need to deploy your app to a device. The plugin uses the `SimulatorAdaptivePerformanceSubsystem` to simulate the events.
 
 When you install the Adaptive Performance package, Unity automatically installs the Simulator provider. To enable the Simulator, you must:
 
@@ -41,8 +41,19 @@ Adaptive Performance also includes an API that you can use to script thermal and
 
 ![Adaptive Performance Device Simulator Scaler settings.](Images/simulator-extension-scaler-settings.png)
 
-Scalers may also be used with the Device Simulator. In this section you will find a list of all the available Scalers. Each one will have the following options.
+The Indexer and Scalers may also be used with the Device Simulator. In this section you will find a list of all the available Scalers. Each one will have the following options:
 
 * A toggle to enable or disable the Scaler.
 * A slider to adjust the value of the Scaler.
 * A text field to enter a value or reflect the current value of the slider.
+
+In addition there are two options to override the current actions taken by the Indexer.
+
+* Thermal Action
+* Performance Action
+
+Both of them have the same options: Stale, Increase, Decrease and Fast Decrease. These correlate to the action that the Indexer will take to adjust the visual quality level to regulate the device temperature and/or app performance. In other words if the device temperature is increasing or if performance is suffering the Indexer would normally set the actions to Decrease or Fast Decrease depending upon how severe the impact is to decrease visual quality until thermal or performance state become stable again.
+
+But if the device temperature and performance are both good then it will decide that it is safe to increase the visual quality. If no change is necessary or desired then the action is set to Stale.
+
+For more information about the individual scalers see the  [user guide](user-guide.md#indexer-and-scalers).

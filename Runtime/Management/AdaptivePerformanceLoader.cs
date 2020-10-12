@@ -16,29 +16,29 @@ namespace UnityEngine.AdaptivePerformance
         /// loader represents.
         /// </summary>
         ///
-        /// <returns>True if initialization succeeded, false otherwise.</returns>
-        public virtual bool Initialize() { return false; }
+        /// <returns>Whether or not initialization succeeded.</returns>
+        public virtual bool Initialize() { return true; }
 
         /// <summary>
         /// Ask loader to start all initialized subsystems.
         /// </summary>
         ///
-        /// <returns>True if all subsystems were successfully started, false otherwise.</returns>
-        public virtual bool Start() { return false; }
+        /// <returns>Whether or not all subsystems were successfully started.</returns>
+        public virtual bool Start() { return true; }
 
         /// <summary>
         /// Ask loader to stop all initialized subsystems.
         /// </summary>
         ///
-        /// <returns>True if all subsystems were successfully stopped, false otherwise.</returns>
-        public virtual bool Stop() { return false; }
+        /// <returns>Whether or not all subsystems were successfully stopped.</returns>
+        public virtual bool Stop() { return true; }
 
         /// <summary>
         /// Ask loader to deinitialize all initialized subsystems.
         /// </summary>
         ///
-        /// <returns>True if deinitialization succeeded, false otherwise.</returns>
-        public virtual bool Deinitialize() { return false; }
+        /// <returns>Whether or not deinitialization succeeded.</returns>
+        public virtual bool Deinitialize() { return true; }
 
         /// <summary>
         /// Gets the loaded subsystem of the specified type. This is implementation-specific, because implementations contain data on

@@ -30,6 +30,8 @@
     </ui:Foldout>
     <ui:Foldout text="Indexer" value="True" name="indexer">
         <Style src="AdaptivePerformanceExtension.uss" />
+        <uie:EnumField name="indexer-thermal-action" label="Thermal Action" type="UnityEngine.AdaptivePerformance.StateAction, Unity.AdaptivePerformance" value="Stale" include-obsolete-values="false" tooltip="Simulate the Indexer thermal action to control which scalers are applied. The values indicate if quality will be increased or decreased in response to the current thermal state." />
+        <uie:EnumField name="indexer-performance-action" label="Performance Action" type="UnityEngine.AdaptivePerformance.StateAction, Unity.AdaptivePerformance" value="Stale" include-obsolete-values="false" tooltip="Simulate the Indexer performance action to control which scalers are applied. The values indicate if quality will be increased or decreased in response to the current performance state." />
         <ui:Foldout text="Scalers" value="True" name="scalers">
             <Style src="AdaptivePerformanceExtension.uss" />
         </ui:Foldout>

@@ -61,23 +61,28 @@ namespace UnityEngine.AdaptivePerformance.Tests.Standalone
 
         public override bool Start()
         {
-            StartSubsystem<StandaloneSubsystem>();
+            if (standaloneSubsystem != null)
+                StartSubsystem<StandaloneSubsystem>();
             return true;
         }
 
         public override bool Stop()
         {
-            StopSubsystem<StandaloneSubsystem>();
+            if (standaloneSubsystem != null)
+                StopSubsystem<StandaloneSubsystem>();
             return true;
         }
 
         public override bool Deinitialize()
         {
             DestroySubsystem<StandaloneSubsystem>();
-            standaloneSubsystem.startCalled -= OnStartCalled;
-            standaloneSubsystem.stopCalled -= OnStopCalled;
-            standaloneSubsystem.destroyCalled -= OnDestroyCalled;
-            return true;
+            if (standaloneSubsystem != null)
+            {
+                standaloneSubsystem.startCalled -= OnStartCalled;
+                standaloneSubsystem.stopCalled -= OnStopCalled;
+                standaloneSubsystem.destroyCalled -= OnDestroyCalled;
+            }
+            return base.Deinitialize();
         }
     }
 }
