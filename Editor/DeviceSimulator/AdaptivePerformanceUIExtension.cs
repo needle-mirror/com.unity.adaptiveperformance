@@ -40,6 +40,18 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_ExtensionFoldout = visualElement;
 #endif
             var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.unity.adaptiveperformance/Editor/DeviceSimulator/AdaptivePerformanceExtension.uxml");
+            if (tree == null)
+            {
+                Label warningLabel = new Label("Simulator provider is not installed. Please install and enable the provider in Project Settings > Adaptive Performance > Standalone >  Providers. After installation, close and reopen the Device Simulator to take effect.");
+                warningLabel.style.whiteSpace = WhiteSpace.Normal;
+                m_ExtensionFoldout.Add(warningLabel);
+#if UNITY_2021_1_OR_NEWER
+                return m_ExtensionFoldout;
+#else
+                return;
+#endif
+            }
+
             m_ExtensionFoldout.Add(tree.CloneTree());
 
             m_ThermalFoldout = m_ExtensionFoldout.Q<Foldout>("thermal");
@@ -91,7 +103,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                         var valueField = container.Q<IntegerField>("scaler-value");
 
                         // Set the values and additional config for these elements
-                        toggle.labelElement.text = t.Name;
+                        toggle.labelElement.text = t.Name.Substring(8);
                         toggle.value = scalerInstance.Enabled;
                         toggle.name = $"{t.Name}-scaler-toggle";
                         valueSlider.value = scalerInstance.CurrentLevel;
@@ -488,6 +500,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         public void OnBeforeSerialize()
         {
+            if (m_ThermalFoldout == null)
+                return;
+
             m_SerializationStates.thermalFoldout = m_ThermalFoldout.value;
             m_SerializationStates.performanceFoldout = m_PerformanceFoldout.value;
             m_SerializationStates.developerFoldout = m_DeveloperFoldout.value;

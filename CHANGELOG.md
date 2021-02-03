@@ -4,6 +4,14 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2021-02-03
+
+### Added
+- Fix FB 1304020: Min and Max values are not saved after it is typed and the labels are too long.
+- Fix FB 1303986: When the settings view is narrowed "View license" text appears on top of the toggle.
+- Fix FB 1297030: Scaler options Checkboxes are misaligned in the Simulator window.
+- Fix FB 1296672: Errors are thrown on installing Adaptive Performance Package when Simulator window is open.
+
 ## [2.1.0] - 2020-10-12
 
 ### Added
@@ -14,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Session bugfixes for Adaptive Performance provider subsystem management.
 
-## [2.0.2] - 2019-08-21
+## [2.0.2] - 2020-08-21
 
 ### Changed
 - Provider downloader will now download latest available build instead of verified if verified version is below 2.0.0. This can happen on 2019 and 2020.1 as the verified package version is 1.x.
@@ -22,7 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Folders and files which are not needed by Adaptive Performance from the package.
 
-## [2.0.1] - 2019-08-10
+## [2.0.1] - 2020-08-10
 
 ### Changed
 - Change capitalized sample path for Adaptive LUT to work on Linux.
@@ -30,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Folders and files which are not needed by Adaptive Performance from the package.
 
-## [2.0.0] - 2019-06-05
+## [2.0.0] - 2020-06-05
 
 ### Added
 - Samples to show off different Adaptive Performance features.

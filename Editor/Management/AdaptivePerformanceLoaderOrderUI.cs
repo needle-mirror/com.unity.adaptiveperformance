@@ -36,6 +36,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
             public static readonly string k_AtNoLoaderInstance = L10n.Tr("There are no Adaptive Performance providers available for this platform.");
             public static readonly string k_LicenseText = L10n.Tr("By clicking the checkbox to install a provider, you acknowledge that you have read and agreed to the terms and conditions found under \"View licenses.\"");
             public static readonly GUIContent k_LicenseViewText = new GUIContent(L10n.Tr("View licenses"));
+            public static readonly GUIContent k_LoaderUITitle = EditorGUIUtility.TrTextContent(L10n.Tr("Providers"));
+            public static readonly GUIContent k_HelpContent = new GUIContent("", EditorGUIUtility.IconContent("_Help@2x").image, L10n.Tr("Selecting a provider installs that providers package. Packages can be managed through the Package Manager."));
         }
 
         private List<LoaderInformation> m_LoaderMetadata = null;
@@ -54,7 +56,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             li.toggled = AdaptivePerformancePackageMetadataStore.IsLoaderAssigned(li.loaderType, CurrentBuildTargetGroup);
             bool preToggledState = li.toggled;
-            rect.width /= 2;
+            rect.width *= 0.51f;
             EditorGUIUtility.labelWidth = 180;
             li.toggled = EditorGUI.Toggle(rect, li.loaderName, preToggledState);
             if (li.toggled != preToggledState)
@@ -64,7 +66,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             }
 
             if (li.licenseURL != null)
-                DisplayLink(Content.k_LicenseViewText, new Uri(li.licenseURL), 5, 80, rect);
+                DisplayLink(Content.k_LicenseViewText, new Uri(li.licenseURL), 2, 80, rect);
         }
 
         private void DisplayLink(GUIContent text, Uri link, float leftMargin, float width, Rect rect)
@@ -82,7 +84,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 System.Diagnostics.Process.Start(link.AbsoluteUri);
             }
             EditorGUIUtility.AddCursorRect(uriRect, MouseCursor.Link);
-            EditorGUI.DrawRect(new Rect(uriRect.x, uriRect.y + uriRect.height - 1, uriRect.width, 1), labelStyle.normal.textColor);
+            EditorGUI.DrawRect(new Rect(uriRect.x + 2, uriRect.y + uriRect.height - 3, uriRect.width - 3, 1), labelStyle.normal.textColor);
         }
 
         float GetElementHeight(int index)
@@ -131,7 +133,21 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 }
 
                 m_OrderedList = new ReorderableList(m_LoaderMetadata, typeof(LoaderInformation), false, true, false, false);
-                m_OrderedList.drawHeaderCallback = (rect) => GUI.Label(rect, EditorGUIUtility.TrTextContent(L10n.Tr("Providers")), EditorStyles.label);
+                m_OrderedList.drawHeaderCallback = (rect) =>
+                {
+                    var labelSize = EditorStyles.label.CalcSize(Content.k_LoaderUITitle);
+                    var labelRect = new Rect(rect);
+                    labelRect.width = labelSize.x;
+
+                    labelSize = EditorStyles.label.CalcSize(Content.k_HelpContent);
+                    var imageRect = new Rect(rect);
+                    imageRect.xMin = labelRect.xMax + 1;
+                    imageRect.width = labelSize.x;
+
+                    EditorGUI.LabelField(labelRect, Content.k_LoaderUITitle, EditorStyles.label);
+                    EditorGUI.LabelField(imageRect, Content.k_HelpContent);
+                };
+
                 m_OrderedList.drawElementCallback = (rect, index, isActive, isFocused) => DrawElementCallback(rect, index, isActive, isFocused);
                 m_OrderedList.elementHeightCallback = (index) => GetElementHeight(index);
                 m_OrderedList.drawFooterCallback = (rect) =>

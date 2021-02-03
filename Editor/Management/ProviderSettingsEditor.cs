@@ -44,9 +44,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_ScalerScale = EditorGUIUtility.TrTextContent(L10n.Tr("Scale"), L10n.Tr("Scale to control the quality impact for the scaler. No quality change when 1, improved quality when >1, and lowered quality when <1"));
         static GUIContent s_ScalerVisualImpact = EditorGUIUtility.TrTextContent(L10n.Tr("Visual Impact"), L10n.Tr("Visual impact the scaler has on the application. The higher the more impact the scaler has on the visuals."));
         static GUIContent s_ScalerTarget = EditorGUIUtility.TrTextContent(L10n.Tr("Target"), L10n.Tr("Target for the scaler of the application bottleneck. The target selected has the most impact on the quality control of this scaler."));
-        static GUIContent s_ScalerMaxLevel = EditorGUIUtility.TrTextContent(L10n.Tr("Maximum Level"), L10n.Tr("Maximum level for the scaler. This is tied to the implementation of the scaler to divide the levels into concrete steps."));
-        static GUIContent s_ScalerMinBound = EditorGUIUtility.TrTextContent(L10n.Tr("Minimum"), L10n.Tr("Minimum value for the scale boundary."));
-        static GUIContent s_ScalerMaxBound = EditorGUIUtility.TrTextContent(L10n.Tr("Maximum"), L10n.Tr("Maximum value for the scale boundary."));
+        static GUIContent s_ScalerMaxLevel = EditorGUIUtility.TrTextContent(L10n.Tr("Max Level"), L10n.Tr("Maximum level for the scaler. This is tied to the implementation of the scaler to divide the levels into concrete steps."));
+        static GUIContent s_ScalerMinBound = EditorGUIUtility.TrTextContent(L10n.Tr("Min"), L10n.Tr("Minimum value for the scale boundary."));
+        static GUIContent s_ScalerMaxBound = EditorGUIUtility.TrTextContent(L10n.Tr("Max"), L10n.Tr("Maximum value for the scale boundary."));
         static GUIContent s_FrameRateLimits = EditorGUIUtility.TrTextContent(L10n.Tr("Framerate"), L10n.Tr("Set the minimum and maximum framerate for the scaler to operate in."));
         static GUIContent s_BoundryLimits = EditorGUIUtility.TrTextContent(L10n.Tr("Boundary"), L10n.Tr("Set the minimum and maximum boundary for the scaler to operate in."));
 
@@ -312,15 +312,33 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     {
                         EditorGUILayout.Space();
                         EditorGUILayout.LabelField(s_ScalerMinBound, GUILayout.MaxWidth(100));
+                        EditorGUI.BeginChangeCheck();
                         EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMinBound), GUIContent.none, GUILayout.MaxWidth(100));
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            RangeCheckProperty(k_ScalerMinBound, scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue, isFrameRateScaler, scalerSetting, true, maxBound);
+                            minBound = scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue;
+                        }
+
+                        EditorGUI.BeginChangeCheck();
                         EditorGUILayout.MinMaxSlider(ref minBound, ref maxBound, isFrameRateScaler ? 15 : 0f, isFrameRateScaler ? 140 : 1f);
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            RangeCheckProperty(k_ScalerMinBound, minBound, isFrameRateScaler, scalerSetting, true, maxBound);
+                            RangeCheckProperty(k_ScalerMaxBound, maxBound, isFrameRateScaler, scalerSetting, false, minBound);
+                        }
+
+                        EditorGUI.BeginChangeCheck();
                         EditorGUILayout.PropertyField(scalerSetting.FindPropertyRelative(k_ScalerMaxBound), GUIContent.none, GUILayout.MaxWidth(100));
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            RangeCheckProperty(k_ScalerMaxBound, scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue, isFrameRateScaler, scalerSetting, false, minBound);
+                            maxBound = scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue;
+                        }
                         EditorGUILayout.LabelField(s_ScalerMaxBound, GUILayout.MaxWidth(100));
                         EditorGUILayout.Space();
                     }
                     EditorGUILayout.EndHorizontal();
-                    scalerSetting.FindPropertyRelative(k_ScalerMinBound).floatValue = isFrameRateScaler ? Mathf.RoundToInt(minBound) : minBound;
-                    scalerSetting.FindPropertyRelative(k_ScalerMaxBound).floatValue = isFrameRateScaler ? Mathf.RoundToInt(maxBound) : maxBound;
                 }
 
                 EditorGUI.indentLevel--;
@@ -332,6 +350,14 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             GUI.enabled = true;
             m_Scalers[name] = scalerSettingInfo;
+        }
+
+        void RangeCheckProperty(string property, float value, bool frameRateScaler, SerializedProperty sproperty, bool isMin, float referenceValue)
+        {
+            if (isMin && value > referenceValue || !isMin && value < referenceValue)
+                value = referenceValue;
+
+            sproperty.FindPropertyRelative(property).floatValue = frameRateScaler ? Mathf.Clamp(Mathf.RoundToInt(value), 15, 140) : Mathf.Clamp((float)Math.Round(value, 2), 0, 1);
         }
 
         GUIContent ReturnScalerGUIContent(string scalerName)
