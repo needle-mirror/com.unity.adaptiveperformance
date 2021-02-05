@@ -4,7 +4,13 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.1.9] - 2019-07-23
+## [1.1.10] - 2021-02-05
+
+### Changed
+- Fix package author to show up correctly in the package manager
+- Sync version with Samsung package
+
+## [1.1.9] - 2020-07-23
 
 ### Changed
 - Automatic Performance Mode: gpuUtilizationThreshold increased from 0.7 to 0.9 to increase effeciency.
@@ -14,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed Automatic Performance Control flag to respect the function and not be read only anymore.
 - Inrease GPU Active time Ratio.
 
-## [1.1.6] - 2019-04-29
+## [1.1.6] - 2020-04-29
 
 ### Changed
 - Fix Analytics system error with unloaded subsystem.
