@@ -736,6 +736,7 @@ namespace UnityEngine.AdaptivePerformance
                 k_AssetVersion = 2;
                 if (m_scalerProfileList[0] != null)
                     m_scalerProfileList[0].ApplySettings(scalerSettings);
+                EditorUtility.SetDirty(this);
                 AssetDatabase.SaveAssets();
             }
 #endif
@@ -816,21 +817,6 @@ namespace UnityEngine.AdaptivePerformance
                 m_ScalerSettings.AdaptiveMSAA.maxBound = 1;
             else
                 Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveMSAA.maxBound");
-
-            if (m_ScalerSettings.AdaptiveShadowCascade.scale == -1)
-                m_ScalerSettings.AdaptiveShadowCascade.scale = 1;
-            else
-                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowCascade.scale");
-
-            if (m_ScalerSettings.AdaptiveShadowCascade.minBound == -1)
-                m_ScalerSettings.AdaptiveShadowCascade.minBound = 0;
-            else
-                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowCascade.minBound");
-
-            if (m_ScalerSettings.AdaptiveShadowCascade.maxBound == -1)
-                m_ScalerSettings.AdaptiveShadowCascade.maxBound = 1;
-            else
-                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowCascade.maxBound");
 
             if (m_ScalerSettings.AdaptiveShadowDistance.scale == -1)
                 m_ScalerSettings.AdaptiveShadowDistance.scale = 1;

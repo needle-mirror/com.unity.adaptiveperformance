@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnEnabled()
         {
-            m_DefaultShadowQualityBias = MaxLevel;
+            m_DefaultShadowQualityBias = AdaptivePerformanceRenderSettings.ShadowQualityBias;
         }
 
         /// <summary>
@@ -39,13 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
-                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = m_DefaultShadowQualityBias - (int)(((float)m_DefaultShadowQualityBias) * Scale);
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(3 - 3 * Scale);
         }
     }
 }

@@ -25,15 +25,15 @@ public static class AdaptivePerformanceProfilerStats
     /// <summary>
     /// Profiler counter to report cpu average frametime.
     /// </summary>
-    public static ProfilerCounter<float> AvgCPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "CPU avg frametime", ProfilerMarkerDataUnit.Count);
+    public static ProfilerCounter<float> AvgCPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "CPU avg frametime", ProfilerMarkerDataUnit.TimeNanoseconds);
     /// <summary>
     /// Profiler counter to report gpu frametime.
     /// </summary>
-    public static ProfilerCounter<float> CurrentGPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "GPU frametime", ProfilerMarkerDataUnit.Count);
+    public static ProfilerCounter<float> CurrentGPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "GPU frametime", ProfilerMarkerDataUnit.TimeNanoseconds);
     /// <summary>
     /// Profiler counter to report gpu average frametime.
     /// </summary>
-    public static ProfilerCounter<float> AvgGPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "GPU avg frametime", ProfilerMarkerDataUnit.Count);
+    public static ProfilerCounter<float> AvgGPUCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "GPU avg frametime", ProfilerMarkerDataUnit.TimeNanoseconds);
     /// <summary>
     /// Profiler counter to report cpu performance level.
     /// </summary>
@@ -45,11 +45,11 @@ public static class AdaptivePerformanceProfilerStats
     /// <summary>
     /// Profiler counter to report frametime.
     /// </summary>
-    public static ProfilerCounter<float> CurrentFrametimeCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "Frametime", ProfilerMarkerDataUnit.Count);
+    public static ProfilerCounter<float> CurrentFrametimeCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "Frametime", ProfilerMarkerDataUnit.TimeNanoseconds);
     /// <summary>
     /// Profiler counter to report average frametime.
     /// </summary>
-    public static ProfilerCounter<float> AvgFrametimeCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "Avg frametime", ProfilerMarkerDataUnit.Count);
+    public static ProfilerCounter<float> AvgFrametimeCounter = new ProfilerCounter<float>(AdaptivePerformanceProfilerCategory, "Avg frametime", ProfilerMarkerDataUnit.TimeNanoseconds);
     /// <summary>
     /// Profiler counter to report the thermal warning level.
     /// </summary>

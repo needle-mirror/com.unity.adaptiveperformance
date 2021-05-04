@@ -337,7 +337,7 @@ namespace UnityEngine.AdaptivePerformance
                     APLog.Debug(m_Subsystem.Stats);
                     APLog.Debug("Performance level CPU={0}/{1} GPU={2}/{3} thermal warn={4}({5}) thermal level={6} mode={7}", m_PerformanceMetrics.CurrentCpuLevel, MaxCpuPerformanceLevel,
                         m_PerformanceMetrics.CurrentGpuLevel, MaxGpuPerformanceLevel, m_ThermalMetrics.WarningLevel, (int)m_ThermalMetrics.WarningLevel, m_ThermalMetrics.TemperatureLevel, m_DevicePerfControl.PerformanceControlMode);
-                    APLog.Debug("Average GPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageGpuFrameTime * 1000.0f, m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
+                    APLog.Debug("Average GPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageGpuFrameTime * 1000.0f , m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
                     APLog.Debug("Average CPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageCpuFrameTime * 1000.0f, m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
                     APLog.Debug("Average frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageFrameTime * 1000.0f, m_FrameTiming.CurrentFrameTime * 1000.0f);
                     APLog.Debug("Bottleneck {0}, ThermalTrend {1}", m_PerformanceMetrics.PerformanceBottleneck, m_ThermalMetrics.TemperatureTrend);
@@ -350,14 +350,14 @@ namespace UnityEngine.AdaptivePerformance
 
         private void CollectProfilerStats()
         {
-            AdaptivePerformanceProfilerStats.CurrentCPUCounter.Sample(m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
-            AdaptivePerformanceProfilerStats.AvgCPUCounter.Sample(m_FrameTiming.AverageCpuFrameTime * 1000.0f);
-            AdaptivePerformanceProfilerStats.CurrentGPUCounter.Sample(m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
-            AdaptivePerformanceProfilerStats.AvgGPUCounter.Sample(m_FrameTiming.AverageGpuFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.CurrentCPUCounter.Sample(m_FrameTiming.CurrentCpuFrameTime * 1000000000.0f);
+            AdaptivePerformanceProfilerStats.AvgCPUCounter.Sample(m_FrameTiming.AverageCpuFrameTime * 1000000000.0f);
+            AdaptivePerformanceProfilerStats.CurrentGPUCounter.Sample(m_FrameTiming.CurrentGpuFrameTime * 1000000000.0f);
+            AdaptivePerformanceProfilerStats.AvgGPUCounter.Sample(m_FrameTiming.AverageGpuFrameTime * 1000000000.0f);
             AdaptivePerformanceProfilerStats.CurrentCPULevelCounter.Sample(m_PerformanceMetrics.CurrentCpuLevel);
             AdaptivePerformanceProfilerStats.CurrentGPULevelCounter.Sample(m_PerformanceMetrics.CurrentGpuLevel);
-            AdaptivePerformanceProfilerStats.CurrentFrametimeCounter.Sample(m_FrameTiming.CurrentFrameTime * 1000.0f);
-            AdaptivePerformanceProfilerStats.AvgFrametimeCounter.Sample(m_FrameTiming.AverageFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.CurrentFrametimeCounter.Sample(m_FrameTiming.CurrentFrameTime * 1000000000.0f);
+            AdaptivePerformanceProfilerStats.AvgFrametimeCounter.Sample(m_FrameTiming.AverageFrameTime * 1000000000.0f);
             AdaptivePerformanceProfilerStats.WarningLevelCounter.Sample((int)m_ThermalMetrics.WarningLevel);
             AdaptivePerformanceProfilerStats.TemperatureLevelCounter.Sample(m_ThermalMetrics.TemperatureLevel);
             AdaptivePerformanceProfilerStats.TemperatureTrendCounter.Sample(m_ThermalMetrics.TemperatureTrend);

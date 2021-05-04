@@ -39,12 +39,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
+            if (ScaleChanged())
                 AdaptivePerformanceRenderSettings.SkipDynamicBatching = (Scale < 1);
         }
     }

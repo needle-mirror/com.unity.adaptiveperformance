@@ -3,6 +3,6 @@
   "description": "Demonstrates how Variable Refresh Rate displays can be used with Adaptive Performance.",
   "createSeparatePackage": true,
   "dependencies": {
-  	"com.unity.adaptiveperformance.samsung.android": "2.2.0"
+  	"com.unity.adaptiveperformance.samsung.android": "3.0.0"
   }
 }

@@ -327,6 +327,7 @@ namespace UnityEngine.AdaptivePerformance
             if (thermalAction == StateAction.Stale && performanceAction == StateAction.Stale)
             {
                 UnapplyHighestCostScaler();
+                TimeUntilNextAction = m_Settings.indexerSettings.thermalActionDelay;
                 return;
             }
             if (thermalAction == StateAction.Decrease)

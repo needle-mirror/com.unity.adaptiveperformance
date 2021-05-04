@@ -30,7 +30,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnEnabled()
         {
-            m_DefaultShadowDistance = 1;
+            m_DefaultShadowDistance = AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier;
         }
 
         /// <summary>
@@ -38,13 +38,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
-                AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = m_DefaultShadowDistance * Scale;
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 1 * Scale;
         }
     }
 }

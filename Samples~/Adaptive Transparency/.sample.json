@@ -3,6 +3,6 @@
   "description": "Demonstrates how removing transparent objects works.",
   "createSeparatePackage": true,
   "dependencies": {
-    "com.unity.render-pipelines.universal": "7.5.1"
+    "com.unity.render-pipelines.universal": "12.0.0"
   }
 }

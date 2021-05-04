@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnEnabled()
         {
-            m_DefaultCascadeCount = (int)MaxLevel;
+            m_DefaultCascadeCount = AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias;
         }
 
         /// <summary>
@@ -39,13 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
-                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(((float)m_DefaultCascadeCount) * Scale);
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(2 * Scale);
         }
     }
 }

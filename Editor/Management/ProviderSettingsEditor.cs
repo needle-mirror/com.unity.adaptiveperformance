@@ -125,6 +125,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// </summary>
         public void OnEnable()
         {
+            if (serializedObject == null || serializedObject.targetObject == null)
+                return;
+
             if (m_scalerProfileList == null)
                 m_scalerProfileList = serializedObject.FindProperty(k_ScalerProfileList);
             m_ReorderableList = new ReorderableList(serializedObject, m_scalerProfileList, false, true, true, true);
@@ -186,6 +189,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// </summary>
         public void DisplayBaseSettingsEnd()
         {
+            if (serializedObject == null || serializedObject.targetObject == null)
+                return;
+
             EditorGUILayout.EndBuildTargetSelectionGrouping(); // Start happens in provider Editor
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();

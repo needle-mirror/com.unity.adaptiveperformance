@@ -40,9 +40,6 @@ Following scaler settings need upgrading if auto upgrade fails:
 * AdaptiveMSAA.scale from -1 to 1
 * AdaptiveMSAA.minBound from -1 to 0
 * AdaptiveMSAA.maxBound from -1 to 1
-* AdaptiveShadowCascades.scale from -1 to 1
-* AdaptiveShadowCascades.minBound from -1 to 0
-* AdaptiveShadowCascades.maxBound from -1 to 1
 * AdaptiveShadowDistance.scale from -1 to 1
 * AdaptiveShadowDistance.minBound from -1 to 0
 * AdaptiveShadowDistance.maxBound from -1 to 1

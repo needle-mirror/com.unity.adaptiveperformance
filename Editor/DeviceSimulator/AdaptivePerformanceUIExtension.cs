@@ -145,18 +145,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
                         valueField.RegisterCallback<ChangeEvent<int>>(evt =>
                         {
                             var scaler = FindScalerObject(t);
-                            if (evt.newValue < 0 || scaler == null)
-                            {
-                                valueField.SetValueWithoutNotify(0);
-                                return;
-                            }
-                            else if (evt.newValue > scaler.MaxLevel)
-                            {
-                                valueField.SetValueWithoutNotify(scaler.MaxLevel);
-                                return;
-                            }
+                            var newVal = evt.newValue;
+                            if (newVal < 0 || scaler == null)
+                                newVal = 0;
+                            else if (newVal > scaler.MaxLevel)
+                                newVal = scaler.MaxLevel;
 
-                            scaler.OverrideLevel = Mathf.Clamp(evt.newValue, 0, scaler.MaxLevel);
+                            scaler.OverrideLevel = Mathf.Clamp(newVal, 0, scaler.MaxLevel);
                             valueField.SetValueWithoutNotify(scaler.OverrideLevel);
                         });
                         maxLevelField.RegisterCallback<ChangeEvent<int>>(evt =>
@@ -165,11 +160,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
                             if (evt.newValue < 1 || scaler == null)
                             {
                                 maxLevelField.SetValueWithoutNotify(1);
+                                scaler.MaxLevel = 1;
                                 return;
                             }
                             else if (evt.newValue > 100)
                             {
                                 maxLevelField.SetValueWithoutNotify(100);
+                                scaler.MaxLevel = 100;
                                 return;
                             }
 
@@ -181,16 +178,19 @@ namespace UnityEditor.AdaptivePerformance.Editor
                             if (evt.newValue < 0 || scaler == null)
                             {
                                 minValueField.SetValueWithoutNotify(0);
+                                scaler.MinBound = 0;
                                 return;
                             }
                             else if (evt.newValue > 10000)
                             {
                                 minValueField.SetValueWithoutNotify(10000);
+                                scaler.MinBound = 10000;
                                 return;
                             }
                             else if (evt.newValue > maxValueField.value)
                             {
                                 minValueField.SetValueWithoutNotify(maxValueField.value);
+                                scaler.MinBound = maxValueField.value;
                                 return;
                             }
                             scaler.MinBound = evt.newValue;
@@ -201,11 +201,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
                             if (evt.newValue < minValueField.value || scaler == null)
                             {
                                 maxValueField.SetValueWithoutNotify(minValueField.value);
+                                scaler.MaxBound = minValueField.value;
                                 return;
                             }
                             else if (evt.newValue > 10000)
                             {
                                 maxValueField.SetValueWithoutNotify(10000);
+                                scaler.MaxBound = 10000;
                                 return;
                             }
 
@@ -674,7 +676,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
                 SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
 
-                if (AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader.GetSettings().enableBoostOnStartup == true)
+                if (AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader?.GetSettings().enableBoostOnStartup == true)
                 {
                     Debug.Log("[Adaptive Performance Simulator] Enabled boost mode on launch");
                 }

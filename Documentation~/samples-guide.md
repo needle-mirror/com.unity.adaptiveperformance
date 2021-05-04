@@ -347,9 +347,7 @@ Adapitve Performance and Variable Refresh Rate is not compatible with framce pac
 ### Universal Render Pipeline
 You need to use Universal Render Pipeline in your project for some samples. The Scalers used in those samples directly change settings in the Universal Render Pipeline and therefore will not have any effect when using any other Render Pipeline.
 
-Adaptive Performance requires Universal Render Pipeline versions `7.5`, `8.2`, `10.0` and later. Install it via the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html).
-
-**Note:** In Universal Render Pipeline versions `7.5`, Adaptive Performance is disabled by default, you need to enable it in the Universal Render Pipeline Quality Asset.
+Adaptive Performance requires Universal Render Pipeline versions `12.0` and later. Install it via the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html).
 
 To use the Universal Render Pipeline Settings we ship with the samples you have to follow following steps:
 

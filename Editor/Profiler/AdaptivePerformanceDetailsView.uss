@@ -1,16 +1,13 @@
-#ap-details-view
-{
+#ap-details-view {
     flex-grow: 1;
     flex-direction: column;
     height: 100%;
 }
 
-#ap-details-view-head
-{
+#ap-details-view-head {
     flex-grow: 1;
     height: 20px;
     width: 100%;
-
     background-color: var(--unity-colors-window-background);
     border-color: var(--unity-colors-window-border);
     border-top-width: 1px;
@@ -21,15 +18,13 @@
     padding-bottom: 15px;
 }
 
-#ap-details-view-header-label
-{
+#ap-details-view-header-label {
     flex-grow: 1;
     -unity-text-align: middle-center;
     font-size: 14px;
 }
 
-#ap-scalers
-{
+#ap-scalers {
     flex-direction: row;
     height: 360px;
     width: 100%;
@@ -37,8 +32,7 @@
     padding: 10px;
 }
 
-#ap-details-view-dials
-{
+#ap-details-view-dials {
     flex-grow: 1;
     flex-direction: row;
     height: 140px;
@@ -46,8 +40,8 @@
     justify-content: space-around;
     padding: 4px;
 }
-#ap-details-view-bottleneck
-{
+
+#ap-details-view-bottleneck {
     flex-direction: column;
     height: 140px;
     width: 100px;
@@ -55,35 +49,30 @@
     padding: 4px;
 }
 
-#ap-details-view-bottleneck-label
-{
+#ap-details-view-bottleneck-label {
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
 
-#ap-details-view-bottleneck-icon-container
-{
+#ap-details-view-bottleneck-icon-container {
     height: 70px;
     width: 120px;
     justify-content: center;
 }
 
-#ap-details-view-bottleneck-icon
-{
+#ap-details-view-bottleneck-icon {
     background-color: grey;
     height: 30px;
     width: 120px;
     justify-content: center;
 }
 
-#ap-details-view-bottleneck-icon-label
-{
+#ap-details-view-bottleneck-icon-label {
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
 
-#ap-details-view-thermal-warning
-{
+#ap-details-view-thermal-warning {
     flex-direction: column;
     height: 120px;
     width: 100px;
@@ -91,27 +80,23 @@
     padding: 4px;
 }
 
-#ap-details-view-thermal-warning-label
-{
+#ap-details-view-thermal-warning-label {
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
 
-#ap-usage-dial
-{
+#ap-usage-dial {
     flex-grow: 1;
     margin: 8px;
     justify-content: center;
 }
 
-#ap-details-view-thermal-label
-{
+#ap-details-view-thermal-label {
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
 
-#ap-details-view-details
-{
+#ap-details-view-details {
     flex-direction: row;
     height: 180px;
     padding: 4px;

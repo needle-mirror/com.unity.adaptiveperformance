@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnEnabled()
         {
-            m_DefaultShadowmapResolution = 1;
+            m_DefaultShadowmapResolution = AdaptivePerformanceRenderSettings.MainLightShadowmapResolutionMultiplier;
         }
 
         /// <summary>
@@ -39,13 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
-                AdaptivePerformanceRenderSettings.MainLightShadowmapResolutionMultiplier = m_DefaultShadowmapResolution * Scale;
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MainLightShadowmapResolutionMultiplier = 1 * Scale;
         }
     }
 }

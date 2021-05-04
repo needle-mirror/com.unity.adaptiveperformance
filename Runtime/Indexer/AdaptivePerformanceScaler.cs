@@ -315,6 +315,20 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
+        /// Checks if scale changed based on the current level and returns true if scale changed false otherwise.
+        /// </summary>
+        /// <returns>Returns true if scale changed false otherwise.</returns>
+        protected bool ScaleChanged()
+        {
+            float oldScaleFactor = Scale;
+            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+
+            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
+
+            return Scale != oldScaleFactor;
+        }
+
+        /// <summary>
         /// Callback for when the performance level is increased.
         /// </summary>
         protected virtual void OnLevelIncrease() {}

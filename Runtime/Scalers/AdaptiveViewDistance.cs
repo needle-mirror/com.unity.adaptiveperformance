@@ -51,12 +51,7 @@ namespace UnityEngine.AdaptivePerformance
             if (m_DefaultFarClipPlane == -1)
                 m_DefaultFarClipPlane = Camera.main.farClipPlane;
 
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
+            if (ScaleChanged())
                 Camera.main.farClipPlane = Scale;
         }
     }

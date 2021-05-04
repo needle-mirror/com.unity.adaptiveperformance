@@ -31,7 +31,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnEnabled()
         {
-            m_DefaultAA = (int)MaxLevel;
+            m_DefaultAA = AdaptivePerformanceRenderSettings.AntiAliasingQualityBias;
         }
 
         /// <summary>
@@ -39,13 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
-
-            if (Scale != oldScaleFactor)
-                AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = (int)(((float)m_DefaultAA) * Scale);
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = (int)(2 * Scale);
         }
     }
 }

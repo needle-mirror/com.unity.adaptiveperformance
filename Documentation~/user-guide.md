@@ -221,7 +221,7 @@ General render Scalers:
 - AdaptiveFramerate
 - AdaptiveViewDistance
 
-Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal`, versions `7.5`, `8.2`, and `10.0+`):
+Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal` `12.0+`):
 - AdaptiveBatching
 - AdaptiveLUT
 - AdaptiveMSAA

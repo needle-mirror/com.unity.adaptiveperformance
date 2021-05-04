@@ -19,12 +19,14 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     VisualElement m_Scalers;
     UsageDial m_UsageDial;
     Label m_BottleneckLabel;
+    VisualElement m_BottleneckIcon;
     Label m_UsageDialLabel;
-    StyleColor m_appliedScalerColor = new StyleColor(new Color(0.09f, 0.3f, 0.69f, 1f));
-    StyleColor m_unappliedScalerColor = new StyleColor(new Color(0.09f, 0.69f, 0.3f, 1f));
+    StyleColor m_appliedScalerColor = new StyleColor(new Color(0.09f, 0.69f, 0.3f, 1f));
+    StyleColor m_unappliedScalerColor = new StyleColor(new Color(0.09f, 0.3f, 0.69f, 1f));
     StyleColor m_inactiveColor = new StyleColor(new Color(0.29f, 0.69f, 0.3f, 0.3f));
-    Vector3 m_barFillPosition = new Vector3(20, 0f, 0f);
+    Length m_scalerOffset = new Length(-200, LengthUnit.Pixel);
     Length m_midDistance = new Length(100, LengthUnit.Pixel);
+    StyleRotate m_scalerRotate = new StyleRotate(new Rotate(180));
 
     public AdaptivePerformanceDetailsViewController(ProfilerWindow profilerWindow) : base(profilerWindow) {}
 
@@ -35,6 +37,7 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
         m_DetailsViewLabel = m_view.Q<Label>("ap-details-view-label");
         m_Scalers = m_view.Q<VisualElement>("ap-scalers");
         m_BottleneckLabel = m_view.Q<Label>("ap-details-view-bottleneck-icon-label");
+        m_BottleneckIcon = m_view.Q<VisualElement>("ap-details-view-bottleneck-icon");
 
         m_UsageDial = m_view.Q<UsageDial>();
         m_UsageDialLabel = m_view.Q<Label>("ap-details-view-thermal-label");
@@ -63,8 +66,6 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                     viewName.name = $"{t.Name}-element-label";
                     barFill.name = $"{t.Name}-element-bar-fill";
                     maxLabel.name = $"{t.Name}-element-max-label";
-                    viewName.transform.position = new Vector3(10, -15f, 0f);
-                    viewName.transform.rotation = Quaternion.Euler(0f, 0f, 45f);
                     currentLabel.name = $"{t.Name}-element-current-label";
                     currentLabel.style.bottom = m_midDistance;
 
@@ -106,12 +107,12 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
 
             var thermalWarningLevel = (WarningLevel)ExtractAdaptivePerformanceCounterValueInt(frameData, "Thermal Warning Level");
             var bottleneck = (PerformanceBottleneck)ExtractAdaptivePerformanceCounterValueInt(frameData, "Bottleneck");
-            m_DetailsViewLabel.text = $"CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU frametime")} \t\t" +
-                $"Average CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU avg frametime")} \n" +
-                $"GPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "GPU frametime")} \t\t" +
-                $"Average GPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "GPU avg frametime")} \n" +
-                $"Frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "Frametime")} \t\t\t" +
-                $"Average frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "Avg frametime")} \n" +
+            m_DetailsViewLabel.text = $"CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU frametime") / 1000000.0f} ms \t\t" +
+                $"Average CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU avg frametime") / 1000000.0f} ms \n" +
+                $"GPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "GPU frametime") / 1000000.0f} ms \t\t" +
+                $"Average GPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "GPU avg frametime") / 1000000.0f} ms \n" +
+                $"Frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "Frametime") / 1000000.0f} ms \t\t\t" +
+                $"Average frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "Avg frametime") / 1000000.0f} ms \n" +
                 $"\n" +
                 $"CPU performance level: {ExtractAdaptivePerformanceCounterValueInt(frameData, "CPU performance level")} \n" +
                 $"GPU performance level: {ExtractAdaptivePerformanceCounterValueInt(frameData, "GPU performance level")} \n" +
@@ -122,22 +123,26 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                 $"Thermal Warning Level: {thermalWarningLevel} \n" +
                 $"Bottleneck: {bottleneck} \n";
 
-            if (m_BottleneckLabel != null)
+            if (m_BottleneckLabel != null && m_BottleneckIcon != null)
             {
                 if (bottleneck == PerformanceBottleneck.CPU)
                 {
+                    m_BottleneckIcon.style.backgroundColor = Color.red;
                     m_BottleneckLabel.text = "CPU";
                 }
                 else if (bottleneck == PerformanceBottleneck.GPU)
                 {
+                    m_BottleneckIcon.style.backgroundColor = Color.blue;
                     m_BottleneckLabel.text = "GPU";
                 }
                 else if (bottleneck == PerformanceBottleneck.TargetFrameRate)
                 {
+                    m_BottleneckIcon.style.backgroundColor = m_appliedScalerColor;
                     m_BottleneckLabel.text = "Target Framerate";
                 }
                 else
                 {
+                    m_BottleneckIcon.style.backgroundColor = Color.grey;
                     m_BottleneckLabel.text = "Unknown";
                 }
             }
@@ -181,7 +186,7 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                         continue;
 
                     currentLabel.text = $"{scalerInfo.currentLevel}";
-                    if (scalerInfo.enabled == 0 && scalerInfo.overrideLevel == -1)
+                    if (scalerInfo.enabled == 0)
                     {
                         barFill.style.backgroundColor = m_inactiveColor;
                     }
@@ -194,9 +199,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                     }
                     var height = new Length((((float)scalerInfo.currentLevel / (float)scalerInfo.maxLevel)) * 100.0f, LengthUnit.Percent);
                     barFill.style.height = height;
-                    barFill.style.bottom = new Length(-200, LengthUnit.Pixel);
-                    barFill.transform.rotation = Quaternion.Euler(0f, 0f, 180f);
-                    barFill.transform.position = m_barFillPosition;
+                    barFill.style.bottom = m_scalerOffset;
+                    barFill.style.rotate = m_scalerRotate;
                     maxLabel.text = $"{scalerInfo.maxLevel}";
                 }
             }

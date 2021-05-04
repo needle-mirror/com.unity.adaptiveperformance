@@ -12,10 +12,10 @@
     <ui:Label name="ap-scaler-element-max-label" text="0"/>
     <ui:VisualElement name="ap-scaler-element-content">
       <ui:VisualElement name="ap-scaler-element-bar">
-        <ui:VisualElement name="ap-scaler-element-bar-fill"/>
+        <ui:VisualElement name="ap-scaler-element-bar-fill" style="transform-origin: top;" />
       </ui:VisualElement>
       <ui:Label name="ap-scaler-element-level-label" text="0"/>
-      <ui:Label name="ap-scaler-element-label" text="Scaler"/>
+        <ui:Label name="ap-scaler-element-label" text="Scaler" style="transform-origin: center; rotate: 45deg;" />
     </ui:VisualElement>
   </ui:VisualElement>
 </ui:UXML>
