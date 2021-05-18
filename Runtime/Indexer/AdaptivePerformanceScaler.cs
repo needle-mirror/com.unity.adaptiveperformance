@@ -306,9 +306,10 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// Any scaler with settings in <see cref="IAdaptivePerformanceSettings"/> needs to call this method and provide the scaler specific setting. Unity uses the setting arguments in the base-scaler as the default settings.
+        /// This is also used by Scaler Profiles to apply their Settings.
         /// </summary>
         /// <param name="defaultSetting">The settings to apply to the scaler.</param>
-        protected void ApplyDefaultSetting(AdaptivePerformanceScalerSettingsBase defaultSetting)
+        public void ApplyDefaultSetting(AdaptivePerformanceScalerSettingsBase defaultSetting)
         {
             m_defaultSetting = defaultSetting;
         }

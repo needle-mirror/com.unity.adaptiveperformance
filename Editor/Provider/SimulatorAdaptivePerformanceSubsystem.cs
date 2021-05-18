@@ -89,6 +89,32 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details, see <see cref="PerformanceDataRecord.CpuPerformanceBoost"/>.
+        /// </summary>
+        public bool CpuPerformanceBoost
+        {
+            get { return updateResult.CpuPerformanceBoost; }
+            set
+            {
+                updateResult.CpuPerformanceBoost = value;
+                updateResult.ChangeFlags |= Provider.Feature.CpuPerformanceBoost;
+            }
+        }
+
+        /// <summary>
+        /// This property is a wrapper around an internal PerformanceDataRecord object. For more details, see <see cref="PerformanceDataRecord.GpuPerformanceBoost"/>.
+        /// </summary>
+        public bool GpuPerformanceBoost
+        {
+            get { return updateResult.GpuPerformanceBoost; }
+            set
+            {
+                updateResult.GpuPerformanceBoost = value;
+                updateResult.ChangeFlags |= Provider.Feature.GpuPerformanceBoost;
+            }
+        }
+
+        /// <summary>
         /// This property is a wrapper around an internal PerformanceDataRecord object. For more details, see <see cref="PerformanceDataRecord.GpuFrameTime"/>.
         /// </summary>
         public float NextGpuFrameTime
@@ -141,13 +167,23 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         }
 
         /// <summary>
+        /// Helper for the device simulator to change cluster info settings. Those settings are usually changed by a device directly.
+        /// </summary>
+        /// <param name="clusterInfo">New Cluster Info values.</param>
+        public void SetClusterInfo(ClusterInfo clusterInfo)
+        {
+            updateResult.ClusterInfo = clusterInfo;
+            updateResult.ChangeFlags |= Provider.Feature.ClusterInfo;
+        }
+
+        /// <summary>
         /// The current version of the Device Simulator Adaptive Performance Subsystem. Matches the version of the Adaptive Performance Subsystem. See <see cref="AdaptivePerformanceSubsystem.Version"/>.
         /// </summary>
         public override Version Version
         {
             get
             {
-                return new Version(2, 0, 0);
+                return new Version(3, 0, 0);
             }
         }
 
@@ -179,7 +215,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         public SimulatorAdaptivePerformanceSubsystem()
         {
             Capabilities = Feature.CpuPerformanceLevel | Feature.GpuPerformanceLevel | Feature.PerformanceLevelControl |
-                Feature.TemperatureLevel | Feature.WarningLevel | Feature.TemperatureTrend | Feature.CpuFrameTime | Feature.GpuFrameTime | Feature.OverallFrameTime;
+                Feature.TemperatureLevel | Feature.WarningLevel | Feature.TemperatureTrend | Feature.CpuFrameTime | Feature.GpuFrameTime | Feature.OverallFrameTime | Feature.CpuPerformanceBoost | Feature.GpuPerformanceBoost | Feature.ClusterInfo;
             updateResult.PerformanceLevelControlAvailable = true;
         }
 
@@ -204,6 +240,8 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         protected override void OnDestroy() {}
 
         private PerformanceDataRecord updateResult = new PerformanceDataRecord();
+        private float resetCpuBoostMode = 0;
+        private float resetGpuBoostMode = 0;
 
         /// <summary>
         /// Update current results and flags.
@@ -211,6 +249,23 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         /// <returns>The latest PerformanceDataRecord object.</returns>
         public override PerformanceDataRecord Update()
         {
+            // Boost mode disables setPerformanceLevel and only lasts 15 seconds
+            if ((int)resetCpuBoostMode == (int)Time.realtimeSinceStartup) // use int to avoid high precision of float
+            {
+                resetCpuBoostMode = 0;
+                AcceptsPerformanceLevel = true;
+                updateResult.CpuPerformanceBoost = false;
+                updateResult.ChangeFlags |= Provider.Feature.CpuPerformanceBoost;
+            }
+            if ((int)resetGpuBoostMode == (int)Time.realtimeSinceStartup)
+            {
+                resetGpuBoostMode = 0;
+                AcceptsPerformanceLevel = true;
+                updateResult.GpuPerformanceBoost = false;
+                updateResult.ChangeFlags |= Provider.Feature.GpuPerformanceBoost;
+            }
+
+
             updateResult.ChangeFlags &= Capabilities;
             var result = updateResult;
             updateResult.ChangeFlags = Feature.None;
@@ -257,6 +312,36 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
             }
 
             return cpuLevel >= 0 && gpuLevel >= 0 && cpuLevel <= MaxCpuPerformanceLevel && gpuLevel <= MaxGpuPerformanceLevel;
+        }
+
+        /// <summary>
+        /// Enable the boost mode for the CPU.
+        /// </summary>
+        /// <returns>Returns if CPU boost mode was successfully enabled.</returns>
+        public bool EnableCpuBoost()
+        {
+            // Boost mode disables setPerformanceLevel
+            AcceptsPerformanceLevel = false;
+            resetCpuBoostMode = Time.realtimeSinceStartup + 15;
+
+            updateResult.CpuPerformanceBoost = true;
+            updateResult.ChangeFlags |= Provider.Feature.CpuPerformanceBoost;
+            return true;
+        }
+
+        /// <summary>
+        /// Enable the boost mode for the GPU.
+        /// </summary>
+        /// <returns>Returns if GPU boost mode was successfully enabled.</returns>
+        public bool EnableGpuBoost()
+        {
+            // Boost mode disables setPerformanceLevel
+            AcceptsPerformanceLevel = false;
+            resetGpuBoostMode = Time.realtimeSinceStartup + 15;
+
+            updateResult.GpuPerformanceBoost = true;
+            updateResult.ChangeFlags |= Provider.Feature.GpuPerformanceBoost;
+            return true;
         }
 
         /// <summary>

@@ -48,7 +48,19 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// <summary>
         /// See <see cref="PerformanceDataRecord.OverallFrameTime"/>
         /// </summary>
-        OverallFrameTime = 0x100
+        OverallFrameTime = 0x100,
+        /// <summary>
+        /// See <see cref="PerformanceDataRecord.CpuPerformanceBoost"/> and <seealso cref="IDevicePerformanceLevelControl.EnableCpuBoost"/>
+        /// </summary>
+        CpuPerformanceBoost = 0x200,
+        /// <summary>
+        /// See <see cref="PerformanceDataRecord.GpuPerformanceBoost"/> and <seealso cref="IDevicePerformanceLevelControl.EnableGpuBoost"/>
+        /// </summary>
+        GpuPerformanceBoost = 0x400,
+        /// <summary>
+        /// See <see cref="PerformanceDataRecord.ClusterInfo"/>
+        /// </summary>
+        ClusterInfo = 0x800
     }
 
     /// <summary>
@@ -129,6 +141,27 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// Has changed when <see cref="Feature.OverallFrameTime"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
         public float OverallFrameTime { get; set; }
+
+        /// <summary>
+        /// The currently active CPU boost state. This is typically true if previously enabled with <see cref="IDevicePerformanceLevelControl.EnableCpuBoost"/> once the boost is successfully applied.
+        /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.EnableCpuBoost"/> fails.
+        /// Once the CPU boost is enabled it is active until you receive a callback that it is disabled.
+        /// CPU boost level has changed when <see cref="Feature.CpuPerformanceBoost"/> bit is set in <see cref="ChangeFlags"/>.
+        /// </summary>
+        public bool CpuPerformanceBoost { get; set; }
+
+        /// <summary>
+        /// The currently active GPU boost state. This is typically true if previously enabled with <see cref="IDevicePerformanceLevelControl.EnableGpuBoost"/> once the boost is successfully applied.
+        /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.EnableGpuBoost"/> fails.
+        /// Once the GPU boost is enabled it is active until you receive a callback that it is disabled.
+        /// GPU boost level has changed when <see cref="Feature.GpuPerformanceBoost"/> bit is set in <see cref="ChangeFlags"/>.
+        /// </summary>
+        public bool GpuPerformanceBoost { get; set; }
+
+        /// <summary>
+        /// Current CPU cluster information information. Includes number of big, medium and small cores use at the application startup.
+        /// </summary>
+        public ClusterInfo ClusterInfo { get; set; }
     }
 
     /// <summary>
@@ -184,6 +217,20 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </param>
         /// <returns>Returns true on success. When this fails, it means that the system took control of the active performance levels.</returns>
         bool SetPerformanceLevel(ref int cpu, ref int gpu);
+
+        /// <summary>
+        /// Request a CPU performance boost.
+        /// </summary>
+        /// If <see cref="Feature.CpuPerformanceBoost"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this function is ignored.
+        /// <returns>Returns true on success. When this fails, it means that the system took control and does not allow boosts.</returns>
+        bool EnableCpuBoost();
+
+        /// <summary>
+        /// Request a GPU performance boost.
+        /// </summary>
+        /// If <see cref="Feature.GpuPerformanceBoost"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this function is ignored.
+        /// <returns>Returns true on success. When this fails, it means that the system took control and does not allow boosts.</returns>
+        bool EnableGpuBoost();
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace UnityEngine.AdaptivePerformance
 {
@@ -51,10 +52,6 @@ namespace UnityEngine.AdaptivePerformance
             if (warning == WarningLevel.Throttling && throttlingTemp == 1.0f)
                 throttlingTemp = thermalLevel; // remember throttling level
 
-            // normal operating conditions
-            if (warning == WarningLevel.NoWarning && thermalLevel < warningTemp)
-                return StateAction.Increase;
-
             // Throttling needs to cool down a lot before changing to no warning
             if (warning == WarningLevel.Throttling || thermalLevel >= throttlingTemp)
                 return StateAction.FastDecrease;
@@ -73,6 +70,19 @@ namespace UnityEngine.AdaptivePerformance
                 else
                     return StateAction.Decrease;
             }
+
+
+            // normal operating conditions
+            if (warning == WarningLevel.NoWarning && thermalLevel < warningTemp)
+            {
+                if (thermalTrend <= 0)
+                    return StateAction.Increase;
+                else if (thermalTrend > 0.5)
+                    return StateAction.FastDecrease;
+                else if (thermalTrend > 0.1)
+                    return StateAction.Decrease;
+            }
+
 
             return StateAction.Stale;
         }
@@ -297,6 +307,9 @@ namespace UnityEngine.AdaptivePerformance
             ThermalAction = thermalAction;
             PerformanceAction = performanceAction;
 
+            if (Profiler.enabled)
+                CollectProfilerStats();
+
             // Enforce minimum wait time between any scaler changes
             TimeUntilNextAction = Mathf.Max(TimeUntilNextAction - Time.deltaTime, 0);
             if (TimeUntilNextAction != 0)
@@ -340,6 +353,27 @@ namespace UnityEngine.AdaptivePerformance
                 TimeUntilNextAction = m_Settings.indexerSettings.performanceActionDelay / 2;
                 return;
             }
+        }
+
+        void CollectProfilerStats()
+        {
+            for (int i = m_UnappliedScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_UnappliedScalers[i];
+                AdaptivePerformanceProfilerStats.EmitScalerDataToProfilerStream(scaler.Name, scaler.Enabled, scaler.OverrideLevel, scaler.CurrentLevel, scaler.Scale, false, scaler.MaxLevel);
+            }
+
+            for (int i = m_AppliedScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_AppliedScalers[i];
+                AdaptivePerformanceProfilerStats.EmitScalerDataToProfilerStream(scaler.Name, scaler.Enabled, scaler.OverrideLevel, scaler.CurrentLevel, scaler.Scale, true, scaler.MaxLevel);
+            }
+            for (int i = m_DisabledScalers.Count - 1; i >= 0; i--)
+            {
+                var scaler = m_DisabledScalers[i];
+                AdaptivePerformanceProfilerStats.EmitScalerDataToProfilerStream(scaler.Name, scaler.Enabled, scaler.OverrideLevel, scaler.CurrentLevel, scaler.Scale, false, scaler.MaxLevel);
+            }
+            AdaptivePerformanceProfilerStats.FlushScalerDataToProfilerStream();
         }
 
         void DeactivateDisabledScalers()
@@ -439,7 +473,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void ApplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel}");
+            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to increase level to {scaler.CurrentLevel+1}");
             if (scaler.NotLeveled)
             {
                 m_UnappliedScalers.Remove(scaler);
@@ -480,7 +514,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void UnapplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler.");
+            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to decrease level to {scaler.CurrentLevel-1}");
             scaler.DecreaseLevel();
             if (scaler.NotLeveled)
             {

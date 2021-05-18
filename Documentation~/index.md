@@ -26,7 +26,10 @@ For information on what's new in the latest version of Adaptive Performance, see
 
 This version of Adaptive Performance is compatible with the following versions of the Unity Editor:
 
-* 2019.4 LTS and later (2020.2 and later recommended)
+* 2021.2 and later
 
 ## Upgrading
 For information on upgrading from a previous version of Adaptive Performance to the current version, see  [Upgrade guides](upgrade-guides.md).
+
+## What's New?
+For information on the latest changes and additions in this version of Adaptive Performance, see  [What's new](whats-new.md).

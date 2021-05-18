@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 
 using UnityEditor.Build;
@@ -85,6 +86,55 @@ namespace UnityEditor.AdaptivePerformance.Editor
             // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
             CleanOldSettings();
+        }
+    }
+
+    /// <summary>
+    /// Helper utilities for build-time modifications.
+    /// </summary>
+    public static class AdaptivePerformanceBuildUtils
+    {
+        /// <summary>
+        /// Add key to boot.config
+        /// </summary>
+        /// <param name="path">Player build path</param>
+        /// <param name="bootConfigKey">Key to add or update</param>
+        /// <param name="wantedSettingValue">Value for the key</param>
+        public static void UpdateBootConfigBoostSetting(string path, string bootConfigKey, string wantedSettingValue)
+        {
+            string bootConfig = Path.Combine(path, "src/main/assets/bin/Data/boot.config");
+            if (!File.Exists(bootConfig))
+                return;
+            var lines = File.ReadAllLines(bootConfig);
+            string searchSetting = $"{bootConfigKey}=";
+            int i;
+            for (i = 0; i < lines.Length; ++i)
+                if (lines[i].StartsWith(searchSetting))
+                    break;
+            wantedSettingValue = searchSetting + wantedSettingValue;
+            if (i >= lines.Length)
+                File.AppendAllLines(bootConfig, new[] { wantedSettingValue });
+            else
+            {
+                if (lines[i] != wantedSettingValue)
+                {
+                    lines[i] = wantedSettingValue;
+                    File.WriteAllLines(bootConfig, lines);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get value for boost mode on startup for given settings
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static string GetWantedStartupBoostSetting(UnityEngine.AdaptivePerformance.IAdaptivePerformanceSettings settings)
+        {
+            if (settings == null)
+                return "1";
+            bool enabled = settings.enableBoostOnStartup;
+            return enabled ? "1" : "0";
         }
     }
 }

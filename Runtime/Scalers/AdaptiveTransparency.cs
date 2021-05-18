@@ -36,7 +36,13 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            AdaptivePerformanceRenderSettings.SkipTransparentObjects = CurrentLevel != 0;
+            float oldScaleFactor = Scale;
+            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+
+            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
+
+            if (Scale != oldScaleFactor)
+                AdaptivePerformanceRenderSettings.SkipTransparentObjects = (Scale < 1);
         }
     }
 }

@@ -39,21 +39,13 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    QualitySettings.lodBias = m_DefaultLodBias;
-                    break;
-                case 1:
-                    QualitySettings.lodBias = m_DefaultLodBias * 0.8f;
-                    break;
-                case 2:
-                    QualitySettings.lodBias = m_DefaultLodBias * 0.6f;
-                    break;
-                case 3:
-                    QualitySettings.lodBias = m_DefaultLodBias * 0.4f;
-                    break;
-            }
+            float oldScaleFactor = Scale;
+            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+
+            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
+
+            if (Scale != oldScaleFactor)
+                QualitySettings.lodBias = m_DefaultLodBias * Scale;
         }
     }
 }

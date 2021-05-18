@@ -312,6 +312,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
         public IEnumerator PerformanceLevelChangeEvent_Works()
         {
             var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            subsystem.AcceptsPerformanceLevel = true; // boost mode disables performance level acceptance and those tests can run before this.
             var ap = Holder.Instance;
 
             var ctrl = ap.DevicePerformanceControl;
@@ -395,6 +396,136 @@ namespace UnityEditor.AdaptivePerformance.Tests
             // AdaptivePerformance is supposed to reapply the last settings
             Assert.AreEqual(cpuLevel, ap.PerformanceStatus.PerformanceMetrics.CurrentCpuLevel);
             Assert.AreEqual(gpuLevel, ap.PerformanceStatus.PerformanceMetrics.CurrentGpuLevel);
+        }
+
+        [UnityTest]
+        public IEnumerator PerformanceBoostChangeEvent_Works()
+        {
+            var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            var ap = Holder.Instance;
+
+            var ctrl = ap.DevicePerformanceControl;
+            var ps = ap.PerformanceStatus;
+
+            ctrl.CpuPerformanceBoost = true;
+            ctrl.GpuPerformanceBoost = true;
+
+            yield return null;
+            Assert.AreEqual(false, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(false, ps.PerformanceMetrics.GpuPerformanceBoost);
+
+            yield return null;
+            Assert.AreEqual(true, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(true, ps.PerformanceMetrics.GpuPerformanceBoost);
+
+            var eventArgs = new PerformanceBoostChangeEventArgs();
+            PerformanceBoostChangeHandler eventHandler = delegate(PerformanceBoostChangeEventArgs args)
+            {
+                eventArgs = args;
+            };
+            ps.PerformanceBoostChangeEvent += eventHandler;
+
+            yield return null;
+
+            // Samsung Subsystem would do this when "timeout" happens (enableBoost changes to no boost after 15 sec)
+            subsystem.GpuPerformanceBoost = false;
+            subsystem.CpuPerformanceBoost = false;
+
+            Assert.AreEqual(true, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(false, eventArgs.CpuBoost);
+            Assert.AreEqual(true, ps.PerformanceMetrics.GpuPerformanceBoost);
+            Assert.AreEqual(false, eventArgs.GpuBoost);
+
+            yield return null;
+
+            Assert.AreEqual(false, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(false, eventArgs.CpuBoost);
+            Assert.AreEqual(false, ps.PerformanceMetrics.GpuPerformanceBoost);
+            Assert.AreEqual(false, eventArgs.GpuBoost);
+        }
+
+        [UnityTest]
+        public IEnumerator PerformanceBoost_Disables_PerformanceLevels()
+        {
+            var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            var ap = Holder.Instance;
+
+            var ctrl = ap.DevicePerformanceControl;
+            var ps = ap.PerformanceStatus;
+
+            ctrl.CpuPerformanceBoost = true;
+            ctrl.GpuPerformanceBoost = true;
+
+            yield return null;
+            Assert.AreEqual(false, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(false, ps.PerformanceMetrics.GpuPerformanceBoost);
+
+            yield return null;
+            Assert.AreEqual(true, ps.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(true, ps.PerformanceMetrics.GpuPerformanceBoost);
+
+
+            ap.DevicePerformanceControl.CpuLevel = 3;
+            ap.DevicePerformanceControl.GpuLevel = 2;
+
+            yield return null;
+
+            // AdaptivePerformance is supposed to not apply levels when bost mode is activated
+            Assert.AreEqual(Constants.UnknownPerformanceLevel, ap.PerformanceStatus.PerformanceMetrics.CurrentCpuLevel);
+            Assert.AreEqual(Constants.UnknownPerformanceLevel, ap.PerformanceStatus.PerformanceMetrics.CurrentGpuLevel);
+        }
+
+        [UnityTest]
+        public IEnumerator PerformanceBoost_Is_Off_After_Timeout()
+        {
+            var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            var ap = Holder.Instance;
+
+            ap.DevicePerformanceControl.GpuPerformanceBoost = true;
+            ap.DevicePerformanceControl.CpuPerformanceBoost = true;
+
+            yield return null;
+
+            // Samsung Subsystem would do this when "timeout" happens (enableBoost changes to no boost after 15 sec)
+            subsystem.GpuPerformanceBoost = false;
+            subsystem.CpuPerformanceBoost = false;
+
+            yield return null;
+
+            // AdaptivePerformance is supposed to reapply the last settings
+            Assert.AreEqual(false, ap.PerformanceStatus.PerformanceMetrics.CpuPerformanceBoost);
+            Assert.AreEqual(false, ap.PerformanceStatus.PerformanceMetrics.GpuPerformanceBoost);
+        }
+
+        [UnityTest]
+        public IEnumerator Feature_ClusterInfo_Is_Supported()
+        {
+            var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+            var ap = Holder.Instance;
+
+            var clusterInfo = ap.SupportedFeature(UnityEngine.AdaptivePerformance.Provider.Feature.ClusterInfo);
+            var bigcores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.BigCore;
+            var mediumcores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.MediumCore;
+            var tinycores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.LittleCore;
+
+            yield return null;
+
+            ClusterInfo newClusterInfo = new ClusterInfo
+            {
+                BigCore = 5,
+                MediumCore = 4,
+                LittleCore = -1
+            };
+            subsystem.SetClusterInfo(newClusterInfo);
+            yield return null;
+
+            Assert.AreEqual(true, clusterInfo);
+            Assert.AreEqual(bigcores, 0); // Big core is always 0 in Simulator
+            Assert.AreEqual(mediumcores, 0); // Medium core is always 0 in Simulator
+            Assert.AreEqual(tinycores, 0); // Small core is always 0 in Simulator
+            Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.BigCore, 5);
+            Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.MediumCore, 4);
+            Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.LittleCore, -1);
         }
     }
 }

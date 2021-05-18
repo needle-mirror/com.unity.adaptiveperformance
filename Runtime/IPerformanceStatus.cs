@@ -20,6 +20,28 @@ namespace UnityEngine.AdaptivePerformance
     public delegate void PerformanceBottleneckChangeHandler(PerformanceBottleneckChangeEventArgs bottleneckEventArgs);
 
     /// <summary>
+    /// Event arguments for boost changes. These are used in the <see cref="PerformanceBottleneckChangeHandler"/>.
+    /// </summary>
+    public struct PerformanceBoostChangeEventArgs
+    {
+        /// <summary>
+        /// Is the CPU boosted.
+        /// </summary>
+        public bool CpuBoost { get; set; }
+
+        /// <summary>
+        /// Is the GPU boosted
+        /// </summary>
+        public bool GpuBoost { get; set; }
+    }
+
+    /// <summary>
+    /// You can subscribe to the boost event delegate which sends the <see cref="PerformanceBoostChangeEventArgs"/> when a boost changes.
+    /// </summary>
+    /// <param name="boostEventArgs">The <see cref="PerformanceBoostChangeEventArgs"/> that describes the boost event.</param>
+    public delegate void PerformanceBoostChangeHandler(PerformanceBoostChangeEventArgs boostEventArgs);
+
+    /// <summary>
     /// Arguments for the performance level change event. These are used in the <see cref="PerformanceLevelChangeHandler"/>.
     /// </summary>
     public struct PerformanceLevelChangeEventArgs
@@ -87,6 +109,11 @@ namespace UnityEngine.AdaptivePerformance
         /// Subscribe to events and get updates when the the current CPU or GPU level changes.
         /// </summary>
         event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
+
+        /// <summary>
+        /// Subscribe to events and get updates when the the current CPU or GPU is boosted.
+        /// </summary>
+        event PerformanceBoostChangeHandler PerformanceBoostChangeEvent;
     }
 
     /// <summary>
@@ -114,6 +141,24 @@ namespace UnityEngine.AdaptivePerformance
         /// Current performance bottleneck which describes if the program is CPU, GPU, or `Application.targetFrameRate` bound.
         /// </summary>
         public PerformanceBottleneck PerformanceBottleneck { get; set; }
+
+        /// <summary>
+        /// CPU boosted.
+        /// </summary>
+        /// <value>CPU boosted</value>
+        public bool CpuPerformanceBoost { get; set; }
+
+        /// <summary>
+        /// GPU boosted.
+        /// </summary>
+        /// <value>GPU boosted</value>
+        public bool GpuPerformanceBoost { get; set; }
+
+        /// <summary>
+        /// Current CPU cluster information information. Updated at application startup.
+        /// </summary>
+        /// <value> CPU cluster information</value>
+        public ClusterInfo ClusterInfo { get; set; }
     }
 
     /// <summary>
@@ -193,5 +238,26 @@ namespace UnityEngine.AdaptivePerformance
         /// In this case, you should consider lowering the application's performance requirements (see <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/>).
         /// </summary>
         TargetFrameRate
+    }
+
+    /// <summary>
+    /// The cluster info describes the CPU Cluster setup.
+    /// </summary>
+    public struct ClusterInfo
+    {
+        /// <summary>
+        /// Number of big cores supported by the CPU.
+        /// </summary>
+        public int BigCore { get; set; }
+
+        /// <summary>
+        /// Number of medium cores supported by the CPU.
+        /// </summary>
+        public int MediumCore { get; set; }
+
+        /// <summary>
+        /// Number of little cores supported by the CPU.
+        /// </summary>
+        public int LittleCore { get; set; }
     }
 }

@@ -1,3 +1,5 @@
+using UnityEngine.Profiling;
+
 namespace UnityEngine.AdaptivePerformance
 {
     internal class AdaptivePerformanceManager
@@ -8,6 +10,7 @@ namespace UnityEngine.AdaptivePerformance
         public event ThermalEventHandler ThermalEvent;
         public event PerformanceBottleneckChangeHandler PerformanceBottleneckChangeEvent;
         public event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
+        public event PerformanceBoostChangeHandler PerformanceBoostChangeEvent;
 
         private Provider.AdaptivePerformanceSubsystem m_Subsystem = null;
 
@@ -16,6 +19,10 @@ namespace UnityEngine.AdaptivePerformance
         private int m_RequestedCpuLevel = Constants.UnknownPerformanceLevel;
         private int m_RequestedGpuLevel = Constants.UnknownPerformanceLevel;
         private bool m_NewUserPerformanceLevelRequest = false;
+        private bool m_RequestedCpuBoost = false;
+        private bool m_RequestedGpuBoost = false;
+        private bool m_NewUserCpuPerformanceBoostRequest = false;
+        private bool m_NewUserGpuPerformanceBoostRequest = false;
 
         private ThermalMetrics m_ThermalMetrics = new ThermalMetrics
         {
@@ -95,6 +102,26 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
 
+        public bool CpuPerformanceBoost
+        {
+            get { return m_RequestedCpuBoost; }
+            set
+            {
+                m_RequestedCpuBoost = value;
+                m_NewUserCpuPerformanceBoostRequest = true;
+            }
+        }
+
+        public bool GpuPerformanceBoost
+        {
+            get { return m_RequestedGpuBoost; }
+            set
+            {
+                m_RequestedGpuBoost = value;
+                m_NewUserGpuPerformanceBoostRequest = true;
+            }
+        }
+
         public IDevelopmentSettings DevelopmentSettings { get { return this; } }
         public IThermalStatus ThermalStatus { get { return this; } }
         public IPerformanceStatus PerformanceStatus { get { return this; } }
@@ -112,6 +139,11 @@ namespace UnityEngine.AdaptivePerformance
         Provider.IApplicationLifecycle m_AppLifecycle;
         TemperatureTrend m_TemperatureTrend;
         bool m_UseProviderOverallFrameTime = false;
+
+        public bool SupportedFeature(Provider.Feature feature)
+        {
+            return m_Subsystem != null ? m_Subsystem.Capabilities.HasFlag(feature) : false;
+        }
 
         public void Awake()
         {
@@ -212,6 +244,9 @@ namespace UnityEngine.AdaptivePerformance
                 PerformanceBottleneckChangeEvent += (PerformanceBottleneckChangeEventArgs ev) => LogBottleneckEvent(ev);
                 PerformanceLevelChangeEvent += (PerformanceLevelChangeEventArgs ev) => LogPerformanceLevelEvent(ev);
 
+                if (m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuPerformanceBoost))
+                    PerformanceBoostChangeEvent += (PerformanceBoostChangeEventArgs ev) => LogBoostEvent(ev);
+
                 Indexer = new AdaptivePerformanceIndexer(ref m_Settings);
 
                 UpdateSubsystem();
@@ -228,6 +263,11 @@ namespace UnityEngine.AdaptivePerformance
         private void LogBottleneckEvent(PerformanceBottleneckChangeEventArgs ev)
         {
             APLog.Debug("[perf event] bottleneck: {0}", ev.PerformanceBottleneck);
+        }
+
+        private void LogBoostEvent(PerformanceBoostChangeEventArgs ev)
+        {
+            APLog.Debug("[perf event] CPU boost: {0}, GPU boost: {1}", ev.CpuBoost, ev.GpuBoost);
         }
 
         private static string ToStringWithSign(int x)
@@ -286,6 +326,9 @@ namespace UnityEngine.AdaptivePerformance
 
             Indexer.Update();
 
+            if (Profiler.enabled)
+                CollectProfilerStats();
+
             if (APLog.enabled && LoggingFrequencyInFrames > 0)
             {
                 m_FrameCount++;
@@ -298,9 +341,27 @@ namespace UnityEngine.AdaptivePerformance
                     APLog.Debug("Average CPU frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageCpuFrameTime * 1000.0f, m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
                     APLog.Debug("Average frametime = {0} ms (Current = {1} ms)", m_FrameTiming.AverageFrameTime * 1000.0f, m_FrameTiming.CurrentFrameTime * 1000.0f);
                     APLog.Debug("Bottleneck {0}, ThermalTrend {1}", m_PerformanceMetrics.PerformanceBottleneck, m_ThermalMetrics.TemperatureTrend);
+                    APLog.Debug("CPU Boost Mode {0}, GPU Boost Mode {1}", m_PerformanceMetrics.CpuPerformanceBoost, m_PerformanceMetrics.GpuPerformanceBoost);
+                    APLog.Debug("Cluster Info = Big Cores: {0} Medium Cores: {1} Little Cores: {2}", m_PerformanceMetrics.ClusterInfo.BigCore, m_PerformanceMetrics.ClusterInfo.MediumCore, m_PerformanceMetrics.ClusterInfo.LittleCore);
                     APLog.Debug("FPS = {0}", 1.0f / m_FrameTiming.AverageFrameTime);
                 }
             }
+        }
+
+        private void CollectProfilerStats()
+        {
+            AdaptivePerformanceProfilerStats.CurrentCPUCounter.Sample(m_FrameTiming.CurrentCpuFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.AvgCPUCounter.Sample(m_FrameTiming.AverageCpuFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.CurrentGPUCounter.Sample(m_FrameTiming.CurrentGpuFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.AvgGPUCounter.Sample(m_FrameTiming.AverageGpuFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.CurrentCPULevelCounter.Sample(m_PerformanceMetrics.CurrentCpuLevel);
+            AdaptivePerformanceProfilerStats.CurrentGPULevelCounter.Sample(m_PerformanceMetrics.CurrentGpuLevel);
+            AdaptivePerformanceProfilerStats.CurrentFrametimeCounter.Sample(m_FrameTiming.CurrentFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.AvgFrametimeCounter.Sample(m_FrameTiming.AverageFrameTime * 1000.0f);
+            AdaptivePerformanceProfilerStats.WarningLevelCounter.Sample((int)m_ThermalMetrics.WarningLevel);
+            AdaptivePerformanceProfilerStats.TemperatureLevelCounter.Sample(m_ThermalMetrics.TemperatureLevel);
+            AdaptivePerformanceProfilerStats.TemperatureTrendCounter.Sample(m_ThermalMetrics.TemperatureTrend);
+            AdaptivePerformanceProfilerStats.BottleneckCounter.Sample((int)m_PerformanceMetrics.PerformanceBottleneck);
         }
 
         private void AccumulateTimingValue(ref float accu, float newValue)
@@ -362,7 +423,9 @@ namespace UnityEngine.AdaptivePerformance
 
             bool triggerPerformanceBottleneckChangeEvent = false;
             bool triggerThermalEventEvent = false;
+            bool triggerPerformanceBoostChangeEvent = false;
             var performanceBottleneckChangeEventArgs = new PerformanceBottleneckChangeEventArgs();
+            var performanceBoostChangeEventArgs = new PerformanceBoostChangeEventArgs();
 
             if (m_OverallFrameTime.GetNumValues() == m_OverallFrameTime.GetSampleWindowSize() &&
                 m_GpuFrameTime.GetNumValues() == m_GpuFrameTime.GetSampleWindowSize() &&
@@ -431,19 +494,69 @@ namespace UnityEngine.AdaptivePerformance
                 }
             }
 
+            triggerPerformanceBoostChangeEvent = (PerformanceBoostChangeEvent != null) &&
+                (updateResult.ChangeFlags.HasFlag(Provider.Feature.CpuPerformanceBoost) ||
+                    updateResult.ChangeFlags.HasFlag(Provider.Feature.GpuPerformanceBoost));
+
+            // The Subsystem may have changed the current modes (e.g. "timeout" of Samsung subsystem)
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.CpuPerformanceBoost))
+            {
+                if (m_DevicePerfControl.CpuPerformanceBoost != updateResult.CpuPerformanceBoost)
+                {
+                    m_DevicePerfControl.CpuPerformanceBoost = updateResult.CpuPerformanceBoost;
+                    m_RequestedCpuBoost = updateResult.CpuPerformanceBoost;
+                }
+            }
+
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.GpuPerformanceBoost))
+            {
+                if (m_DevicePerfControl.GpuPerformanceBoost != updateResult.GpuPerformanceBoost)
+                {
+                    m_DevicePerfControl.GpuPerformanceBoost = updateResult.GpuPerformanceBoost;
+                    m_RequestedGpuBoost = updateResult.GpuPerformanceBoost;
+                }
+            }
+
+            if (m_NewUserCpuPerformanceBoostRequest && PerformanceBoostChangeEvent != null)
+            {
+                m_NewUserCpuPerformanceBoostRequest = false;
+
+                m_Subsystem.PerformanceLevelControl.EnableCpuBoost();
+            }
+
+            if (m_NewUserGpuPerformanceBoostRequest && PerformanceBoostChangeEvent != null)
+            {
+                m_NewUserGpuPerformanceBoostRequest = false;
+
+                m_Subsystem.PerformanceLevelControl.EnableGpuBoost();
+            }
+
             if (m_DevicePerfControl.Update(out levelChangeEventArgs) && PerformanceLevelChangeEvent != null)
                 PerformanceLevelChangeEvent.Invoke(levelChangeEventArgs);
 
             m_PerformanceMetrics.CurrentCpuLevel = m_DevicePerfControl.CurrentCpuLevel;
             m_PerformanceMetrics.CurrentGpuLevel = m_DevicePerfControl.CurrentGpuLevel;
 
+            m_PerformanceMetrics.CpuPerformanceBoost = m_DevicePerfControl.CpuPerformanceBoost;
+            m_PerformanceMetrics.GpuPerformanceBoost = m_DevicePerfControl.GpuPerformanceBoost;
+
             m_NewUserPerformanceLevelRequest = false;
 
-            // PerformanceLevelChangeEvent triggers before those since it's useful for the user to know when the auto cpu/gpu level controller already made adjustments
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.ClusterInfo))
+            {
+                m_PerformanceMetrics.ClusterInfo = updateResult.ClusterInfo;
+            }
+            // PerformanceLevelChangeEvent and BoostModeChangeEvent triggers before those since it's useful for the user to know when the auto cpu/gpu level controller already made adjustments
             if (triggerThermalEventEvent)
                 ThermalEvent.Invoke(m_ThermalMetrics);
             if (triggerPerformanceBottleneckChangeEvent)
                 PerformanceBottleneckChangeEvent(performanceBottleneckChangeEventArgs);
+            if (triggerPerformanceBoostChangeEvent)
+            {
+                performanceBoostChangeEventArgs.CpuBoost = m_DevicePerfControl.CpuPerformanceBoost;
+                performanceBoostChangeEventArgs.GpuBoost = m_DevicePerfControl.GpuPerformanceBoost;
+                PerformanceBoostChangeEvent(performanceBoostChangeEventArgs);
+            }
         }
 
         private static bool WillCurrentFrameRender()

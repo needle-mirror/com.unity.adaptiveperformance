@@ -15,16 +15,25 @@ public class BottleneckUI : MonoBehaviour
     void Start()
     {
         ap = Holder.Instance;
+        if (ap == null)
+            return;
+
         ap.PerformanceStatus.PerformanceBottleneckChangeEvent += OnBottleneckChange;
     }
 
     private void OnDestroy()
     {
+        if (ap == null)
+            return;
+
         ap.PerformanceStatus.PerformanceBottleneckChangeEvent -= OnBottleneckChange;
     }
 
     void Update()
     {
+        if (ap == null)
+            return;
+
         avgCPUfloat = ap.PerformanceStatus.FrameTiming.AverageCpuFrameTime;
         avgGPUfloat = ap.PerformanceStatus.FrameTiming.AverageGpuFrameTime;
         avgFramefloat = ap.PerformanceStatus.FrameTiming.AverageFrameTime;

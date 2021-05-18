@@ -13,11 +13,15 @@ Install Adaptive Performance samples from the **Package Manager** window. Some o
 - [Sample Environment](#sample-environment)
 - [Thermal Sample](#thermal-sample)
 - [Bottleneck Sample](#bottleneck-sample)
+- [Boost Sample](#boost-sample)
+- [Cluster Info Sample](#cluster-info-sample)
 - [VRR Sample](#vrr-sample)
 - [Automatic Performance Control Sample](#automatic-performance-control-sample)
 - [Adaptive Framerate Sample](#adaptive-framerate-sample)
 - [Adaptive LOD Sample](#adaptive-lod-sample)
 - [Adaptive Resolution Sample](#adaptive-resolution-sample)
+- [Adaptive View Distance Sample](#adaptive-view-distance-sample)
+- [Scaler Profiles Sample](#scaler-profiles-sample)
 
 The following samples require Universal Render Pipeline:
 
@@ -70,6 +74,26 @@ The BottleneckControl Prefab in the Bottleneck scene enables you to configure se
 |Wait Time Before Switch|How many seconds before starting the next part of the test.|
 |Wait Time After Target Reached|How long to wait (in seconds) after meeting the target bottleneck.|
 |State Change Iterations|How many times the sample iterates through each bottleneck type.|
+
+## Boost Sample
+![Boost](Images/Samples/samples-boost.png)
+
+This sample demonstrates the use of the CPU and GPU boost API. Adaptive Performance can request a CPU or GPU boost which changes the minimum and maximum frequency of the CPU or GPU to provide more resources to the CPU and GPU.
+
+The sample has buttons to activate the CPU and GPU boosts and simulate high CPU or GPU load.
+
+The scene spawns bees. The log prints the time, and the number of bees spawned.
+
+When you simulate a high load, you can see the CPU time or GPU frame time increase. When you activate boost mode, you can see the CPU or GPU frame time reduce for 15 seconds.
+
+Using boost mode with CPU load generally increases the number of bees spawned.
+
+## Cluster Info Sample
+![Boost](Images/Samples/samples-clusterinfo.png)
+
+This sample demonstrates the use of the Cluster Info feature.
+
+CPU cores come in different sizes and configurations on heterogeneous systems. This sample prints the number of big, medium and little cores to the log. It also demonstrates how to check if a feature, such as Cluster Info, is available. The sample prints *Not Supported* in red to the screen if the API is not available or not supported.
 
 ## VRR Sample
 ![Variable Refresh Rate Sample](Images/Samples/samples-vrr.png)
@@ -277,6 +301,30 @@ The Adaptive Transparency sample uses the Scaler Visualization Prefab and enable
 - Enable or disable the scaler
 - Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
 
+## Adaptive View Distance Sample
+![Adaptive View Distance Sample](Images/Samples/samples-adaptiveviewdistance.png)
+
+The Adaptive View Distance sample shows how you can change the view distance of the [main camera](https://docs.unity3d.com/ScriptReference/Camera-main.html). To use the scaler your main camera needs to be tagged with the tag *MainCamera*.
+
+This feature uses the Indexer system to make decisions on when reduce the view distance to maintain performance and thermal stability.
+
+### Options
+The Adaptive View Distance sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
+
+- Enable or disable the scaler
+- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+
+## Scaler Profiles Sample
+![Scaler Profiles Sample](Images/Samples/samples-scalerprofiles.png)
+
+The Scaler Profiles Sample shows how you can use different scaler profiles to easily change scalers at runtime using the scaler profiles APIs.
+
+This demo only works if you add more than the default scaler profile. You can add different scaler profiles in the Adaptive Performance settings.
+
+![Scaler Profiles in the Adaptive Performance settings.](Images/settings-scaler-profiles.png)
+
+The scaler profiles UI will show the list of scaler profiles defined in the settings. You can click onto the name of a scaler and it will update all scalers defined in the profile.
+
 # Technical details
 ## Requirements
 
@@ -288,7 +336,7 @@ To enable proper timing for Adaptive Performance, you need to enable the **Frame
 
 If you want to use `Application.targetFrameRate` to limit the target frame rate, set the **VSync Count** option under **Edit &gt; Project Settings &gt; Quality &gt; Other** to **Don't Sync**.
 
-![Adaptive Transparency Sample](Images/Samples/settings-qualitylevels.png)
+![Adaptive Transparency Sample](Images/settings-qualitylevels.png)
 
 Unity has several quality levels in the quality settings. We recommend to switch the **VSync Count** to **Don't Sync** for each quality level. This will avoid issues with Adaptive Performance features like Adaptive Framerate and limiting the target framerate with `Application.targetFrameRate`.
 

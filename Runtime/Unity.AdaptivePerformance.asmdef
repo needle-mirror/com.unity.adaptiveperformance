@@ -1,7 +1,10 @@
 {
     "name": "Unity.AdaptivePerformance",
+    "rootNamespace": "",
     "references": [
-        "GUID:d03624f02fd4aef4aa6b888a1b059ad7"
+        "GUID:d03624f02fd4aef4aa6b888a1b059ad7",
+        "GUID:6abe8ead8ade49441879ba4315343e7d",
+        "GUID:b46779583a009f04ba9f5f31d0e7e6ac"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
