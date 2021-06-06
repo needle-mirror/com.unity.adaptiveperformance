@@ -22,6 +22,29 @@ Unity enables Adaptive Performance by default once you install the package and i
 
 For a description of the detailed startup behavior of a subsystem, see the [Subsystem Registration](https://docs.unity3d.com/Packages/com.unity.subsystemregistration@latest) documentation.
 
+## Features
+
+Adaptive Performance comes with different features. You can easily check which feature is supported on the device using the `Instance.SupportedFeature` function by providing the feature of interest. Following example checks for the `Provider.Feature.ClusterInfo`.
+
+```csharp
+void Start()
+{
+    ap = Holder.Instance;
+
+    if (ap == null || !ap.Active)
+    {
+        Debug.Log("[AP ClusterInfo] Adaptive Performance not active.");
+        return;
+    }
+    if (!ap.SupportedFeature(UnityEngine.AdaptivePerformance.Provider.Feature.ClusterInfo))
+    {
+        Debug.Log("[AP ClusterInfo] Feature not supported.");
+    }
+
+    var clusterInfo = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo;
+}
+```
+
 ## Performance status
 
 Adaptive Performance tracks several performance metrics and updates them every frame. To access these metrics, use the `Instance.PerformanceStatus` property.
@@ -125,6 +148,49 @@ public void EnterBenchmark()
 }
 ```
 
+## Boost Mode
+
+Adaptive Performance can request a CPU or GPU boost. A boost temporarily raises the minimum frequency of the CPU or GPU to the same value as its maximum frequency. Additionally the maximum frequency is raised, which provides more resources and enables it to perform more work.
+
+If the CPU or GPU does not require additional resources, or if it is idle, then requesting a boost will not have an effect.
+
+In the following sample case, the big and medium cores of the CPU are overloaded. Requesting a CPU boost provides additional resources, so the program can execute everything in time.
+
+![Big and medium cores are accelerated while tiny cores are on the same level as before.](Images/boost-mode.png)
+
+The downside is a higher energy consumption and heat production; using boost mode can easily bring the device into a throttling state. You should profile your application and look for additional optimizations before considering boost mood, and only use boost mode for short bursts.
+
+Typical scenarios for boost mode:
+
+- Decrease load time if CPU or GPU bound
+- Temporarily boost performance to decrease loading times.
+- Avoid visible hitches when you expect a spike in CPU or GPU work (such as network processing, compiling shaders, or generating content).
+
+Typically, the system performs (e.g. governors) load balancing to ensure that the CPU and GPU have adequate power for their tasks; however, the CPU and GPU frequencies can take time to ramp up. If you know in advance that your application will be under heavy CPU or GPU load, you can use boost mode to ramp up the frequency in advance so you do not have to wait.
+
+Examples of when you might do this include:
+
+- Loading a scene
+- Switching scene content (e.g. go into boss fight)
+- Spawn many objects
+- Show advertisement
+- Bursts of network traffic
+
+**Note:** boost mode requires a lot more power when both the CPU and GPU are boosted. Be very careful when doing this, and do not do it unnecessarily; you might overtax the device, which can lead to unintended behaviors.
+
+See the [Adaptive Performance samples](samples-guide.md) for more information about Boost modes.
+
+## Cluster Info
+
+CPU cores come in different sizes and configurations on heterogeneous systems. In certain scenarios it's important to know about the cluster in more detail. Use the cluster info struct to obtain information about the count of cores. A cluster is unlikely to chain during runtime so you can cache the data.
+
+```
+  var clusterInfo = Holder.Instance.PerformanceStatus.PerformanceMetrics.ClusterInfo;
+  Debug.Log($"Cluster Info = Big Cores: {clusterInfo.BigCore} Medium Cores: {clusterInfo.MediumCore} Little Cores: {clusterInfo.LittleCore}");
+```
+
+See the [Adaptive Performance samples](samples-guide.md) for more information about Cluster Info.
+
 ## Indexer and Scalers
 
 The Indexer is an Adaptive Performance system that tracks thermal and performance state and offers a quantified quality index.
@@ -141,18 +207,19 @@ Scalers only work when the Indexer is active. Activate the Indexer from the **Pr
 
 ![Samsung Android provider in the provider list is installed and ready to use.](Images/settings-provider-logging.png)
 
-Add any Scaler into the scene which you want to control using the Indexer quality quantification.
+Enable any scaler and it is added automatically to your application.
 
 ### Standard Scalers
 
-Adaptive Performance provides a few common Scaler.
+Adaptive Performance provides a few common Scalers.
 
 General render Scalers:
 - AdaptiveLOD
 - AdaptiveResolution
 - AdaptiveFramerate
+- AdaptiveViewDistance
 
-Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal`, versions `7.5`, `8.2`, and `10.0`):
+Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal`, versions `7.5`, `8.2`, and `10.0+`):
 - AdaptiveBatching
 - AdaptiveLUT
 - AdaptiveMSAA
@@ -176,34 +243,31 @@ public class TextureQualityScaler : AdaptivePerformanceScaler
 {
    public override ScalerVisualImpact VisualImpact => ScalerVisualImpact.High;
    public override ScalerTarget Target => ScalerTarget.GPU;
-   public override int MaxLevel => 2;
+   public override int MaxLevel => 4;
+   public override int MinBound => 0;
+   public override int MaxBound => 4;
 
    int m_DefaultTextureQuality;
 
    protected override void OnDisabled()
    {
-       QualitySettings.masterTextureLimit = m_DefaultTextureQuality;
+       QualitySettings.masterTextureLimit = m_DefaultTextureLimit;
    }
 
    protected override void OnEnabled()
    {
-       m_DefaultTextureQuality = QualitySettings.masterTextureLimit;
+       m_DefaultTextureLimit = QualitySettings.masterTextureLimit;
    }
 
    protected override void OnLevel()
    {
-      switch (CurrentLevel)
-      {
-         case 0:
-            QualitySettings.masterTextureLimit = 0;
-            break;
-         case 1:
-            QualitySettings.masterTextureLimit = 1;
-            break;
-         case 2:
-            QualitySettings.masterTextureLimit = 2;
-            break;
-      }
+        float oldScaleFactor = Scale;
+        float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
+
+        Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
+
+        if (Scale != oldScaleFactor)
+            QualitySettings.masterTextureLimit = (int)MaxBound-((int)(MaxBound*Scale));
    }
 }
 ```
@@ -227,9 +291,12 @@ Every Scaler shares a set of settings which describe the cost of the Scaler. The
 
 |**Setting**|**Description**|
 |:---|:---|
-|Enabled| Defines if a scaler is enabled or disable. You can change this setting during runtime. |
-|Visual Impact| The visual impact can be high, medium or low and depends on how much visual change a quality settings change causes. The higher the visual impact the higher the cost. this means a Scaler level is increased more often than a level of a Scaler with a lower cost.  You can change this setting during runtime. |
-|Target| This setting can not be changed. It defines which [bottleneck](#performance-bottleneck) a Scaler targets. Those targets can be CPU, GPU or Fillrate. If a bottleneck algins with the target of a scaler it triggers the highest cost for this Scaler and the level is often increase. |
+|Enabled| Defines if a scaler is enabled or disable. You can change this setting during runtime. In the menu it is displayed as checkbox next to the scaler name. |
+|Min Scale| Defines the minimum scale of the scaler. If the minimum scale is 0.5, the minimum quality is 50% of the original value. |
+|Max Scale| Defines the maximum scale of the scaler. If the maximum scale is 1.5, the maximum quality is 150% of the original value. Often, the maximum scale is set to 1, which is then used as the default for a high end device. |
+|Max Level| Defines the number of discrete quality levels between the minimum and maximum scale. A maximum level of 20 means that a scaler has 20 levels available between maximum and minimum quality. A binary scaler has a maximum level of 1. |
+|Visual Impact| Describes the visual impact of changing this quality setting. Valid values are high, medium, or low. Adaptive Performance prioritises changes based on this setting: it tries to increase scalers with a high Visual Impact, and reduce scalers with a low Visual Impact. You can change this setting at runtime. |
+|Target| This setting can not be changed. It defines which [bottleneck](#performance-bottleneck) a Scaler targets. Those targets can be CPU, GPU or Fillrate. If a bottleneck aligns with the target of a scaler it triggers the highest cost for this Scaler and the level is often increased. |
 
 The target of a Scaler corresponds to a [performance bottleneck](#performance-bottleneck).
 
@@ -239,25 +306,68 @@ The target of a Scaler corresponds to a [performance bottleneck](#performance-bo
 |GPU| GPU bound |
 |Fillrate| Target Frame Rate bound |
 
-Following Scaler have additional settings
+For better understanding please see how some of the scalers are defined.
 
 #### Adaptive Framerate
 Adaptive Framerate requires a minimum and maximum framerate. The Scaler sets the Application.targetFrameRate to a suitable value inbetween those values.
 
+**Note:** Adaptive Framerate is only supported when [QualitySettings.vsyncCount](https://docs.unity3d.com/ScriptReference/QualitySettings-vSyncCount.html) is set to 0 ( `Don't Sync` ).  Set this value using a script, or navigate to the  **Project Settings** (menu: **Edit &gt; Project Settings &gt; Quality &gt; Quality Level &gt; Other &gt; VSync Count** to `Don't Sync`.
+
 |**Setting**|**Description**|
 |:---|:---|
-|Minimum | Defines the lowest framerate acceptable.|
-|Maximum | Defines the highest framerate the Scaler should target. |
+|Min Scale | Defines the lowest framerate acceptable, in frames per second. |
+|Max Scale | Defines the highest framerate the Scaler should target, in frames per second. |
+|Max Level | Defines the number of discrete quality levels between the minimum and maximum framerate. This is usually Maximum FPS - Minimum FPS. |
+|Visual Impact | High - changing the FPS has a severe impact on how the game is perceived visually. |
+|Target | CPU, GPU and FillRate as it can improve each situation by reducing the amount of time left finishing work. |
 
 #### Adaptive Resolution
-Adaptive Resolution requires a minimum and maximum boundary. The Scaler changes the resolution inbetween those boundaries in steps defined by the maximum level.
+Adaptive Resolution requires a minimum and maximum scale. The Scaler changes the resolution in between those boundaries in steps defined by the maximum level.
 
 |**Setting**|**Description**|
 |:---|:---|
-|Minimum Boundary | Defines the lowest scale acceptable.|
-|Maximum Boundary | Defines the highest scale desireable.|
-|Maximum Level | Defines the scale steps which are taken between minimum and maximum boundary.|
+|Min Scale | Defines the lowest scale acceptable. By default set to 0.5 which is 50% of the default resolution. |
+|Max Scale | Defines the highest scale desirable. By default set to 1 which is 100% of the default resolution. |
+|Max Level | Defines the number of discrete quality levels between the minimum and maximum scale. The default value is 9, as this is the best interval for dynamic resolution. |
+|Visual Impact | Low - as changing the resolution has less impact on how the game is perceived visually. |
+|Target | GPU and FillRate as it can improve GPU and FillRate bound situations best by reducing the amount of work the GPU has to finish.|
+
+#### Adaptive View Distance
+Adaptive View Distance requires a minimum and maximum scale to change the view distance of your main camera. This Scaler changes the view distance in between those boundaries in steps defined by the maximum level. The minimum and maximum scale have the same limitations as the [Camera.farClipPlane]](https://docs.unity3d.com/ScriptReference/Camera-farClipPlane.html). The Adaptive View Distance scaler requires the MainCamera tag to be set on your selected camera. For multiple camera support you can extend the Scaler.
+
+
+### Scaler Profiles
+Adaptive Performance provides scaler profiles which enable you to categorise your scalers and change them all at once without using the scripting API for every scaler setting.
+You can create and name your scaler profiles in the **Scaler Settings** (menu: **Edit &gt; Project Settings &gt; Adaptive Performance &gt; {Provider} &gt; Runtime Settings &gt; Scaler Settings**, then use the **+** button).
+
+The default values loaded are defined in the Default Scaler Profile. This profile is the first one in the list and can not be removed.
+
+![Scaler Profiles in the Adaptive Performance settings.](Images/settings-scaler-profiles.png)
+
+You can query for all profiles created and available during runtime using the Adaptive Performance settings API.
+
+```
+IAdaptivePerformanceSettings settings = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetSettings();
+if (settings == null) return;
+
+var scalerProfiles = settings.GetAvailableScalerProfiles();
+```
+
+Afterwards you can call `LoadScalerProfile` and provide the scaler profile name as string to load.
+
+```
+settings.LoadScalerProfile(scalerProfiles[3]);
+```
+
+Loading a scaler profile is a heavy operation and should only be performed while in a loading state.
+
+See the [Adaptive Performance samples](samples-guide.md) for more information about Scalers Profiles.
 
 ### Development Settings
- - Logging: Enable this option to have the Adaptive Performance subsystem log messages to the player log. This is only active for Development builds.
- - Logging Frequency: How frequently the system should log messages. Specified in frames.
+
+Development Settings are only available for development builds. Each setting is disable during a release build as the feature are not avilable during a release build.
+
+|**Setting**|**Description**|
+|:---|:---|
+|Logging | Enable this option to have the Adaptive Performance subsystem log messages to the player log. |
+|Logging | Frequency: How frequently the system should log messages. Specified in frames. |

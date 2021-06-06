@@ -5,7 +5,7 @@ Adaptive Performance adds a section of controls to the [Device Simulator](https:
 When you install the Adaptive Performance package, Unity automatically installs the Simulator provider. To enable the Simulator, you must:
 
 * [Activate](installing-and-configuring.md#provider-installation) the Simulator provider for Desktop platforms in the **Project Settings** window
-* Install the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@2.2/manual/index.html) package.
+* If you are using Unity 2020 or below, install the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@2.2/manual/index.html)  In Unity 2021 and above, the Device Simulator is already included in the Unity Editor.
 
 ![Adaptive Performance Device Simulator settings.](Images/simulator-provider-enable.png)
 
@@ -30,6 +30,8 @@ After you install Adaptive Performance, the **Device Simulator** window will dis
 * Target FPS - Simulates the application target framerate in frames per second.
 * CPU Level - Simulates the frequency cap of the CPU in discrete levels.
 * GPU Level - Simulates the frequency cap of the GPU in discrete levels.
+* CPU Boost - CPU Boost enables CPU Boost for 15 seconds. Enabling CPU boost disables CPU levels until the boost is over. If the system is throttling the CPU boost has no effect.
+* GPU Boost - GPU Boost enables GPU Boost for 15 seconds. Enabling GPU boost disables GPU levels until the boost is over. If the system is throttling the GPU boost has no effect.
 
 ### Developer Options
 * Logging - Enable or disable logging from the Adaptive Performance subsystem.
@@ -44,8 +46,10 @@ Adaptive Performance also includes an API that you can use to script thermal and
 The Indexer and Scalers may also be used with the Device Simulator. In this section you will find a list of all the available Scalers. Each one will have the following options:
 
 * A toggle to enable or disable the Scaler.
-* A slider to adjust the value of the Scaler.
-* A text field to enter a value or reflect the current value of the slider.
+* A integer field to enter a value or reflect the current value (override level) of the Scaler.
+* A integer field to enter the Max Level for the scaler.
+* A float field to enter the Min Scale for the scaler.
+* A float field to enter the Max Scale for the scaler.
 
 In addition there are two options to override the current actions taken by the Indexer.
 

@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 namespace UnityEngine.AdaptivePerformance
@@ -59,17 +62,71 @@ namespace UnityEngine.AdaptivePerformance
     }
 
     /// <summary>
+    /// Scaler profiles are used to combine all settings of scalers into one profile to be able to change the settings of each scaler at once.
+    /// </summary>
+    [System.Serializable]
+    public class AdaptivePerformanceScalerProfile : AdaptivePerformanceScalerSettings
+    {
+        /// <summary>
+        /// Name of the Scaler Profile. Used to find profiles and switch them during runtime.
+        /// </summary>
+        public string Name
+        {
+            get { return m_Name; }
+            set { m_Name = value; }
+        }
+
+        [SerializeField, Tooltip("Name of the scaler profile.")]
+        string m_Name = "Default Scaler Profile";
+    }
+
+    /// <summary>
     /// Settings of indexer system.
     /// </summary>
     [System.Serializable]
     public class AdaptivePerformanceScalerSettings
     {
+        /// <summary>
+        /// Apply existing external settings to a scaler to override the existing settings.
+        /// </summary>
+        /// <param name="settings">Provide existing settings to replace the default settings.</param>
+        public void ApplySettings(AdaptivePerformanceScalerSettings settings)
+        {
+            if (settings == null)
+                return;
+
+            ApplySettingsBase(AdaptiveFramerate, settings.AdaptiveFramerate);
+            ApplySettingsBase(AdaptiveBatching, settings.AdaptiveBatching);
+            ApplySettingsBase(AdaptiveLOD, settings.AdaptiveLOD);
+            ApplySettingsBase(AdaptiveLut, settings.AdaptiveLut);
+            ApplySettingsBase(AdaptiveMSAA, settings.AdaptiveMSAA);
+            ApplySettingsBase(AdaptiveResolution, settings.AdaptiveResolution);
+            ApplySettingsBase(AdaptiveShadowCascade, settings.AdaptiveShadowCascade);
+            ApplySettingsBase(AdaptiveShadowDistance, settings.AdaptiveShadowDistance);
+            ApplySettingsBase(AdaptiveShadowmapResolution, settings.AdaptiveShadowmapResolution);
+            ApplySettingsBase(AdaptiveShadowQuality, settings.AdaptiveShadowQuality);
+            ApplySettingsBase(AdaptiveTransparency, settings.AdaptiveTransparency);
+            ApplySettingsBase(AdaptiveSorting, settings.AdaptiveSorting);
+            ApplySettingsBase(AdaptiveViewDistance, settings.AdaptiveViewDistance);
+        }
+
+        void ApplySettingsBase(AdaptivePerformanceScalerSettingsBase destination, AdaptivePerformanceScalerSettingsBase sources)
+        {
+            destination.enabled = sources.enabled;
+            destination.scale = sources.scale;
+            destination.visualImpact = sources.visualImpact;
+            destination.target = sources.target;
+            destination.minBound = sources.minBound;
+            destination.maxBound = sources.maxBound;
+            destination.maxLevel = sources.maxLevel;
+        }
+
         [SerializeField, Tooltip("Settings for a scaler used by the Indexer to adjust the application update rate using Application.TargetFramerate")]
         AdaptivePerformanceScalerSettingsBase m_AdaptiveFramerate = new AdaptivePerformanceScalerSettingsBase
         {
             name = "Adaptive Framerate",
             enabled = false,
-            scale = -1,
+            scale = 1.0f,
             visualImpact = ScalerVisualImpact.High,
             target =  ScalerTarget.CPU | ScalerTarget.GPU | ScalerTarget.FillRate,
             minBound = 15,
@@ -91,7 +148,7 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Resolution",
             enabled = false,
-            scale = -1.0f,
+            scale = 1.0f,
             visualImpact = ScalerVisualImpact.Low,
             target =  ScalerTarget.FillRate | ScalerTarget.GPU,
             maxLevel = 9,
@@ -113,12 +170,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Batching",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.CPU,
             maxLevel = 1,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
         /// <summary>
         /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to control if dynamic batching is enabled.
@@ -134,12 +191,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive LOD",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.High,
             target =  ScalerTarget.GPU,
             maxLevel = 3,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0.4f,
+            maxBound = 1,
         };
 
 
@@ -157,12 +214,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Lut",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.GPU | ScalerTarget.CPU,
             maxLevel = 1,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
 
 
@@ -180,12 +237,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive MSAA",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.GPU | ScalerTarget.FillRate,
             maxLevel = 2,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
 
 
@@ -199,25 +256,32 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         [SerializeField, Tooltip("Settings for a scaler used by the Indexer to adjust the number of shadow cascades to be used.")]
-        AdaptivePerformanceScalerSettingsBase m_AdaptiveShadowCascades = new AdaptivePerformanceScalerSettingsBase
+        AdaptivePerformanceScalerSettingsBase m_AdaptiveShadowCascade = new AdaptivePerformanceScalerSettingsBase
         {
             name = "Adaptive Shadow Cascade",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.GPU | ScalerTarget.CPU,
             maxLevel = 2,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
+
+        const string obsoleteMsg = "AdaptiveShadowCascades has been renamed. Please use AdaptiveShadowCascade. (UnityUpgradable) -> AdaptiveShadowCascade";
+        /// <summary>
+        /// Obsolete: Please use <see cref="AdaptiveShadowCascade"/>.
+        /// </summary>
+        [Obsolete(obsoleteMsg, false)] // ap-obsolete-001 - once removed, ensure all instances of ap-obsolete-001 are removed
+        public AdaptivePerformanceScalerSettingsBase AdaptiveShadowCascades => AdaptiveShadowCascade;
 
         /// <summary>
         /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to adjust the number of shadow cascades to be used.
         /// </summary>
-        public AdaptivePerformanceScalerSettingsBase AdaptiveShadowCascades
+        public AdaptivePerformanceScalerSettingsBase AdaptiveShadowCascade
         {
-            get { return m_AdaptiveShadowCascades; }
-            set { m_AdaptiveShadowCascades = value; }
+            get { return m_AdaptiveShadowCascade; }
+            set { m_AdaptiveShadowCascade = value; }
         }
 
         [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change the distance at which shadows are rendered.")]
@@ -225,12 +289,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Shadow Distance",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Low,
             target =  ScalerTarget.GPU,
             maxLevel = 3,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0.15f,
+            maxBound = 1,
         };
 
         /// <summary>
@@ -247,12 +311,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Shadowmap Resolution",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Low,
             target =  ScalerTarget.GPU,
             maxLevel = 3,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0.15f,
+            maxBound = 1,
         };
 
         /// <summary>
@@ -269,12 +333,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Shadow Quality",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.High,
             target =  ScalerTarget.GPU | ScalerTarget.CPU,
             maxLevel = 3,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
 
         /// <summary>
@@ -291,12 +355,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Sorting",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.Medium,
             target =  ScalerTarget.CPU,
             maxLevel = 1,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
 
         /// <summary>
@@ -313,12 +377,12 @@ namespace UnityEngine.AdaptivePerformance
         {
             name = "Adaptive Transparency",
             enabled = false,
-            scale = -1,
+            scale = 1,
             visualImpact = ScalerVisualImpact.High,
             target =  ScalerTarget.GPU,
             maxLevel = 1,
-            minBound = -1,
-            maxBound = -1,
+            minBound = 0,
+            maxBound = 1,
         };
 
         /// <summary>
@@ -328,6 +392,28 @@ namespace UnityEngine.AdaptivePerformance
         {
             get { return m_AdaptiveTransparency; }
             set { m_AdaptiveTransparency = value; }
+        }
+
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change the view distance")]
+        AdaptivePerformanceScalerSettingsBase m_AdaptiveViewDistance = new AdaptivePerformanceScalerSettingsBase
+        {
+            name = "Adaptive View Distance",
+            enabled = false,
+            scale = 1,
+            visualImpact = ScalerVisualImpact.High,
+            target =  ScalerTarget.GPU,
+            maxLevel = 40,
+            minBound = 50f,
+            maxBound = 1000,
+        };
+
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change the view distance.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptiveViewDistance
+        {
+            get { return m_AdaptiveViewDistance; }
+            set { m_AdaptiveViewDistance = value; }
         }
     }
     /// <summary>
@@ -509,5 +595,293 @@ namespace UnityEngine.AdaptivePerformance
             get { return m_ScalerSettings; }
             set { m_ScalerSettings = value; }
         }
+
+        /// <summary>
+        /// Load a scaler profile from the settings. Unity update the values of all scalers in the profile to new ones.
+        /// This is a heavy operation using reflection and should not be used per frame and only in load operations as it causes hitching and possible screen artifacts depending on which scalers are used in a scene.
+        /// </summary>
+        /// <param name="scalerProfileName">Supply the name of the scaler. You can query a list of available scaler profiles via <see cref="IAdaptivePerformanceSettings.GetAvailableScalerProfiles"/>.</param>
+        public void LoadScalerProfile(string scalerProfileName)
+        {
+            if (scalerProfileName == null || scalerProfileName.Length <= 0)
+            {
+                APLog.Debug("Scaler profile name empty. Can not load and apply profile.");
+                return;
+            }
+            if (m_scalerProfileList.Length <= 0)
+            {
+                APLog.Debug("No scaler profiles available. Can not load and apply profile. Add more profiles in the Adaptive Performance settings.");
+                return;
+            }
+            if (m_scalerProfileList.Length == 1)
+                APLog.Debug("Only default scaler profile available. Reset all scalers to default profile.");
+
+            for (int i = 0; i < m_scalerProfileList.Length; i++)
+            {
+                AdaptivePerformanceScalerProfile scalerProfile = m_scalerProfileList[i];
+                if (scalerProfile == null)
+                {
+                    APLog.Debug("Scaler profile is null. Can not load and apply profile. Check Adaptive Performance settings.");
+                    return;
+                }
+                if (scalerProfile.Name == null || scalerProfile.Name.Length <= 0)
+                {
+                    APLog.Debug("Scaler profile name is null or empty. Can not load and apply profile. Check Adaptive Performance settings.");
+                    return;
+                }
+                if (scalerProfile.Name == scalerProfileName)
+                {
+                    scalerSettings.ApplySettings(scalerProfile);
+                    break;
+                }
+            }
+            if (ApplyScalerProfileToAllScalers())
+                APLog.Debug($"Scaler profile {scalerProfileName} loaded.");
+        }
+
+        bool ApplyScalerProfileToAllScalers()
+        {
+            bool success = false;
+
+            if (Holder.Instance == null || Holder.Instance.Indexer == null)
+                return success;
+
+            List<AdaptivePerformanceScaler> allScalers = new List<AdaptivePerformanceScaler>();
+            List<AdaptivePerformanceScaler> scalers = new List<AdaptivePerformanceScaler>();
+            Holder.Instance.Indexer.GetUnappliedScalers(ref scalers);
+            allScalers.AddRange(scalers);
+            Holder.Instance.Indexer.GetAppliedScalers(ref scalers);
+            allScalers.AddRange(scalers);
+            Holder.Instance.Indexer.GetDisabledScalers(ref scalers);
+            allScalers.AddRange(scalers);
+
+            if (allScalers.Count <= 0)
+            {
+                APLog.Debug($"No scalers found. No scaler profile applied.");
+                return success;
+            }
+
+            PropertyInfo[] properties = typeof(AdaptivePerformanceScalerSettings).GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                var aScaler = allScalers.Find(s => s.GetType().ToString().Contains(property.Name));
+                if (aScaler)
+                {
+                    System.Reflection.PropertyInfo prop = typeof(AdaptivePerformanceScalerSettings).GetProperty(property.Name);
+                    var value = prop.GetValue(scalerSettings);
+                    aScaler.ApplyDefaultSetting((AdaptivePerformanceScalerSettingsBase)value);
+                    success = true;
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// Returns a list of all available scaler profiles.
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAvailableScalerProfiles()
+        {
+            string[] scalerNames = new string[m_scalerProfileList.Length];
+            if (m_scalerProfileList.Length <= 0)
+            {
+                APLog.Debug("No scaler profiles available. You can not load and apply profiles. Add more profiles in the Adaptive Performance settings.");
+                return scalerNames;
+            }
+            for (int i = 0; i < m_scalerProfileList.Length; i++)
+            {
+                AdaptivePerformanceScalerProfile scalerProfile = m_scalerProfileList[i];
+                scalerNames[i] = scalerProfile.Name;
+            }
+            return scalerNames;
+        }
+
+        [SerializeField] AdaptivePerformanceScalerProfile[] m_scalerProfileList = new AdaptivePerformanceScalerProfile[] { new AdaptivePerformanceScalerProfile {} };
+
+        /// <summary>
+        /// Default scaler profile index.
+        /// </summary>
+        public int defaultScalerProfilerIndex
+        {
+            get { return m_DefaultScalerProfilerIndex; }
+            set { m_DefaultScalerProfilerIndex = value; }
+        }
+        [SerializeField] internal int m_DefaultScalerProfilerIndex = 0;
+
+        // Default values set when a new Adaptive Performance setting is created
+        [SerializeField] int k_AssetVersion = 1;
+
+        /// <summary>
+        /// When Unity enables the serialized object it upgrades old files to the new format in the editor and saves the assets. Empty during runtime.
+        /// </summary>
+        public void OnEnable()
+        {
+#if UNITY_EDITOR
+            if (k_AssetVersion < 2 && !Application.isPlaying)
+            {
+                UpgradeToVersion2();
+                k_AssetVersion = 2;
+                if (m_scalerProfileList[0] != null)
+                    m_scalerProfileList[0].ApplySettings(scalerSettings);
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
+#endif
+        }
+
+#if UNITY_EDITOR
+        void UpgradeToVersion2()
+        {
+            if (m_ScalerSettings == null)
+                return;
+
+            if (m_ScalerSettings.AdaptiveFramerate.scale == -1)
+                m_ScalerSettings.AdaptiveFramerate.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveFramerate.scale");
+
+            if (m_ScalerSettings.AdaptiveResolution.scale == -1)
+                m_ScalerSettings.AdaptiveResolution.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveResolution.scale");
+
+            if (m_ScalerSettings.AdaptiveBatching.scale == -1)
+                m_ScalerSettings.AdaptiveBatching.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveBatching.scale");
+
+            if (m_ScalerSettings.AdaptiveBatching.minBound == -1)
+                m_ScalerSettings.AdaptiveBatching.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveBatching.minBound");
+
+            if (m_ScalerSettings.AdaptiveBatching.maxBound == -1)
+                m_ScalerSettings.AdaptiveBatching.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveBatching.maxBound");
+
+            if (m_ScalerSettings.AdaptiveLOD.scale == -1)
+                m_ScalerSettings.AdaptiveLOD.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLOD.scale");
+
+            if (m_ScalerSettings.AdaptiveLOD.minBound == -1)
+                m_ScalerSettings.AdaptiveLOD.minBound = 0.4f;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLOD.minBound");
+
+            if (m_ScalerSettings.AdaptiveLOD.maxBound == -1)
+                m_ScalerSettings.AdaptiveLOD.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLOD.maxBound");
+
+            if (m_ScalerSettings.AdaptiveLut.scale == -1)
+                m_ScalerSettings.AdaptiveLut.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLut.scale");
+
+            if (m_ScalerSettings.AdaptiveLut.minBound == -1)
+                m_ScalerSettings.AdaptiveLut.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLut.minBound");
+
+            if (m_ScalerSettings.AdaptiveLut.maxBound == -1)
+                m_ScalerSettings.AdaptiveLut.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveLut.maxBound");
+
+            if (m_ScalerSettings.AdaptiveMSAA.scale == -1)
+                m_ScalerSettings.AdaptiveMSAA.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveMSAA.scale");
+
+            if (m_ScalerSettings.AdaptiveMSAA.minBound == -1)
+                m_ScalerSettings.AdaptiveMSAA.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveMSAA.minBound");
+
+            if (m_ScalerSettings.AdaptiveMSAA.maxBound == -1)
+                m_ScalerSettings.AdaptiveMSAA.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveMSAA.maxBound");
+
+            if (m_ScalerSettings.AdaptiveShadowDistance.scale == -1)
+                m_ScalerSettings.AdaptiveShadowDistance.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowDistance.scale");
+
+            if (m_ScalerSettings.AdaptiveShadowDistance.minBound == -1)
+                m_ScalerSettings.AdaptiveShadowDistance.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowDistance.minBound");
+
+            if (m_ScalerSettings.AdaptiveShadowDistance.maxBound == -1)
+                m_ScalerSettings.AdaptiveShadowDistance.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowDistance.maxBound");
+
+            if (m_ScalerSettings.AdaptiveShadowmapResolution.scale == -1)
+                m_ScalerSettings.AdaptiveShadowmapResolution.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowmapResolution.scale");
+
+            if (m_ScalerSettings.AdaptiveShadowmapResolution.minBound == -1)
+                m_ScalerSettings.AdaptiveShadowmapResolution.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowmapResolution.minBound");
+
+            if (m_ScalerSettings.AdaptiveShadowmapResolution.maxBound == -1)
+                m_ScalerSettings.AdaptiveShadowmapResolution.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowmapResolution.maxBound");
+
+            if (m_ScalerSettings.AdaptiveShadowQuality.scale == -1)
+                m_ScalerSettings.AdaptiveShadowQuality.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowQuality.scale");
+
+            if (m_ScalerSettings.AdaptiveShadowQuality.minBound == -1)
+                m_ScalerSettings.AdaptiveShadowQuality.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowQuality.minBound");
+
+            if (m_ScalerSettings.AdaptiveShadowQuality.maxBound == -1)
+                m_ScalerSettings.AdaptiveShadowQuality.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveShadowQuality.maxBound");
+
+            if (m_ScalerSettings.AdaptiveSorting.scale == -1)
+                m_ScalerSettings.AdaptiveSorting.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveSorting.scale");
+
+            if (m_ScalerSettings.AdaptiveSorting.minBound == -1)
+                m_ScalerSettings.AdaptiveSorting.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveSorting.minBound");
+
+            if (m_ScalerSettings.AdaptiveSorting.maxBound == -1)
+                m_ScalerSettings.AdaptiveSorting.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveSorting.maxBound");
+
+            if (m_ScalerSettings.AdaptiveTransparency.scale == -1)
+                m_ScalerSettings.AdaptiveTransparency.scale = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveTransparency.scale");
+
+            if (m_ScalerSettings.AdaptiveTransparency.minBound == -1)
+                m_ScalerSettings.AdaptiveTransparency.minBound = 0;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveTransparency.minBound");
+
+            if (m_ScalerSettings.AdaptiveTransparency.maxBound == -1)
+                m_ScalerSettings.AdaptiveTransparency.maxBound = 1;
+            else
+                Debug.Log("[Adaptive Performance] Upgraded Adaptive Performance Settings but did not upgrade modified AdaptiveTransparency.maxBound");
+        }
+
+#endif
     }
 }

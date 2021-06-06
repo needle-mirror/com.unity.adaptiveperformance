@@ -38,21 +38,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 1;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 0.75f;
-                    break;
-                case 2:
-                    AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 0.5f;
-                    break;
-                case 3:
-                    AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 0.15f;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MaxShadowDistanceMultiplier = 1 * Scale;
         }
     }
 }

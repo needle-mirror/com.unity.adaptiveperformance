@@ -39,6 +39,7 @@ public class AdaptivePerformanceSettings : MonoBehaviour
     public bool AdaptiveShadowQuality = false;
     public bool AdaptiveTransparency = false;
     public bool AdaptiveSorting = false;
+    public bool AdaptiveViewDistance = false;
     public bool AdaptiveVRR = false;
 
     /// <summary>
@@ -59,12 +60,13 @@ public class AdaptivePerformanceSettings : MonoBehaviour
         settings.scalerSettings.AdaptiveLut.enabled = AdaptiveLut;
         settings.scalerSettings.AdaptiveMSAA.enabled = AdaptiveMSAA;
         settings.scalerSettings.AdaptiveResolution.enabled = AdaptiveResolution;
-        settings.scalerSettings.AdaptiveShadowCascades.enabled = AdaptiveShadowCascades;
+        settings.scalerSettings.AdaptiveShadowCascade.enabled = AdaptiveShadowCascades;
         settings.scalerSettings.AdaptiveShadowDistance.enabled = AdaptiveShadowDistance;
         settings.scalerSettings.AdaptiveShadowmapResolution.enabled = AdaptiveShadowmapResolution;
         settings.scalerSettings.AdaptiveShadowQuality.enabled = AdaptiveShadowQuality;
         settings.scalerSettings.AdaptiveSorting.enabled = AdaptiveSorting;
         settings.scalerSettings.AdaptiveTransparency.enabled = AdaptiveTransparency;
+        settings.scalerSettings.AdaptiveViewDistance.enabled = AdaptiveViewDistance;
         #if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         var adaptiveVRR = GameObject.FindObjectOfType<AdaptiveVariableRefreshRate>();
         if (adaptiveVRR)

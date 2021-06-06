@@ -56,6 +56,26 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         /// <value>The requested GPU performance level</value>
         int GpuLevel { get; set; }
+
+        /// <summary>
+        /// The requested CPU boost mode state.
+        /// Enabled typically allows CPU cores to run at higher clock speeds.
+        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
+        /// Changes are applied once per frame.
+        /// It is recommended to not use a boost often and certainly not continuously to save power.
+        /// </summary>
+        /// <value>True when CPU boost is active, otherwise false. The default value is false.</value>
+        bool CpuPerformanceBoost { get; set; }
+
+        /// <summary>
+        /// The requested GPU boost mode state.
+        /// Enabled typically allows GPU cores to run at higher clock speeds.
+        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
+        /// Changes are applied once per frame.
+        /// It is recommended to not use a boost often and certainly not continuously to save power.
+        /// </summary>
+        /// <value>True when CPU boost is active, otherwise false. The default value is false.</value>
+        bool GpuPerformanceBoost { get; set; }
     }
 
     /// <summary>

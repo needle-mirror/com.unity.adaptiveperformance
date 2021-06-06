@@ -17,8 +17,10 @@ public class AdaptiveFrameRateSettings : MonoBehaviour
     {
 #if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         AdaptiveVRRO = GameObject.FindObjectOfType<AdaptiveVariableRefreshRate>();
-        if (AdaptiveVRRO)
-            VRREnabled.isOn = AdaptiveVRRO.Enabled;
+        if (!AdaptiveVRRO)
+            return;
+
+        VRREnabled.isOn = AdaptiveVRRO.Enabled;
 
         VRRSettingsMin.value = AdaptiveVRRO.MinBound;
         VRRSettingsMax.value = AdaptiveVRRO.MaxBound;
@@ -38,6 +40,9 @@ public class AdaptiveFrameRateSettings : MonoBehaviour
     void Update()
     {
 #if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
+        if (!AdaptiveVRRO)
+            return;
+
         AdaptiveVRRO.MinBound = VRRSettingsMin.value;
         AdaptiveVRRO.MaxBound = VRRSettingsMax.value;
 #endif

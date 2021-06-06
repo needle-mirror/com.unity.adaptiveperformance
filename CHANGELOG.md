@@ -4,6 +4,22 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2021-06-06
+
+### Changed
+- Indexer Thermal action returns StateAction.Decrease and StateAction.FastDecrease instead of StateAction.Increase at 0.1 and 0.5 of thermal trend when not in throttling or throttling imminent to activate scalers sooner than Throttling immindent state.
+- Scalers do not use switch-case to determine their value, instead use min, max scale and max level to calculate a scale and increment and apply it to their target when the level changes.
+- Simulator integration for scalers. Offers now min, max scale and max level additionally to the level override to easily simulate the scaler behaviour.
+
+### Added
+- Fix FB 1321990: Sliders don't match their values when in the Simulator View Control Panel
+- Scaler profiles
+- Boost mode
+- Cluster info
+- Feature API
+- Adaptive view distance
+- More samples for boost, scaler profiles, cluster info, and adaptive view distance.
+
 ## [2.1.1] - 2021-02-03
 
 ### Added

@@ -51,10 +51,6 @@ namespace UnityEngine.AdaptivePerformance
             if (warning == WarningLevel.Throttling && throttlingTemp == 1.0f)
                 throttlingTemp = thermalLevel; // remember throttling level
 
-            // normal operating conditions
-            if (warning == WarningLevel.NoWarning && thermalLevel < warningTemp)
-                return StateAction.Increase;
-
             // Throttling needs to cool down a lot before changing to no warning
             if (warning == WarningLevel.Throttling || thermalLevel >= throttlingTemp)
                 return StateAction.FastDecrease;
@@ -73,6 +69,19 @@ namespace UnityEngine.AdaptivePerformance
                 else
                     return StateAction.Decrease;
             }
+
+
+            // normal operating conditions
+            if (warning == WarningLevel.NoWarning && thermalLevel < warningTemp)
+            {
+                if (thermalTrend <= 0)
+                    return StateAction.Increase;
+                else if (thermalTrend > 0.5)
+                    return StateAction.FastDecrease;
+                else if (thermalTrend > 0.1)
+                    return StateAction.Decrease;
+            }
+
 
             return StateAction.Stale;
         }
@@ -314,6 +323,7 @@ namespace UnityEngine.AdaptivePerformance
             if (thermalAction == StateAction.Stale && performanceAction == StateAction.Stale)
             {
                 UnapplyHighestCostScaler();
+                TimeUntilNextAction = m_Settings.indexerSettings.thermalActionDelay;
                 return;
             }
             if (thermalAction == StateAction.Decrease)
@@ -439,7 +449,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void ApplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel}");
+            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to increase level to {scaler.CurrentLevel+1}");
             if (scaler.NotLeveled)
             {
                 m_UnappliedScalers.Remove(scaler);
@@ -480,7 +490,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void UnapplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler.");
+            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to decrease level to {scaler.CurrentLevel-1}");
             scaler.DecreaseLevel();
             if (scaler.NotLeveled)
             {

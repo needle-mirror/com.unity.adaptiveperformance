@@ -28,6 +28,9 @@ public class ThermalControl : MonoBehaviour
     void Start()
     {
         ap = Holder.Instance;
+        if (ap == null)
+            return;
+
         originalLimitCount = objectFactory.LimitCount;
         ap.ThermalStatus.ThermalEvent += OnThermalEvent;
 

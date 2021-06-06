@@ -70,6 +70,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_CpuLevelField = m_ExtensionFoldout.Q<IntegerField>("performance-cpu-level-field");
             m_GpuLevel = m_ExtensionFoldout.Q<SliderInt>("performance-gpu-level");
             m_GpuLevelField = m_ExtensionFoldout.Q<IntegerField>("performance-gpu-level-field");
+            m_CpuBoost = m_ExtensionFoldout.Q<Toggle>("performance-control-cpu-boost");
+            m_GpuBoost = m_ExtensionFoldout.Q<Toggle>("performance-control-gpu-boost");
             m_Bottleneck = m_ExtensionFoldout.Q<EnumField>("performance-bottleneck");
             m_DevLogging = m_ExtensionFoldout.Q<Toggle>("developer-logging");
             m_DevLoggingFrequency = m_ExtensionFoldout.Q<IntegerField>("developer-logging-frequency");
@@ -81,6 +83,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_PerformanceAction = m_IndexerFoldout.Q<EnumField>("indexer-performance-action");
             m_ScalersFoldout = m_ExtensionFoldout.Q<Foldout>("scalers");
             m_ScalersFoldout.value = m_SerializationStates.scalersFoldout;
+            m_DeviceSettingsFoldout = m_ExtensionFoldout.Q<Foldout>("device-settings");
+            m_DeviceSettingsFoldout.value = m_SerializationStates.deviceSettingsFoldout;
+            m_BigCores = m_ExtensionFoldout.Q<IntegerField>("cluster-info-big-cores");
+            m_MediumCores = m_ExtensionFoldout.Q<IntegerField>("cluster-info-medium-cores");
+            m_LittleCores = m_ExtensionFoldout.Q<IntegerField>("cluster-info-little-cores");
 
             // Create settings for each one of the scalers
             Type ti = typeof(AdaptivePerformanceScaler);
@@ -98,21 +105,29 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                         // Load the UI elements
                         var container = scalerTree.CloneTree();
-                        var valueSlider = container.Q<Slider>("scaler-slider");
+                        var foldout = container.Q<Foldout>("scaler");
                         var toggle = container.Q<Toggle>("scaler-toggle");
                         var valueField = container.Q<IntegerField>("scaler-value");
+                        var maxLevelField = container.Q<IntegerField>("scaler-max-level-value");
+                        var minValueField = container.Q<FloatField>("scaler-min-value");
+                        var maxValueField = container.Q<FloatField>("scaler-max-value");
 
                         // Set the values and additional config for these elements
-                        toggle.labelElement.text = t.Name.Substring(8);
                         toggle.value = scalerInstance.Enabled;
                         toggle.name = $"{t.Name}-scaler-toggle";
-                        valueSlider.value = scalerInstance.CurrentLevel;
-                        valueSlider.name = $"{t.Name}-scaler-slider";
-                        valueSlider.SetEnabled(scalerInstance.Enabled);
                         valueField.value = scalerInstance.CurrentLevel;
                         valueField.name = $"{t.Name}-scaler-value";
                         valueField.SetEnabled(scalerInstance.Enabled);
-
+                        maxLevelField.value = scalerInstance.MaxLevel;
+                        maxLevelField.name = $"{t.Name}-scaler-max-level-value";
+                        maxLevelField.SetEnabled(scalerInstance.Enabled);
+                        minValueField.value = scalerInstance.MinBound;
+                        minValueField.name = $"{t.Name}-scaler-min-value";
+                        minValueField.SetEnabled(scalerInstance.Enabled);
+                        maxValueField.value = scalerInstance.MaxBound;
+                        maxValueField.name = $"{t.Name}-scaler-max-value";
+                        maxValueField.SetEnabled(scalerInstance.Enabled);
+                        foldout.text = t.Name.Substring(8);
                         // Now set up the callback actions
                         toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
                         {
@@ -122,28 +137,81 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                             scaler.Enabled = evt.newValue;
                             valueField.SetEnabled(evt.newValue);
-                            valueSlider.SetEnabled(evt.newValue);
-                        });
-
-                        valueSlider.RegisterCallback<ChangeEvent<float>>(evt =>
-                        {
-                            var scaler = FindScalerObject(t);
-                            if (scaler == null)
-                                return;
-
-                            scaler.OverrideLevel = (int)Mathf.Clamp(evt.newValue, 0, scaler.MaxLevel);
-                            valueField.SetValueWithoutNotify(scaler.OverrideLevel);
+                            maxLevelField.SetEnabled(evt.newValue);
+                            minValueField.SetEnabled(evt.newValue);
+                            maxValueField.SetEnabled(evt.newValue);
                         });
 
                         valueField.RegisterCallback<ChangeEvent<int>>(evt =>
                         {
                             var scaler = FindScalerObject(t);
-                            if (evt.newValue < 0 || scaler == null)
-                                return;
+                            var newVal = evt.newValue;
+                            if (newVal < 0 || scaler == null)
+                                newVal = 0;
+                            else if (newVal > scaler.MaxLevel)
+                                newVal = scaler.MaxLevel;
 
-                            scaler.OverrideLevel = Mathf.Clamp(evt.newValue, 0, scaler.MaxLevel);
-                            valueSlider.SetValueWithoutNotify(scaler.OverrideLevel);
+                            scaler.OverrideLevel = Mathf.Clamp(newVal, 0, scaler.MaxLevel);
                             valueField.SetValueWithoutNotify(scaler.OverrideLevel);
+                        });
+                        maxLevelField.RegisterCallback<ChangeEvent<int>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (evt.newValue < 1 || scaler == null)
+                            {
+                                maxLevelField.SetValueWithoutNotify(1);
+                                scaler.MaxLevel = 1;
+                                return;
+                            }
+                            else if (evt.newValue > 100)
+                            {
+                                maxLevelField.SetValueWithoutNotify(100);
+                                scaler.MaxLevel = 100;
+                                return;
+                            }
+
+                            scaler.MaxLevel = evt.newValue;
+                        });
+                        minValueField.RegisterCallback<ChangeEvent<float>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (evt.newValue < 0 || scaler == null)
+                            {
+                                minValueField.SetValueWithoutNotify(0);
+                                scaler.MinBound = 0;
+                                return;
+                            }
+                            else if (evt.newValue > 10000)
+                            {
+                                minValueField.SetValueWithoutNotify(10000);
+                                scaler.MinBound = 10000;
+                                return;
+                            }
+                            else if (evt.newValue > maxValueField.value)
+                            {
+                                minValueField.SetValueWithoutNotify(maxValueField.value);
+                                scaler.MinBound = maxValueField.value;
+                                return;
+                            }
+                            scaler.MinBound = evt.newValue;
+                        });
+                        maxValueField.RegisterCallback<ChangeEvent<float>>(evt =>
+                        {
+                            var scaler = FindScalerObject(t);
+                            if (evt.newValue < minValueField.value || scaler == null)
+                            {
+                                maxValueField.SetValueWithoutNotify(minValueField.value);
+                                scaler.MaxBound = minValueField.value;
+                                return;
+                            }
+                            else if (evt.newValue > 10000)
+                            {
+                                maxValueField.SetValueWithoutNotify(10000);
+                                scaler.MaxBound = 10000;
+                                return;
+                            }
+
+                            scaler.MaxBound = evt.newValue;
                         });
 
                         m_ScalersFoldout.Add(container);
@@ -327,6 +395,48 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     return;
                 ap.DevicePerformanceControl.GpuLevel = newGPULevel;
             });
+            m_CpuBoost.RegisterCallback<ChangeEvent<bool>>((evt) =>
+            {
+                var ap = Holder.Instance;
+                if (ap == null)
+                    return;
+
+                if (evt.newValue)
+                {
+                    var ctrl = ap.DevicePerformanceControl;
+                    ctrl.CpuPerformanceBoost = evt.newValue;
+                    m_GpuBoost.SetEnabled(false);
+                }
+                else
+                {
+                    SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                    if (subsystem == null)
+                        return;
+
+                    subsystem.CpuPerformanceBoost = false;
+                }
+            });
+            m_GpuBoost.RegisterCallback<ChangeEvent<bool>>((evt) =>
+            {
+                var ap = Holder.Instance;
+                if (ap == null)
+                    return;
+
+                if (evt.newValue)
+                {
+                    var ctrl = ap.DevicePerformanceControl;
+                    ctrl.GpuPerformanceBoost = evt.newValue;
+                    m_GpuBoost.SetEnabled(false);
+                }
+                else
+                {
+                    SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                    if (subsystem == null)
+                        return;
+
+                    subsystem.GpuPerformanceBoost = false;
+                }
+            });
             m_Bottleneck.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
                 SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
@@ -447,6 +557,36 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 Application.targetFrameRate = targetFrameRate;
             });
 
+            m_BigCores.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                m_ClusterInfo.BigCore = evt.newValue;
+                subsystem.SetClusterInfo(m_ClusterInfo);
+            });
+
+            m_MediumCores.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                m_ClusterInfo.MediumCore = evt.newValue;
+                subsystem.SetClusterInfo(m_ClusterInfo);
+            });
+
+            m_LittleCores.RegisterCallback<ChangeEvent<int>>(evt =>
+            {
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                m_ClusterInfo.LittleCore = evt.newValue;
+                subsystem.SetClusterInfo(m_ClusterInfo);
+            });
+
             EditorApplication.playModeStateChanged += LogPlayModeState;
 
             SyncAPSubsystemSettingsToEditor();
@@ -470,6 +610,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         IntegerField m_CpuLevelField;
         SliderInt m_GpuLevel;
         IntegerField m_GpuLevelField;
+        Toggle m_CpuBoost;
+        Toggle m_GpuBoost;
         EnumField m_Bottleneck;
         Foldout m_DeveloperFoldout;
         Toggle m_DevLogging;
@@ -478,12 +620,22 @@ namespace UnityEditor.AdaptivePerformance.Editor
         EnumField m_ThermalAction;
         EnumField m_PerformanceAction;
         Foldout m_ScalersFoldout;
+        Foldout m_DeviceSettingsFoldout;
+        IntegerField m_BigCores;
+        IntegerField m_MediumCores;
+        IntegerField m_LittleCores;
 
         SimulatorAdaptivePerformanceSubsystem m_Subsystem;
 
         List<AdaptivePerformanceScaler> m_Scalers = new List<AdaptivePerformanceScaler>();
 
         int m_OriginalTargetFramerate = 0;
+        ClusterInfo m_ClusterInfo = new ClusterInfo
+        {
+            BigCore = 1,
+            MediumCore = 3,
+            LittleCore = 4
+        };
 
         [SerializeField, HideInInspector]
         AdaptivePerformanceStates m_SerializationStates;
@@ -496,6 +648,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             public bool developerFoldout;
             public bool indexerFoldout;
             public bool scalersFoldout;
+            public bool deviceSettingsFoldout;
         }
 
         public void OnBeforeSerialize()
@@ -508,6 +661,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_SerializationStates.developerFoldout = m_DeveloperFoldout.value;
             m_SerializationStates.indexerFoldout = m_IndexerFoldout.value;
             m_SerializationStates.scalersFoldout = m_ScalersFoldout.value;
+            m_SerializationStates.deviceSettingsFoldout = m_DeviceSettingsFoldout.value;
         }
 
         public void OnAfterDeserialize() {}
@@ -518,7 +672,23 @@ namespace UnityEditor.AdaptivePerformance.Editor
             {
                 SyncAPSubsystemSettingsToEditor();
                 SyncScalerSettingsToEditor();
+                SyncDeviceSettingsToSimulator();
+                // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
+                SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
+
+                EditorApplication.update += Update;
             }
+            else
+                EditorApplication.update -= Update;
+        }
+
+        void SyncDeviceSettingsToSimulator()
+        {
+            SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+            if (subsystem == null)
+                return;
+
+            subsystem.SetClusterInfo(m_ClusterInfo);
         }
 
         void SyncScalerSettingsToEditor()
@@ -537,11 +707,24 @@ namespace UnityEditor.AdaptivePerformance.Editor
                         if (scaler == null)
                             return;
 
-                        var valueSlider = m_ScalersFoldout.Q<Slider>($"{t.Name}-scaler-slider");
-                        var toggle = m_ScalersFoldout.Q<Toggle>($"{t.Name}-scaler-toggle");
+                        var valueField = m_ScalersFoldout.Q<IntegerField>($"{t.Name}-scaler-value");
+                        valueField.value = scaler.CurrentLevel;
+                        valueField.SetEnabled(scaler.Enabled);
 
-                        valueSlider.highValue = scaler.MaxLevel;
+                        var toggle = m_ScalersFoldout.Q<Toggle>($"{t.Name}-scaler-toggle");
                         toggle.value = scaler.Enabled;
+
+                        var maxLevelField = m_ScalersFoldout.Q<IntegerField>($"{t.Name}-scaler-max-level-value");
+                        maxLevelField.value = scaler.MaxLevel;
+                        maxLevelField.SetEnabled(scaler.Enabled);
+
+                        var maxValueField = m_ScalersFoldout.Q<FloatField>($"{t.Name}-scaler-max-value");
+                        maxValueField.value = scaler.MaxBound;
+                        maxValueField.SetEnabled(scaler.Enabled);
+
+                        var minValueField = m_ScalersFoldout.Q<FloatField>($"{t.Name}-scaler-min-value");
+                        minValueField.value = scaler.MinBound;
+                        minValueField.SetEnabled(scaler.Enabled);
                     }
                 }
             }
@@ -576,14 +759,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_GpuLevel.highValue = ctrl.MaxGpuPerformanceLevel;
             m_GpuLevel.lowValue = 0;
             m_GpuLevelField.value = ctrl.GpuLevel;
+            m_CpuBoost.value = ctrl.CpuPerformanceBoost;
+            m_GpuBoost.value = ctrl.GpuPerformanceBoost;
             m_Bottleneck.value = perfMetrics.PerformanceBottleneck;
             m_DevLogging.value = devSettings.Logging;
             m_DevLoggingFrequency.value = devSettings.LoggingFrequencyInFrames;
             m_ThermalAction.value = ap.Indexer.ThermalAction;
             m_PerformanceAction.value = ap.Indexer.PerformanceAction;
-
-            // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
-            SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
         }
 
         void SetBottleneck(PerformanceBottleneck performanceBottleneck, SimulatorAdaptivePerformanceSubsystem subsystem)
@@ -661,6 +843,18 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 m_Subsystem = loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
             }
             return m_Subsystem;
+        }
+
+        void Update()
+        {
+            var ap = Holder.Instance;
+            if (ap == null)
+                return;
+
+            m_CpuBoost.SetEnabled(!ap.PerformanceStatus.PerformanceMetrics.CpuPerformanceBoost);
+            m_CpuBoost.SetValueWithoutNotify(ap.PerformanceStatus.PerformanceMetrics.CpuPerformanceBoost);
+            m_GpuBoost.SetEnabled(!ap.PerformanceStatus.PerformanceMetrics.GpuPerformanceBoost);
+            m_GpuBoost.SetValueWithoutNotify(ap.PerformanceStatus.PerformanceMetrics.GpuPerformanceBoost);
         }
     }
 }

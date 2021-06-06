@@ -13,15 +13,11 @@ public class ThermalVisualisation : MonoBehaviour
 
     void Update()
     {
-        if (ap != null)
-        {
-            temperatureTrendSlider.value = ap.ThermalStatus.ThermalMetrics.TemperatureTrend;
-            temperatureLevelSlider.value = ap.ThermalStatus.ThermalMetrics.TemperatureLevel;
-        }
-        else
-        {
-            Debug.Log("Warning Adaptive Performance Manager was not found and does not report");
-        }
+        if (ap == null)
+            return;
+
+        temperatureTrendSlider.value = ap.ThermalStatus.ThermalMetrics.TemperatureTrend;
+        temperatureLevelSlider.value = ap.ThermalStatus.ThermalMetrics.TemperatureLevel;
     }
 
     void OnThermalEvent(ThermalMetrics ev)
@@ -44,6 +40,11 @@ public class ThermalVisualisation : MonoBehaviour
     void Start()
     {
         ap = Holder.Instance;
+        if (ap == null)
+        {
+            Debug.Log("[Thermal Visualization] Warning Adaptive Performance Manager was not found and does not report");
+            return;
+        }
         ap.ThermalStatus.ThermalEvent += OnThermalEvent;
     }
 }

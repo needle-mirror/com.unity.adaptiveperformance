@@ -97,6 +97,13 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         /// <value>Interface to settings that are loaded from the provider settings object during startup.</value>
         IAdaptivePerformanceSettings Settings { get; }
+
+        /// <summary>
+        /// List of supported Features by the loaded provider. See <see cref="Provider.Feature"/>.
+        /// </summary>
+        /// <param name="feature">The feature in question. See <see cref="Provider.Feature"/>.</param>
+        /// <returns>True if the requested feature is supported, false otherwise.</returns>
+        bool SupportedFeature(Provider.Feature feature);
     }
 
     /// <summary>

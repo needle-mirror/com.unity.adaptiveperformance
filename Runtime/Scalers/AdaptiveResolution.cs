@@ -85,15 +85,12 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            float oldScaleFactor = Scale;
-            float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
-
-            Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
+            var scaleChange = ScaleChanged();
 
             // if Gfx API does not support Dynamic resolution, currentCamera.allowDynamicResolution will be false
             if (IsDynamicResolutionSupported())
             {
-                if (Scale != oldScaleFactor)
+                if (scaleChange)
                     ScalableBufferManager.ResizeBuffers(Scale, Scale);
                 int rezWidth = (int)Mathf.Ceil(ScalableBufferManager.widthScaleFactor * Screen.currentResolution.width);
                 int rezHeight = (int)Mathf.Ceil(ScalableBufferManager.heightScaleFactor * Screen.currentResolution.height);

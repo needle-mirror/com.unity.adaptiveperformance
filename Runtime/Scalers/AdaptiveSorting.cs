@@ -39,15 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.SkipFrontToBackSorting = false;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.SkipFrontToBackSorting = true;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.SkipFrontToBackSorting = (Scale < 1);
         }
     }
 }

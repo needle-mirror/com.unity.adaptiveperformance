@@ -15,7 +15,7 @@ namespace UnityEngine.AdaptivePerformance
             base.Awake();
             if (m_Settings == null)
                 return;
-            ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveShadowCascades);
+            ApplyDefaultSetting(m_Settings.scalerSettings.AdaptiveShadowCascade);
         }
 
         /// <summary>
@@ -39,18 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = 0;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = 1;
-                    break;
-                case 2:
-                    AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = 2;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(2 * Scale);
         }
     }
 }

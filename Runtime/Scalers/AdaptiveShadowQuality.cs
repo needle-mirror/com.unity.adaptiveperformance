@@ -39,21 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.ShadowQualityBias = 0;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.ShadowQualityBias = 1;
-                    break;
-                case 2:
-                    AdaptivePerformanceRenderSettings.ShadowQualityBias = 2;
-                    break;
-                case 3:
-                    AdaptivePerformanceRenderSettings.ShadowQualityBias = 3;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(3 - 3 * Scale);
         }
     }
 }

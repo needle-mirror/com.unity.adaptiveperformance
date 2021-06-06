@@ -16,17 +16,19 @@
         <uie:EnumField name="performance-bottleneck" label="Bottleneck" type="UnityEngine.AdaptivePerformance.PerformanceBottleneck, Unity.AdaptivePerformance" value="Unknown" include-obsolete-values="false" tooltip="Simulate the device bottleneck by setting it to CPU, GPU or target framerate bound. Target framerate is either VSync or the value set in UnityEngine.Application.TargetFramerate." />
         <ui:Toggle name="performance-control-auto-mode" label="Auto Control Mode" value="true" tooltip="Auto Control Mode sets CPU and GPU level automatically. If the system is throttling the Performance Control Mode is set to system and Auto Control Mode has no influence." />
         <ui:VisualElement name="performance-target-fps-container" style="flex-direction: row;" tooltip="Target FPS simulates the application target framerate in frames per second.">
-            <ui:SliderInt label="Target FPS" name="performance-target-fps" low-value="0" high-value="1000" value="4" style="flex-grow: 10;"/>
-            <uie:IntegerField name="performance-target-fps-field" max-length="2" style="min-width:60px;max-width:60px;margin-left:auto;"/>
+            <ui:SliderInt label="Target FPS" name="performance-target-fps" low-value="0" high-value="1000" value="30" style="flex-grow: 10;"/>
+            <uie:IntegerField name="performance-target-fps-field" max-length="2" value="30" style="min-width:60px;max-width:60px;margin-left:auto;"/>
         </ui:VisualElement>
         <ui:VisualElement name="performance-level-container-cpu" style="flex-direction: row;" tooltip="CPU level simulates the frequency cap of the CPU in discrete levels.">
-            <ui:SliderInt label="CPU Level" name="performance-cpu-level" low-value="0" high-value="6" value="4" style="flex-grow: 10;"/>
-            <uie:IntegerField name="performance-cpu-level-field" max-length="2" style="min-width:60px;max-width:60px;margin-left:auto;"/>
+            <ui:SliderInt label="CPU Level" name="performance-cpu-level" low-value="0" high-value="6" value="6" style="flex-grow: 10;"/>
+            <uie:IntegerField name="performance-cpu-level-field" max-length="2" value="6" style="min-width:60px;max-width:60px;margin-left:auto;"/>
         </ui:VisualElement>
         <ui:VisualElement name="performance-level-container-gpu" style="flex-direction: row;" tooltip="GPU level simulates the frequency cap of the GPU in discrete levels.">
             <ui:SliderInt label="GPU Level" name="performance-gpu-level" low-value="0" high-value="4" value="4" style="flex-grow: 10;"/>
-            <uie:IntegerField name="performance-gpu-level-field" max-length="2" style="min-width:60px;max-width:60px;margin-left:auto;"/>
+            <uie:IntegerField name="performance-gpu-level-field" max-length="2" value="4" style="min-width:60px;max-width:60px;margin-left:auto;"/>
         </ui:VisualElement>
+        <ui:Toggle name="performance-control-cpu-boost" label="CPU Boost" value="false" tooltip="CPU Boost enables CPU Boost for 15 seconds. Enabling CPU boost disables CPU levels until the boost is over. If the system is throttling the CPU boost has no effect." />
+        <ui:Toggle name="performance-control-gpu-boost" label="GPU Boost" value="false" tooltip="GPU Boost enables GPU Boost for 15 seconds. Enabling GPU boost disables GPU levels until the boost is over. If the system is throttling the GPU boost has no effect." />
     </ui:Foldout>
     <ui:Foldout text="Indexer" value="True" name="indexer">
         <Style src="AdaptivePerformanceExtension.uss" />
@@ -35,6 +37,13 @@
         <ui:Foldout text="Scalers" value="True" name="scalers">
             <Style src="AdaptivePerformanceExtension.uss" />
         </ui:Foldout>
+    </ui:Foldout>
+    <ui:Foldout text="Device Settings" value="False" name="device-settings">
+        <Style src="AdaptivePerformanceExtension.uss" />
+        <ui:Label text="Cluster Info" name="device-cluster-info" value="true" tooltip="Cluster Info Settings"/>
+        <uie:IntegerField label="Big Cores" value="1" name="cluster-info-big-cores" tooltip="Simulates the amount of big cores available on the system."/>
+        <uie:IntegerField label="Medium Cores" value="3" name="cluster-info-medium-cores" tooltip="Simulates the amount of medium cores available on the system."/>
+        <uie:IntegerField label="Little Cores" value="4" name="cluster-info-little-cores" tooltip="Simulates the amount of little cores available on the system."/>
     </ui:Foldout>
     <ui:Foldout text="Developer Options" value="False" name="developer-options">
         <Style src="AdaptivePerformanceExtension.uss" />

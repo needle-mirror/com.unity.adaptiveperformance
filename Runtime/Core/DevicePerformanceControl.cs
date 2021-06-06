@@ -92,5 +92,9 @@ namespace UnityEngine.AdaptivePerformance
 
         public int CurrentCpuLevel { get; set; }
         public int CurrentGpuLevel { get; set; }
+
+        public bool CpuPerformanceBoost { get; set; }
+
+        public bool GpuPerformanceBoost { get; set; }
     }
 }

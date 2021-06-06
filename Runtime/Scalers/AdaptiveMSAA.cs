@@ -39,18 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = 0;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = 1;
-                    break;
-                case 2:
-                    AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = 2;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.AntiAliasingQualityBias = (int)(2 * Scale);
         }
     }
 }

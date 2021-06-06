@@ -39,15 +39,8 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         protected override void OnLevel()
         {
-            switch (CurrentLevel)
-            {
-                case 0:
-                    AdaptivePerformanceRenderSettings.SkipDynamicBatching = false;
-                    break;
-                case 1:
-                    AdaptivePerformanceRenderSettings.SkipDynamicBatching = true;
-                    break;
-            }
+            if (ScaleChanged())
+                AdaptivePerformanceRenderSettings.SkipDynamicBatching = (Scale < 1);
         }
     }
 }

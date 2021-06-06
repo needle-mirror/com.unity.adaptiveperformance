@@ -52,7 +52,7 @@ public class BottleneckControl : MonoBehaviour
         timer = waitTimeBeforeSwitch;
         ap = Holder.Instance;
 
-        if (!ap.Active)
+        if (ap == null || !ap.Active)
         {
             state = "Adaptive Performance not active";
             Debug.Log("[AP Bottleneck] Adaptive Performance not active");
