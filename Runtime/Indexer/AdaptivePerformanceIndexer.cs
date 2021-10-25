@@ -233,6 +233,18 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
+        /// Returns all scalers independent of their state.
+        /// </summary>
+        /// <param name="scalers">Output where scalers will be written.</param>
+        public void GetAllRegisteredScalers(ref List<AdaptivePerformanceScaler> scalers)
+        {
+            scalers.Clear();
+            scalers.AddRange(m_DisabledScalers);
+            scalers.AddRange(m_UnappliedScalers);
+            scalers.AddRange(m_AppliedScalers);
+        }
+
+        /// <summary>
         /// Unapply all currently active scalers.
         /// </summary>
         public void UnapplyAllScalers()

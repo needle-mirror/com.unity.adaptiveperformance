@@ -1,11 +1,11 @@
-# Adaptive Performance Simulator plugin
+# Adaptive Performance Simulator
 
 Adaptive Performance adds a section of controls to the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest) window to let you simulate thermal and bottleneck events in the Editor. This should help you to test your Adaptive Performance implementations in the Editor without the need to deploy your app to a device. The plugin uses the `SimulatorAdaptivePerformanceSubsystem` to simulate the events.
 
 When you install the Adaptive Performance package, Unity automatically installs the Simulator provider. To enable the Simulator, you must:
 
 * [Activate](installing-and-configuring.md#provider-installation) the Simulator provider for Desktop platforms in the **Project Settings** window
-* If you are using Unity 2020 or below, install the [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@2.2/manual/index.html)  In Unity 2021 and above, the Device Simulator is already included in the Unity Editor.
+* In Unity 2021 and above, the Device Simulator is already included in the Unity Editor.
 
 ![Adaptive Performance Device Simulator settings.](Images/simulator-provider-enable.png)
 

@@ -2,7 +2,7 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "3.0.0",
+  "version": "4.0.0-pre.1",
   "unity": "2021.2",
   "unityRelease": "0a18",
   "keywords": [
@@ -119,14 +119,39 @@
       "displayName": "Adaptive View Distance Sample",
       "description": "Demonstrates how Adaptive Performance View Distance scaler works.",
       "path": "Samples~/Adaptive View Distance"
+    },
+    {
+      "displayName": "Custom Scaler Sample",
+      "description": "Demonstrates how adding custom Adaptive Performance scaler works by showing how to create Adaptive Fog.",
+      "path": "Samples~/Custom Scaler"
+    },
+    {
+      "displayName": "Adaptive Physics",
+      "description": "Demonstrates how Adaptive Performance Physics scaler works.",
+      "path": "Samples~/Adaptive Physics"
+    },
+    {
+      "displayName": "Visual Scripting",
+      "description": "Demonstrates how Adaptive Performance can be used in Visual Scripting.",
+      "path": "Samples~/Visual Scripting"
+    },
+    {
+      "displayName": "Adaptive Decals",
+      "description": "Demonstrates how Adaptive Performance Decals scaler works.",
+      "path": "Samples~/Adaptive Decals"
+    },
+    {
+      "displayName": "Adaptive Layer Culling",
+      "description": "Demonstrates how Adaptive Performance Layer Culling scaler works.",
+      "path": "Samples~/Adaptive Layer Culling"
     }
   ],
   "upmCi": {
-    "footprint": "21af1a9086e66cd745fd08809b2c6c66dc9ba1d5"
+    "footprint": "21a8f357286c64042ca2b2d19e62807de04b64fe"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "5835d2f2e94099daaec5ebd5fd8d06f98544b7e9"
+    "revision": "ede21c2abaf1acfb4f473269ba42ae7282f08e9d"
   }
 }

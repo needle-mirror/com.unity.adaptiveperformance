@@ -18,6 +18,7 @@ There are two target audiences for the Adaptive Performance Provider Management 
 This package also includes documentation on how to:
 
 * [Use the Adaptive Performance Device Simulator](simulator.md) plugin in the Unity Editor. For more information on this plugin, see [Device Simulator](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest) in the Unity Manual.
+* [Use Adaptive Performance Visual Scripting](visual-scripting.md) units in Unity Visual Scripting.
 * Implement or test specific features using the [samples](samples-guide.md) provided.
 
 For information on what's new in the latest version of Adaptive Performance, see the [Changelog](../changelog/CHANGELOG.html).

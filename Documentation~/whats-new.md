@@ -1,11 +1,14 @@
-# What's new in version 3.0.0
-Summary of changes in Adaptive Performance package version 3.0.0.
+# What's new in version 4.0.0
+Summary of changes in Adaptive Performance package version 4.0.0.
 
 The main updates in this release include:
 
 ##Added
-* Profiler Support
-* Startup Boost Mode
+* Layer Culling Scaler
+* Decals Scaler
+* Visual Scripting
+* Custom Scaler
+* Physics scaler
 
 ## Updated
 * Documentation

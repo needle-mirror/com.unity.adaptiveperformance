@@ -220,6 +220,8 @@ General render Scalers:
 - AdaptiveResolution
 - AdaptiveFramerate
 - AdaptiveViewDistance
+- AdaptivePhysics
+- AdaptiveLayerCulling
 
 Universal Render Pipeline Scalers (These Scalers only work with `com.unity.render-pipelines.universal` `12.0+`):
 - AdaptiveBatching
@@ -231,6 +233,7 @@ Universal Render Pipeline Scalers (These Scalers only work with `com.unity.rende
 - AdaptiveShadowmapResolution
 - AdaptiveSorting
 - AdaptiveTransparency
+- AdaptiveDecals
 
 See the [Adaptive Performance samples](samples-guide.md) for more information about Scalers.
 
@@ -389,3 +392,7 @@ The color of the bar indicates the scaler's status. The colors are:
 |Grey | The scaler is disabled. |
 |Green | The scaler is enabled and applied. |
 |Blue | The scaler is enabled but not applied. |
+
+### Visual Scripting Integration
+
+After installing Adaptive Performance, Unity's [Visual Scripting](https://docs.unity3d.com/2021.2/Documentation/Manual/com.unity.visualscripting.html) system includes [units](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest/index.html?subfolder=/manual/vs-understanding-units.html) you can use to access Adaptive Performance metrics. For more information, see [Adaptive Performance Visual Scripting](visual-scripting.md).

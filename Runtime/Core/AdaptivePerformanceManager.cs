@@ -1,4 +1,7 @@
 using UnityEngine.Profiling;
+#if VISUAL_SCRIPTING_ENABLED
+using Unity.VisualScripting;
+#endif
 
 namespace UnityEngine.AdaptivePerformance
 {
@@ -258,16 +261,25 @@ namespace UnityEngine.AdaptivePerformance
         {
             AdaptivePerformanceAnalytics.SendAdaptivePerformanceThermalEvent(ev);
             APLog.Debug("[thermal event] temperature level: {0}, warning level: {1}, thermal trend: {2}", ev.TemperatureLevel, ev.WarningLevel, ev.TemperatureTrend);
+            #if VISUAL_SCRIPTING_ENABLED
+            EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnThermalEvent, ev.WarningLevel);
+            #endif
         }
 
         private void LogBottleneckEvent(PerformanceBottleneckChangeEventArgs ev)
         {
             APLog.Debug("[perf event] bottleneck: {0}", ev.PerformanceBottleneck);
+            #if VISUAL_SCRIPTING_ENABLED
+            EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnBottleneckEvent, ev.PerformanceBottleneck);
+            #endif
         }
 
         private void LogBoostEvent(PerformanceBoostChangeEventArgs ev)
         {
             APLog.Debug("[perf event] CPU boost: {0}, GPU boost: {1}", ev.CpuBoost, ev.GpuBoost);
+            #if VISUAL_SCRIPTING_ENABLED
+            EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnBoostEvent, ev);
+            #endif
         }
 
         private static string ToStringWithSign(int x)
@@ -278,6 +290,9 @@ namespace UnityEngine.AdaptivePerformance
         private void LogPerformanceLevelEvent(PerformanceLevelChangeEventArgs ev)
         {
             APLog.Debug("[perf level change] cpu: {0}({1}) gpu: {2}({3}) control mode: {4} manual override: {5}", ev.CpuLevel, ToStringWithSign(ev.CpuLevelDelta), ev.GpuLevel, ToStringWithSign(ev.GpuLevelDelta), ev.PerformanceControlMode, ev.ManualOverride);
+            #if VISUAL_SCRIPTING_ENABLED
+            EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnPerformanceLevelEvent, ev);
+            #endif
         }
 
         private void AddNonNegativeValue(RunningAverage runningAverage, float value)

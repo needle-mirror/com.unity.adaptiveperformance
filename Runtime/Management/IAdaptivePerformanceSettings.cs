@@ -415,6 +415,74 @@ namespace UnityEngine.AdaptivePerformance
             get { return m_AdaptiveViewDistance; }
             set { m_AdaptiveViewDistance = value; }
         }
+
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change physics properties")]
+        AdaptivePerformanceScalerSettingsBase m_AdaptivePhysics = new AdaptivePerformanceScalerSettingsBase
+        {
+            name = "Adaptive Physics",
+            enabled = false,
+            scale = 1,
+            visualImpact = ScalerVisualImpact.Low,
+            target =  ScalerTarget.CPU,
+            maxLevel = 5,
+            minBound = 0.5f,
+            maxBound = 1,
+        };
+
+
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change decal properties.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptiveDecals
+        {
+            get { return m_AdaptiveDecals; }
+            set { m_AdaptiveDecals = value; }
+        }
+
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change decal properties")]
+        AdaptivePerformanceScalerSettingsBase m_AdaptiveDecals = new AdaptivePerformanceScalerSettingsBase
+        {
+            name = "Adaptive Decals",
+            enabled = false,
+            scale = 1,
+            visualImpact = ScalerVisualImpact.Medium,
+            target = ScalerTarget.GPU,
+            maxLevel = 20,
+            minBound = 0.01f,
+            maxBound = 1,
+        };
+
+
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change physics properties.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptivePhysics
+        {
+            get { return m_AdaptivePhysics; }
+            set { m_AdaptivePhysics = value; }
+        }
+
+        [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change the layer culling distance")]
+        AdaptivePerformanceScalerSettingsBase m_AdaptiveLayerCulling = new AdaptivePerformanceScalerSettingsBase
+        {
+            name = "Adaptive Layer Culling",
+            enabled = false,
+            scale = 1,
+            visualImpact = ScalerVisualImpact.Medium,
+            target = ScalerTarget.CPU,
+            maxLevel = 40,
+            minBound = 0.01f,
+            maxBound = 1,
+        };
+
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change the layer culling distance.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptiveLayerCulling
+        {
+            get { return m_AdaptiveLayerCulling; }
+            set { m_AdaptiveLayerCulling = value; }
+        }
     }
     /// <summary>
     /// Settings of indexer system.

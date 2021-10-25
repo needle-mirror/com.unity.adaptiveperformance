@@ -41,6 +41,9 @@ public class AdaptivePerformanceSettings : MonoBehaviour
     public bool AdaptiveSorting = false;
     public bool AdaptiveViewDistance = false;
     public bool AdaptiveVRR = false;
+    public bool AdaptivePhysics = false;
+    public bool AdaptiveDecals = false;
+    public bool AdaptiveLayerCulling = false;
 
     /// <summary>
     /// In case you want to manually override settings from the Setting menu during awake, this can be done with the IAdaptivePerformanceSettings.
@@ -67,10 +70,13 @@ public class AdaptivePerformanceSettings : MonoBehaviour
         settings.scalerSettings.AdaptiveSorting.enabled = AdaptiveSorting;
         settings.scalerSettings.AdaptiveTransparency.enabled = AdaptiveTransparency;
         settings.scalerSettings.AdaptiveViewDistance.enabled = AdaptiveViewDistance;
-        #if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
+#if UNITY_ADAPTIVE_PERFORMANCE_SAMSUNG_ANDROID
         var adaptiveVRR = GameObject.FindObjectOfType<AdaptiveVariableRefreshRate>();
         if (adaptiveVRR)
             adaptiveVRR.Enabled = AdaptiveVRR;
-        #endif
+#endif
+        settings.scalerSettings.AdaptivePhysics.enabled = AdaptivePhysics;
+        settings.scalerSettings.AdaptiveDecals.enabled = AdaptiveDecals;
+        settings.scalerSettings.AdaptiveLayerCulling.enabled = AdaptiveLayerCulling;
     }
 }

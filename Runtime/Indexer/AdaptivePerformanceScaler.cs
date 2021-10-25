@@ -1,3 +1,8 @@
+#if VISUAL_SCRIPTING_ENABLED
+using Unity.VisualScripting;
+using UnityEngine.AdaptivePerformance.VisualScripting;
+#endif
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
@@ -184,6 +189,9 @@ namespace UnityEngine.AdaptivePerformance
 
         int m_OverrideLevel = -1;
         AdaptivePerformanceScalerSettingsBase m_defaultSetting = new AdaptivePerformanceScalerSettingsBase();
+#if VISUAL_SCRIPTING_ENABLED
+        AdaptivePerformanceScalerEvent m_ScalerEvent;
+#endif
 
         /// <summary>
         /// Settings reference for all scalers.
@@ -280,6 +288,11 @@ namespace UnityEngine.AdaptivePerformance
             CurrentLevel++;
             OnLevelIncrease();
             OnLevel();
+#if VISUAL_SCRIPTING_ENABLED
+            m_ScalerEvent.Name = Name;
+            m_ScalerEvent.Level = CurrentLevel;
+            EventBus.Trigger(AdaptivePerformanceEventHooks.OnScalerEvent, m_ScalerEvent);
+#endif
         }
 
         internal void DecreaseLevel()
@@ -292,6 +305,11 @@ namespace UnityEngine.AdaptivePerformance
             CurrentLevel--;
             OnLevelDecrease();
             OnLevel();
+#if VISUAL_SCRIPTING_ENABLED
+            m_ScalerEvent.Name = Name;
+            m_ScalerEvent.Level = CurrentLevel;
+            EventBus.Trigger(AdaptivePerformanceEventHooks.OnScalerEvent, m_ScalerEvent);
+#endif
         }
 
         internal void Activate()

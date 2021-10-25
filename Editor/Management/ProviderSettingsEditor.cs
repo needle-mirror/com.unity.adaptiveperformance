@@ -59,6 +59,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_AdaptiveSorting = EditorGUIUtility.TrTextContent(L10n.Tr("Sorting"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Sorting skips the front-to-back sorting of the Universal Render Pipeline based on the thermal and performance load."));
         static GUIContent s_AdaptiveTransparency = EditorGUIUtility.TrTextContent(L10n.Tr("Transparency"), L10n.Tr("Requires Universal Render Pipeline. Adaptive Transparency skips transparent objects render pass."));
         static GUIContent s_AdaptiveViewDistance = EditorGUIUtility.TrTextContent(L10n.Tr("View Distance"), L10n.Tr("Adaptive View Distance changes the view distance of the main camera. Requires the MainCamera tag on the Camera you want to assign."));
+        static GUIContent s_AdaptivePhysics = EditorGUIUtility.TrTextContent(L10n.Tr("Physics"), L10n.Tr("Adaptive Physics changes the Time.fixedDeltaTime based on the thermal and performance load."));
+        static GUIContent s_AdaptiveDecals = EditorGUIUtility.TrTextContent(L10n.Tr("Decals"), L10n.Tr("Adaptive Decal changes the maximum draw distance for all decals of the Universal Render Pipeline based on the thermal and performance load."));
+        static GUIContent s_AdaptiveLayerCulling = EditorGUIUtility.TrTextContent(L10n.Tr("Layer Culling"), L10n.Tr("Adaptive Layer Culling changes the maximum draw distance for each layer based on the thermal and performance load. It scales the value provided by camera.layerCullDistances."));
 
         static string s_FrameRateWarning = L10n.Tr("Adaptive Framerate is only supported without VSync. Set VSync Count to \"Don't Sync\" in Quality settings.");
         static string s_WarningPopup = L10n.Tr("Warning");
@@ -537,6 +540,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     return s_AdaptiveTransparency;
                 case "Adaptive View Distance":
                     return s_AdaptiveViewDistance;
+                case "Adaptive Physics":
+                    return s_AdaptivePhysics;
+                case "Adaptive Decals":
+                    return s_AdaptiveDecals;
+                case "Adaptive Layer Culling":
+                    return s_AdaptiveLayerCulling;
+
                 default:
                     return new GUIContent("");
             }

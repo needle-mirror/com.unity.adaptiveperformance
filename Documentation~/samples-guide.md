@@ -22,6 +22,11 @@ Install Adaptive Performance samples from the **Package Manager** window. Some o
 - [Adaptive Resolution Sample](#adaptive-resolution-sample)
 - [Adaptive View Distance Sample](#adaptive-view-distance-sample)
 - [Scaler Profiles Sample](#scaler-profiles-sample)
+- [Custom Scaler Sample](#custom-scaler-sample)
+- [Adaptive Physics Sample](#adaptive-physics)
+- [Visual Scripting](#visual-scripting)
+- [Adaptive Layer Culling](#adaptive-layer-culling)
+
 
 The following samples require Universal Render Pipeline:
 
@@ -31,6 +36,7 @@ The following samples require Universal Render Pipeline:
 - [Adaptive Shadow Sample](#adaptive-shadow-sample)
 - [Adaptive Sorting Sample](#adaptive-sorting-sample)
 - [Adaptive Transparency Sample](#adaptive-transparency-sample)
+- [Adaptive Decals Sample](#adaptive-decals-sample)
 
 ## Sample Environment
 The sample environment is required for most of the samples, because the samples share the same assets. You should install the sample environment before installing any other samples to have the necessary base structure available.
@@ -141,8 +147,8 @@ The sample uses the same content as the Auto Performance Control sample. It swit
 ### Options
 The Adaptive Framerate sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 To adapt framerate automatically, use the **Adaptive Framerate** and **Adaptive Variable Refresh Rate** Scalers.
 
@@ -177,8 +183,8 @@ The overdraw control allows you to render multiple instances of the image on top
 ### Options
 The Adaptive Resolution sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 
 ## Adaptive LOD Sample
@@ -193,8 +199,8 @@ The sample uses the same content as the Auto Performance Control sample. It swit
 ### Options
 The Adaptive LOD sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Batching Sample
 ![Adaptive Batching Sample](Images/Samples/samples-adaptivebatching.png)
@@ -210,8 +216,8 @@ Changes are not visible on-screen for this demo, please use a graphics performan
 ### Options
 The Adaptive batching sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive LUT Sample
 ![Adaptive LUT Sample](Images/Samples/samples-adaptivelut.png)
@@ -229,8 +235,8 @@ The sample shows color grading quality change when LUT size is adjusted. With sm
 ### Options
 The Adaptive LUT sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive MSAA Sample
 ![Adaptive MSAA Sample](Images/Samples/samples-adaptivemsaa.png)
@@ -247,8 +253,8 @@ The scaler affects only camera's post processing subpixel morphological Anti-ali
 ### Options
 The Adaptive MSAA sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Shadow Sample
 ![Adaptive Shadow Sample](Images/Samples/samples-adaptiveshadows.png)
@@ -266,8 +272,8 @@ In the sample you should see the resolution of and distance at which shadows are
 ### Options
 The Adaptive Shadow sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Sorting Sample
 ![Adaptive Sorting Sample](Images/Samples/samples-adaptivesorting.png)
@@ -281,8 +287,8 @@ This feature uses the Indexer system to make decisions on when to change sorting
 ### Options
 The Adaptive Sorting sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 Changes are not visible on-screen for this demo, please use a graphics performance analyzer to see the differences. In the Editor Stats you can see a change in SetPass calls.
 
@@ -298,8 +304,8 @@ This feature uses the Indexer system to make decisions on when to disable transp
 ### Options
 The Adaptive Transparency sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive View Distance Sample
 ![Adaptive View Distance Sample](Images/Samples/samples-adaptiveviewdistance.png)
@@ -311,8 +317,8 @@ This feature uses the Indexer system to make decisions on when reduce the view d
 ### Options
 The Adaptive View Distance sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler
-- Override to change the level via the slider in the UI instead of relying on the Indexer to control the level (used for testing)
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Scaler Profiles Sample
 ![Scaler Profiles Sample](Images/Samples/samples-scalerprofiles.png)
@@ -324,6 +330,124 @@ This demo only works if you add more than the default scaler profile. You can ad
 ![Scaler Profiles in the Adaptive Performance settings.](Images/settings-scaler-profiles.png)
 
 The scaler profiles UI will show the list of scaler profiles defined in the settings. You can click onto the name of a scaler and it will update all scalers defined in the profile.
+
+## Custom Scaler Sample
+![Custom Scaler ](Images/Samples/samples-customscaler.png)
+
+The **Custom Scaler** sample shows how to create a custom scaler that implements an adaptive fog. The scaler changes the view distance of the [main camera](https://docs.unity3d.com/ScriptReference/Camera-main.html) uses linear fog to hide the cut-off. To use the scaler, add the **MainCamera** tag to be main camera in the scene. If you use exponential fog, the scaler changes the fog density until the fog disappears completely.
+
+Fog can be switched between Exponential and Linear in the Settings under (menu: **Lighting &gt; Environment &gt; Other Settings &gt; Mode**.
+The scaler's behavior changes depending on which fog mode you use:
+
+- **Exponential Fog**: Reduces the density of the fog with every scale step until the fog disappears completely.
+- **Linear Fog**: Changes the fog's **End** distance to coincide with the camera's view distance.This hides the reduced view distance with fog.
+
+**Note:** Custom scaler don't appear in the UI list and the settings are hardcoded in the custom scaler class. The scalar initiates automatically and shows up in the device simulator, but you can't access it via scaler profiles.
+
+This feature uses the [Indexer](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@latest?subfolder=/manual/user-guide.html%23indexer-and-scalers) system to make decisions on when to increase the fog and when to reduce the view distance to maintain performance and thermal stability.
+
+### Options
+The Custom Scaler sample uses the Scaler Visualization Prefab which enables you to see the status of the scaler. Use it to modify the status of the scalars for easier testing. You can:
+
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+
+## Adaptive Physics
+
+The adaptive physics sample shows how to change the [fixed delta time](https://docs.unity3d.com/ScriptReference/Time-fixedDeltaTime.html) at which the physics engine updates. The physics scaler changes the fixed delta time and if you use it for other systems those will be scaled as well. If you use the fixed delta times in other systems you might want to create your own physics scaler, tweaking more detailed settings instead of the fixed delta time.
+
+![Bottleneck](Images/Samples/samples-adaptivephysics.png)
+
+This feature uses the [Indexer](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@latest?subfolder=/manual/user-guide.html%23indexer-and-scalers) system to make decisions on when to change the Time.fixedDeltaTime to maintain performance and thermal stability.
+
+A comparison between an original Time.fixedDeltaTime value and a scaled-down version. The average frame time for the original was 28ms and the average frame time for the scaled-down version was 21ms.
+
+## Visual Scripting
+
+
+![Bottleneck](Images/Samples/samples-visualscripting.png)
+
+Adaptive Performance can be used with Unity's [Visual Scripting](https://docs.unity3d.com/2021.1/Documentation/Manual/com.unity.visualscripting.html) system. When installing Adaptive Performance it also includes [units](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest/index.html?subfolder=/manual/vs-understanding-units.html) you can use to access Adaptive Performance metrics.
+
+When you install the Visual Scripting package, Unity automatically activates the Adaptive Performance units. When you add Adaptive Performance to a project with existing Visual Scripting graphs, you must recompile the units. To do this, select **Edit** &gt; **Project Settings** &gt; **Visual Scripting** &gt; **Node Library** &gt; **Regenerate Units**. More information about the Visual Scripting integration please visit the [Visual Scripting guide](visual-scripting.md)
+
+The Visual Scripting sample includes examples that cover the following metrics:
+
+| **Metric**              | **Unit**                                               | **Description**                                              |
+| ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| **Thermal information** | On Thermal Metric and Thermal Metric                   | The sample uses the On Thermal Metric event to change the color of a panel depending on the warning level. The possible colors are:<br/>&#8226; **Blue**: No Warning.<br/>&#8226; **Orange**: Throttling Imminent.<br/>&#8226; **Red**: Throttling.<br/><br/>The example also uses the Thermal Metric unit to print the warning level to the console using the boolean outputs. |
+| **Temperature level**   | Thermal Metric                                         | The sample uses the Thermal Metric unit to display the temperature level as text every frame. |
+| **Temperature trend**   | Thermal Metric                                         | The sample uses the Thermal Metric unit to display the temperature trend as text every frame. |
+| **Bottleneck**          | Bottleneck                                             | The sample uses the Bottleneck event to indicate the cause of a bottleneck. To do this, it changes text and the color of a panel. The possible bottleneck causes are:<br/>&#8226; **Red**: CPU.<br/>&#8226; **Orange**: GPU.<br/>&#8226; **Green**: Target Framerate<br/>&#8226; **Gray** Unknown. |
+| **CPU/GPU boost**       | Get Boost, Set Boost, and On CPU/GPU Boosted | The sample uses the Get Boost unit to display the boost mode status as text every frame.<br/><br/>The sample uses the Set Boost unit to enable and disable boost mode for the CPU and GPU.<br/><br/>The sample uses the On CPU/GPU Boosted event unit to change the color of buttons depending on the boost mode. The colors are:<br/>&#8226; **Green**: Boost mode is active.<br/>&#8226; **Blue**: Boost mode is not active. |
+| **Cluster information** | Get Cluster Info                                       | The sample uses the Get Cluster Info unit to display information about CPU cores as text. |
+| **Frame times**         | Frametiming                                            | The sample uses the Frametiming unit to display CPU and GPU frame times as text. |
+| **CPU/GPU performance** | Get Performance Levels and Set Performance Levels      | The sample uses the Get Performance Levels unit to display the CPU and GPU levels as text.<br/><br/>The sample's **CPU Level** and **GPU Level** buttons calculate a random number between 0 and 6 and use the Set Performance Levels unit to set the performance level to the random value.<br/><br/>The sample uses the On Performance Level event unit to display the CPU and GPU level to the console. |
+| **Indexer**             | Get Indexer Data                                       | The sample uses the Get Indexer Data unit to display the performance and thermal actions as text. |
+| **Scaler**              | On Level Scaler                                        | The sample uses the On Level Scaler event unit to update the text with what scaler to update and what level to update the scalar to. |
+| **Frames per second**   | FPS                                                    | The sample uses the FPS unit to display the current frames per second. To do this it changes text and the color of a panel. The possible colors are:<br/>&#8226; **Red**: For a framerate less than 30.<br/>&#8226; **Orange**: For a framerate above 30 and less than 45.<br/>&#8226; **Green**: For a framerate above 45 every frame. |
+
+
+For quick tests use the Device Simulator and see what each state should look like on the device.
+
+## Adaptive Decals Sample
+
+The Adaptive Decals sample shows how to dynamically adjust the draw distance of [decals](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@12.0/manual/renderer-feature-decal.html) at runtime.
+
+![Adaptive Decals Sample](Images/Samples/samples-adaptivedecals.png)
+
+**Note:** You need to use the Universal Render Pipeline to see effects for this sample. Please see the [Universal Render Pipeline](#universal-render-pipeline) section for details.
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the decal draw distance to maintain performance and thermal stability.
+
+The sample uses similar content to the Auto Performance Control sample. It loops in medium CPU load until it reaches critical framerates and then decreases the draw distance of decals. The result of this is that the render distance for decals changes depending on the CPU and GPU load.
+
+### Options
+The Adaptive Decals sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
+
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+
+## Adaptive Layer Culling
+The Adaptive Layer Culling sample shows how to dynamically adjust [layer cull distances](https://docs.unity3d.com/ScriptReference/Camera-layerCullDistances.html) at runtime.
+
+![Adaptive Layer Culling](Images/Samples/samples-adaptivelayerculling.png)
+
+This feature uses the Indexer system to make decisions on when and how much to increase or decrease the layer cull distances to maintain performance and thermal stability.
+
+The sample uses similar content to the Auto Performance Control sample. It loops in medium CPU load until it reaches critical framerates and then decreases the cull distance of the layers. The result of this is that the cull distance for layers changes depending on the CPU and GPU load.
+
+You can set a different value for the culling distance of each layer and they scale proportionally. As a result, you can control which objects to cull earlier to save performance. For an example of how to do this, see the following code sample. Be aware that the default camera far clipping plane value is 1000.
+
+```csharp
+        Camera camera = GetComponent<Camera>();
+        float[] distances = new float[32];
+        distances[0] = 0; // Default Layer - 0 will be ignored and left unscaled which results in the far clipping plane
+        distances[1] = 200; // TransparentFX layer
+        distances[2] = 400; // Ignore Raycast layer
+        distances[3] = 900; // empty layer
+        distances[4] = 1500; // Water layer
+        // This example ignores the rest of the layers. This is equivalent to using a value of 0, which the Default layer uses.
+        camera.layerCullDistances = distances;
+```
+
+In this sample:
+* Objects in the Water layer have a cull distance of `1500`. To help you to visualize this, the sample only uses blue objects in this layer.
+* Objects in the Ignore Raycast layer have a cull distance of `400`. To help you to visualize this, the sample only uses green objects in this layer.
+* Objects in the Transparent FX layer have a cull distance of `200`. To help you to visualize this, the sample only uses red objects in this layer.
+
+As the scalar level changes, the culling distances change proportionally. For example, if the scalar level changes to 50%:
+* The culling distance for the Water layer becomes `750`.
+* The culling distance for the Ignore Raycast layer becomes `200`.
+* The culling distance for the Transparent FX layer becomes `100`.
+
+In the sample you should see the distance change at which objects on layers are culled based upon the CPU and GPU load. As you see, by priming the culling layers you can define how quick the scaling effects the different layers.
+
+### Options
+The Adaptive Decals sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
+
+- Enable or disable the scaler.
+- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 # Technical details
 ## Requirements

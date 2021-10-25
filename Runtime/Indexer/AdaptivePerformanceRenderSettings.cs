@@ -13,6 +13,7 @@ namespace UnityEngine.AdaptivePerformance
         private static float s_MaxShadowDistanceMultiplier = 1;
         private static float s_ShadowResolutionMultiplier = 1;
         private static float s_RenderScaleMultiplier = 1;
+        private static float s_DecalsMaxDistance = 1000;
 
         /// <summary>
         /// Amount to multiply the main lights shadowmap resolution. Values are clamped between 0 and 1.
@@ -22,6 +23,16 @@ namespace UnityEngine.AdaptivePerformance
             get { return s_ShadowResolutionMultiplier; }
             set { s_ShadowResolutionMultiplier = Mathf.Clamp01(value); }
         }
+
+        /// <summary>
+        /// Adjust the drawdistance for decals.
+        /// </summary>
+        public static float DecalsDrawDistance
+        {
+            get { return s_DecalsMaxDistance; }
+            set { s_DecalsMaxDistance = value; }
+        }
+
         /// <summary>
         /// Adjust the number of shadow cascades for the main camera in the scene.
         /// </summary>

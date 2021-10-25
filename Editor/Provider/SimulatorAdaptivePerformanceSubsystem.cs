@@ -183,7 +183,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         {
             get
             {
-                return new Version(3, 0, 0);
+                return new Version(4, 0, 0);
             }
         }
 

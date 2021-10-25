@@ -3,6 +3,6 @@
   "description": "Demonstrates how Adaptive Framrate using target framerate or variable refresh rate works.",
   "createSeparatePackage": true,
   "dependencies": {
-  	"com.unity.adaptiveperformance.samsung.android": "3.0.0"
+  	"com.unity.adaptiveperformance.samsung.android": "4.0.0"
   }
 }
