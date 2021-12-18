@@ -83,7 +83,7 @@ The sample has buttons to activate the CPU and GPU boosts and simulate high CPU 
 
 The scene spawns bees. The log prints the time, and the number of bees spawned.
 
-When you simulate a high load, you can see the CPU time or GPU frame time increase. When you activate boost mode, you can see the CPU or GPU frame time reduce for 15 seconds.
+When you simulate a high load, you can see the CPU time or GPU frame time increase. When you activate boost mode, you can see the CPU or GPU frame time reduce for 10 seconds.
 
 Using boost mode with CPU load generally increases the number of bees spawned.
 

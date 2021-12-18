@@ -55,6 +55,9 @@ namespace UnityEngine.AdaptivePerformance
                         changeArgs.GpuLevelDelta = 0;
                         CurrentCpuLevel = Constants.UnknownPerformanceLevel;
                         CurrentGpuLevel = Constants.UnknownPerformanceLevel;
+                        CpuLevel = Constants.UnknownPerformanceLevel;
+                        GpuLevel = Constants.UnknownPerformanceLevel;
+                        return false;
                     }
 
                     changeArgs.CpuLevel = CurrentCpuLevel;

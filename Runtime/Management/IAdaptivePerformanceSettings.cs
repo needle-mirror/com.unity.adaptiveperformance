@@ -708,10 +708,10 @@ namespace UnityEngine.AdaptivePerformance
             set { m_DefaultScalerProfilerIndex = value; }
         }
         [SerializeField] internal int m_DefaultScalerProfilerIndex = 0;
-
+#if UNITY_EDITOR
         // Default values set when a new Adaptive Performance setting is created
         [SerializeField] int k_AssetVersion = 1;
-
+#endif
         /// <summary>
         /// When Unity enables the serialized object it upgrades old files to the new format in the editor and saves the assets. Empty during runtime.
         /// </summary>
