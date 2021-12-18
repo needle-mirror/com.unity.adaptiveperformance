@@ -30,8 +30,8 @@ After you install Adaptive Performance, the **Device Simulator** window will dis
 * Target FPS - Simulates the application target framerate in frames per second.
 * CPU Level - Simulates the frequency cap of the CPU in discrete levels.
 * GPU Level - Simulates the frequency cap of the GPU in discrete levels.
-* CPU Boost - CPU Boost enables CPU Boost for 15 seconds. Enabling CPU boost disables CPU levels until the boost is over. If the system is throttling the CPU boost has no effect.
-* GPU Boost - GPU Boost enables GPU Boost for 15 seconds. Enabling GPU boost disables GPU levels until the boost is over. If the system is throttling the GPU boost has no effect.
+* CPU Boost - CPU Boost enables CPU Boost for 10 seconds. Enabling CPU boost disables CPU levels until the boost is over. If the system is throttling the CPU boost has no effect.
+* GPU Boost - GPU Boost enables GPU Boost for 10 seconds. Enabling GPU boost disables GPU levels until the boost is over. If the system is throttling the GPU boost has no effect.
 
 ### Developer Options
 * Logging - Enable or disable logging from the Adaptive Performance subsystem.

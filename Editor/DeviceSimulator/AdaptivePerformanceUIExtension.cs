@@ -513,7 +513,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                 // Update the UI to match
                 m_TemperatureLevel.SetValueWithoutNotify(temperatureLevel);
+                m_TemperatureLevelField.SetValueWithoutNotify(temperatureLevel);
                 m_TemperatureTrend.SetValueWithoutNotify(temperatureTrend);
+                m_TemperatureTrendField.SetValueWithoutNotify(temperatureTrend);
                 m_WarningLevel.SetValueWithoutNotify(warningLevel);
             });
 
