@@ -27,6 +27,9 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     Length m_scalerOffset = new Length(-200, LengthUnit.Pixel);
     Length m_midDistance = new Length(100, LengthUnit.Pixel);
     StyleRotate m_scalerRotate = new StyleRotate(new Rotate(180));
+    static readonly StyleColor k_Green = new StyleColor(new Color32(136, 176, 49, byte.MaxValue));
+    static readonly StyleColor k_Yellow = new StyleColor(new Color32(221, 124, 69, byte.MaxValue));
+    static readonly StyleColor k_Red = new StyleColor(new Color32(219, 89, 81, byte.MaxValue));
 
     public AdaptivePerformanceDetailsViewController(ProfilerWindow profilerWindow) : base(profilerWindow) {}
 
@@ -127,22 +130,22 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
             {
                 if (bottleneck == PerformanceBottleneck.CPU)
                 {
-                    m_BottleneckIcon.style.backgroundColor = Color.red;
+                    m_BottleneckIcon.style.backgroundColor = k_Red;
                     m_BottleneckLabel.text = "CPU";
                 }
                 else if (bottleneck == PerformanceBottleneck.GPU)
                 {
-                    m_BottleneckIcon.style.backgroundColor = Color.blue;
+                    m_BottleneckIcon.style.backgroundColor = k_Red;
                     m_BottleneckLabel.text = "GPU";
                 }
                 else if (bottleneck == PerformanceBottleneck.TargetFrameRate)
                 {
-                    m_BottleneckIcon.style.backgroundColor = m_appliedScalerColor;
+                    m_BottleneckIcon.style.backgroundColor = k_Yellow;
                     m_BottleneckLabel.text = "Target Framerate";
                 }
                 else
                 {
-                    m_BottleneckIcon.style.backgroundColor = Color.grey;
+                    m_BottleneckIcon.style.backgroundColor = k_Yellow;
                     m_BottleneckLabel.text = "Unknown";
                 }
             }

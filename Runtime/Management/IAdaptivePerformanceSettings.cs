@@ -108,6 +108,9 @@ namespace UnityEngine.AdaptivePerformance
             ApplySettingsBase(AdaptiveTransparency, settings.AdaptiveTransparency);
             ApplySettingsBase(AdaptiveSorting, settings.AdaptiveSorting);
             ApplySettingsBase(AdaptiveViewDistance, settings.AdaptiveViewDistance);
+            ApplySettingsBase(AdaptivePhysics, settings.AdaptivePhysics);
+            ApplySettingsBase(AdaptiveLayerCulling, settings.AdaptiveLayerCulling);
+            ApplySettingsBase(AdaptiveDecals, settings.AdaptiveDecals);
         }
 
         void ApplySettingsBase(AdaptivePerformanceScalerSettingsBase destination, AdaptivePerformanceScalerSettingsBase sources)
@@ -429,6 +432,14 @@ namespace UnityEngine.AdaptivePerformance
             maxBound = 1,
         };
 
+        /// <summary>
+        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change physics properties.
+        /// </summary>
+        public AdaptivePerformanceScalerSettingsBase AdaptivePhysics
+        {
+            get { return m_AdaptivePhysics; }
+            set { m_AdaptivePhysics = value; }
+        }
 
         /// <summary>
         /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change decal properties.
@@ -451,16 +462,6 @@ namespace UnityEngine.AdaptivePerformance
             minBound = 0.01f,
             maxBound = 1,
         };
-
-
-        /// <summary>
-        /// A scaler setting used by <see cref="AdaptivePerformanceIndexer"/> to change physics properties.
-        /// </summary>
-        public AdaptivePerformanceScalerSettingsBase AdaptivePhysics
-        {
-            get { return m_AdaptivePhysics; }
-            set { m_AdaptivePhysics = value; }
-        }
 
         [SerializeField, Tooltip("Settings for a scaler used by the Indexer to change the layer culling distance")]
         AdaptivePerformanceScalerSettingsBase m_AdaptiveLayerCulling = new AdaptivePerformanceScalerSettingsBase
@@ -788,10 +789,10 @@ namespace UnityEngine.AdaptivePerformance
             set { m_DefaultScalerProfilerIndex = value; }
         }
         [SerializeField] internal int m_DefaultScalerProfilerIndex = 0;
-
+#if UNITY_EDITOR
         // Default values set when a new Adaptive Performance setting is created
         [SerializeField] int k_AssetVersion = 1;
-
+#endif
         /// <summary>
         /// When Unity enables the serialized object it upgrades old files to the new format in the editor and saves the assets. Empty during runtime.
         /// </summary>

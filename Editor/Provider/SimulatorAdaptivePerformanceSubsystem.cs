@@ -322,7 +322,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         {
             // Boost mode disables setPerformanceLevel
             AcceptsPerformanceLevel = false;
-            resetCpuBoostMode = Time.realtimeSinceStartup + 15;
+            resetCpuBoostMode = Time.realtimeSinceStartup + 10;
 
             updateResult.CpuPerformanceBoost = true;
             updateResult.ChangeFlags |= Provider.Feature.CpuPerformanceBoost;
@@ -337,7 +337,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         {
             // Boost mode disables setPerformanceLevel
             AcceptsPerformanceLevel = false;
-            resetGpuBoostMode = Time.realtimeSinceStartup + 15;
+            resetGpuBoostMode = Time.realtimeSinceStartup + 10;
 
             updateResult.GpuPerformanceBoost = true;
             updateResult.ChangeFlags |= Provider.Feature.GpuPerformanceBoost;

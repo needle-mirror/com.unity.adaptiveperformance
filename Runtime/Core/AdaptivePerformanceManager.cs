@@ -504,8 +504,11 @@ namespace UnityEngine.AdaptivePerformance
                 }
                 else
                 {
-                    m_DevicePerfControl.CpuLevel = m_RequestedCpuLevel;
-                    m_DevicePerfControl.GpuLevel = m_RequestedGpuLevel;
+                    if (m_NewUserPerformanceLevelRequest)
+                    {
+                        m_DevicePerfControl.CpuLevel = m_RequestedCpuLevel;
+                        m_DevicePerfControl.GpuLevel = m_RequestedGpuLevel;
+                    }
                 }
             }
 
