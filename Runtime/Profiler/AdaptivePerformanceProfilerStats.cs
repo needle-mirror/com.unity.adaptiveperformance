@@ -146,7 +146,7 @@ public static class AdaptivePerformanceProfilerStats
 
         unsafe
         {
-            fixed(byte* pSource = scalerNameBytes)
+            fixed (byte* pSource = scalerNameBytes)
             {
                 UnsafeUtility.MemCpy(scalerInfo.scalerName, pSource, scalerNameBytes.Length);
             }

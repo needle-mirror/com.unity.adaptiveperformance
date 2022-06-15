@@ -474,7 +474,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void ApplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to increase level to {scaler.CurrentLevel+1}");
+            APLog.Debug($"[Indexer] Applying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to increase level to {scaler.CurrentLevel + 1}");
             if (scaler.NotLeveled)
             {
                 m_UnappliedScalers.Remove(scaler);
@@ -515,7 +515,7 @@ namespace UnityEngine.AdaptivePerformance
 
         private void UnapplyScaler(AdaptivePerformanceScaler scaler)
         {
-            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to decrease level to {scaler.CurrentLevel-1}");
+            APLog.Debug($"[Indexer] Unapplying {scaler.Name} scaler at level {scaler.CurrentLevel} and try to decrease level to {scaler.CurrentLevel - 1}");
             scaler.DecreaseLevel();
             if (scaler.NotLeveled)
             {

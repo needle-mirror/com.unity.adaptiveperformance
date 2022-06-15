@@ -243,7 +243,7 @@ namespace UnityEditor.AdaptivePerformance.UI.Editor
         /// <summary>
         /// Instantiates a <see cref="UsageDial"/> using the data read from a UXML file.
         /// </summary>
-        public new class UxmlFactory : UxmlFactory<UsageDial, UxmlTraits> {}
+        public new class UxmlFactory : UxmlFactory<UsageDial, UxmlTraits> { }
 
         /// <summary>
         /// Defines <see cref="UxmlTraits"/> for the <see cref="UsageDial"/>.

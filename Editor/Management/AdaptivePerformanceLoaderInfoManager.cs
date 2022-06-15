@@ -137,8 +137,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         void CleanupLostAssignedLoaders()
         {
             var missingLoaders = from info in m_AssignedLoaderInfos
-                where info.instance == null
-                select info;
+                                 where info.instance == null
+                                 select info;
 
             if (missingLoaders.Any())
             {

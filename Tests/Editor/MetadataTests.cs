@@ -35,7 +35,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
         public IEnumerator CreateSettingsAndLoaders()
         {
             int frameCount = 0;
-            string[] assets = new string[0] {};
+            string[] assets = new string[0] { };
 
 
             while (frameCount < 60)
@@ -46,7 +46,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
 
             yield return null;
 
-            string[] assetTypes = new string[] {"TestLoaderOne", "TestLoaderTwo", "TestLoaderThree", "TestSettings"};
+            string[] assetTypes = new string[] { "TestLoaderOne", "TestLoaderTwo", "TestLoaderThree", "TestSettings" };
             foreach (var assetType in assetTypes)
             {
                 assets = AssetDatabase.FindAssets($"t:{assetType}");
@@ -75,7 +75,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
         public IEnumerator AccessSettings()
         {
             int frameCount = 0;
-            string[] assets = new string[0] {};
+            string[] assets = new string[0] { };
 
             TestPackage.Editor.TestPackage pkg = new TestPackage.Editor.TestPackage();
             AdaptivePerformancePackageMetadataStore.AddPluginPackage(pkg);

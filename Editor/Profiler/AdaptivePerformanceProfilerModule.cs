@@ -30,6 +30,6 @@ namespace UnityEditor.AdaptivePerformance.Editor
             return new AdaptivePerformanceDetailsViewController(ProfilerWindow);
         }
 
-        public AdaptivePerformanceProfilerModule() : base(k_ChartCounters, ProfilerModuleChartType.Line, k_AutoEnabledCategoryNames) {}
+        public AdaptivePerformanceProfilerModule() : base(k_ChartCounters, ProfilerModuleChartType.Line, k_AutoEnabledCategoryNames) { }
     }
 }

@@ -13,7 +13,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
     /// Base abstract class that provides some common functionality for providers seeking to integrate with management assisted build.
     /// </summary>
     /// <typeparam name="T">The type parameter that will be used as the base type of the settings.</typeparam>
-    public abstract class AdaptivePerformanceBuildHelper<T>  : IPreprocessBuildWithReport, IPostprocessBuildWithReport where T : UnityEngine.Object
+    public abstract class AdaptivePerformanceBuildHelper<T> : IPreprocessBuildWithReport, IPostprocessBuildWithReport where T : UnityEngine.Object
     {
         /// <summary>Override of base IPreprocessBuildWithReport.</summary>
         /// <returns>The callback order.</returns>

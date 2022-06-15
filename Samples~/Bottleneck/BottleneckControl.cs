@@ -142,7 +142,7 @@ public class BottleneckControl : MonoBehaviour
     {
         if (timeout)
         {
-            markers.Add(new Marker { time = watch.ElapsedMilliseconds, label = $"Timed out before reaching {targetBottleneck} Bottleneck, switching to {nextBottleneck} in 3 seconds", objectCount = factory.internalObjs});
+            markers.Add(new Marker { time = watch.ElapsedMilliseconds, label = $"Timed out before reaching {targetBottleneck} Bottleneck, switching to {nextBottleneck} in 3 seconds", objectCount = factory.internalObjs });
         }
         else
         {

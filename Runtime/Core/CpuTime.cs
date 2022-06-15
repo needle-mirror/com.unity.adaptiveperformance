@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.AdaptivePerformance
 {
- #if UNITY_ANDROID
+#if UNITY_ANDROID
     internal class RenderThreadCpuTime
     {
         [DllImport("AndroidCpuUsage")]
@@ -41,9 +41,9 @@ namespace UnityEngine.AdaptivePerformance
 #else
     internal class RenderThreadCpuTime
     {
-        public RenderThreadCpuTime() {}
-        public void Reset() {}
-        public void Measure() {}
+        public RenderThreadCpuTime() { }
+        public void Reset() { }
+        public void Measure() { }
         public float GetLatestResult() { return -1.0f; }
     }
 #endif

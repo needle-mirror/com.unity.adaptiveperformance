@@ -37,8 +37,10 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         {
             List<IAdaptivePerformancePackage> packages = new List<IAdaptivePerformancePackage>();
 
-            packages.Add(new KnownPackage() {
-                metadata = new KnownPackageMetadata(){
+            packages.Add(new KnownPackage()
+            {
+                metadata = new KnownPackageMetadata()
+                {
                     packageName = "Adaptive Performance Samsung Android",
                     packageId = "com.unity.adaptiveperformance.samsung.android",
                     settingsType = "UnityEngine.AdaptivePerformance.Samsung.Android.SamsungAndroidProviderSettings",

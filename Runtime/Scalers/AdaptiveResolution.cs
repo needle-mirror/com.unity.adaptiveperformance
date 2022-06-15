@@ -32,7 +32,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Callback when scaler gets enabled and added to the indexer
         /// </summary>
-        protected override void OnEnabled() {}
+        protected override void OnEnabled() { }
 
         void OnValidate()
         {

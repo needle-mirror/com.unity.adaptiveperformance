@@ -1,3 +1,5 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
@@ -44,6 +46,9 @@ namespace UnityEngine.AdaptivePerformance
     /// You control the quality through changing the levels, where 0 represents the controller not being applied and 1,2... as applied.
     /// As a result, a higher level represents lower visuals, but better performance.
     /// </summary>
+#if UNITY_2021_2_OR_NEWER
+    [RequireDerived]
+#endif
     public abstract class AdaptivePerformanceScaler : ScriptableObject
     {
         private AdaptivePerformanceIndexer m_Indexer;
@@ -246,7 +251,7 @@ namespace UnityEngine.AdaptivePerformance
             if (Holder.Instance == null)
                 return;
 
-            m_Settings =  Holder.Instance.Settings;
+            m_Settings = Holder.Instance.Settings;
             m_Indexer = Holder.Instance.Indexer;
         }
 
@@ -331,22 +336,22 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Callback for when the performance level is increased.
         /// </summary>
-        protected virtual void OnLevelIncrease() {}
+        protected virtual void OnLevelIncrease() { }
         /// <summary>
         /// Callback for when the performance level is decreased.
         /// </summary>
-        protected virtual void OnLevelDecrease() {}
+        protected virtual void OnLevelDecrease() { }
         /// <summary>
         /// Callback for any level change
         /// </summary>
-        protected virtual void OnLevel() {}
+        protected virtual void OnLevel() { }
         /// <summary>
         /// Callback when scaler gets enabled and added to the indexer
         /// </summary>
-        protected virtual void OnEnabled() {}
+        protected virtual void OnEnabled() { }
         /// <summary>
         /// Callback when scaler gets disabled and removed from indexer
         /// </summary>
-        protected virtual void OnDisabled() {}
+        protected virtual void OnDisabled() { }
     }
 }

@@ -27,7 +27,7 @@ public class ObjectSpawner : MonoBehaviour
         Vector3 spawnPos = new Vector3(spawnOrigin.x - offset, spawnOrigin.y, spawnOrigin.z - offset);
 
         Random.InitState((int)Time.time);
-        PrimitiveType[] primitiveTypes = {PrimitiveType.Capsule, PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder};
+        PrimitiveType[] primitiveTypes = { PrimitiveType.Capsule, PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder };
 
         int index = 0;
         for (int i = 0; i < m_SpawnSize; ++i)

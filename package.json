@@ -2,7 +2,7 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "unity": "2021.2",
   "unityRelease": "0a18",
   "keywords": [
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "com.unity.subsystemregistration": "1.1.0",
-    "com.unity.profiling.core": "1.0.0"
+    "com.unity.profiling.core": "1.0.2"
   },
   "license": "See LICENSE.md file",
   "samples": [
@@ -121,12 +121,15 @@
       "path": "Samples~/Adaptive View Distance"
     }
   ],
+  "_upm": {
+    "changelog": "### Added\n- Fix bug when building with IL2CPP and scaler types getting stripped out.\n- Fix bug with manual lifetime tests failing occasionally.\n- Fix bug with test provider and settings showing up in Project Settings."
+  },
   "upmCi": {
-    "footprint": "263d627a6877b1f7e25c4eb0be61fd06bb0171d9"
+    "footprint": "6f1d767397aca1ebbb954863b778a9c468f9d7ef"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "971ac86211e0f5b69f8b3a570b0b508887870017"
+    "revision": "32ebb4bf715a6ecc033edfe943267fb2e1ad86e5"
   }
 }

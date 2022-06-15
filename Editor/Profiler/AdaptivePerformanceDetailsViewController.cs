@@ -31,7 +31,7 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     static readonly StyleColor k_Yellow = new StyleColor(new Color32(221, 124, 69, byte.MaxValue));
     static readonly StyleColor k_Red = new StyleColor(new Color32(219, 89, 81, byte.MaxValue));
 
-    public AdaptivePerformanceDetailsViewController(ProfilerWindow profilerWindow) : base(profilerWindow) {}
+    public AdaptivePerformanceDetailsViewController(ProfilerWindow profilerWindow) : base(profilerWindow) { }
 
     protected override VisualElement CreateView()
     {
@@ -169,7 +169,7 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                 }
             }
 
-            var returnVal = new AdaptivePerformanceProfilerStats.ScalerInfo[] {};
+            var returnVal = new AdaptivePerformanceProfilerStats.ScalerInfo[] { };
             var scalerInfos = GetScalerFromProfilerStream(selectedFrameIndexInt32);
             unsafe
             {
@@ -232,7 +232,7 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     {
         using (var frameData = UnityEditorInternal.ProfilerDriver.GetRawFrameDataView(frame, 0))
         {
-            var returnVal = new AdaptivePerformanceProfilerStats.ScalerInfo[] {};
+            var returnVal = new AdaptivePerformanceProfilerStats.ScalerInfo[] { };
             if (frameData != null)
             {
                 var clientInfos =

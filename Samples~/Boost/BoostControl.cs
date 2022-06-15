@@ -129,7 +129,7 @@ public class BoostControl : MonoBehaviour
 
     void Update()
     {
-        bottleneckStatus.text = $"{state}" + (testRunning ? $"{Environment.NewLine} Timeout in {timeOut-watch.ElapsedMilliseconds / 1000f:F2}s" : "");
+        bottleneckStatus.text = $"{state}" + (testRunning ? $"{Environment.NewLine} Timeout in {timeOut - watch.ElapsedMilliseconds / 1000f:F2}s" : "");
         if (bottleneckUI != null)
             bottleneckUI.targetBottleneck = targetBottleneck;
 

@@ -307,7 +307,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         {
             buttonRect.x -= 400;
             buttonRect.y -= 13;
-            PopupWindow.Show(buttonRect, new EnterNamePopup(m_scalerProfileList, s => {
+            PopupWindow.Show(buttonRect, new EnterNamePopup(m_scalerProfileList, s =>
+            {
                 var index = list.serializedProperty.arraySize;
                 list.serializedProperty.arraySize++;
                 list.index = index;
