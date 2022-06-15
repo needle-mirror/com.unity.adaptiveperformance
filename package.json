@@ -2,7 +2,7 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "unity": "2021.2",
   "unityRelease": "0a18",
   "keywords": [
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "com.unity.subsystemregistration": "1.1.0",
-    "com.unity.profiling.core": "1.0.0"
+    "com.unity.profiling.core": "1.0.2"
   },
   "license": "See LICENSE.md file",
   "samples": [
@@ -146,12 +146,15 @@
       "path": "Samples~/Adaptive Layer Culling"
     }
   ],
+  "_upm": {
+    "changelog": "### Added\n- Fix bug with scaler not being initialized with settings from the Editor UI properly when using profiles.\n- Fix bug when building with IL2CPP and scaler types getting stripped out.\n- Fix bug with manual lifetime tests failing occasionally.\n- Fix bug with test provider and settings showing up in Project Settings."
+  },
   "upmCi": {
-    "footprint": "d96fbadd60206c14a3ab0bcf391431fae0cf900f"
+    "footprint": "9e5073e86f497287694b259a19f5a071f8fbb1b0"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "e743558cd8d7f1f5ea8a461190c34f5d783b424d"
+    "revision": "08f36a7c7e7e80b8ec602e108f0e40d1661540b5"
   }
 }

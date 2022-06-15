@@ -69,7 +69,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             foreach (var t in TypeLoaderExtensions.GetAllTypesWithInterface<IAdaptivePerformancePackage>())
             {
-                if (t.IsInterface || t.FullName.Contains("Unity.AdaptivePerformance.TestPackage") || t.FullName.Contains("UnityEditor.AdaptivePerformance.Editor.Metadata.AdaptivePerformanceKnownPackages"))
+                if (t.IsInterface || t.FullName.Contains("UnityEditor.AdaptivePerformance.TestPackage") || t.FullName.Contains("UnityEditor.AdaptivePerformance.Editor.Metadata.AdaptivePerformanceKnownPackages"))
                     continue;
 
                 IAdaptivePerformancePackage package = Activator.CreateInstance(t) as IAdaptivePerformancePackage;

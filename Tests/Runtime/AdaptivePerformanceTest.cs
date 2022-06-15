@@ -1,9 +1,12 @@
+using System;
 using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.AdaptivePerformance.Simulator.Editor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.AdaptivePerformance;
-using UnityEditor.AdaptivePerformance.Simulator.Editor;
 
 namespace UnityEditor.AdaptivePerformance.Tests
 {
@@ -288,7 +291,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
                 subsystem.NextOverallFrameTime = 0.9f;
                 yield return null;
             }
-            PerformanceBottleneckChangeHandler eventHandler = delegate(PerformanceBottleneckChangeEventArgs args)
+            PerformanceBottleneckChangeHandler eventHandler = delegate (PerformanceBottleneckChangeEventArgs args)
             {
                 ++eventCounter;
                 bottleneck = args.PerformanceBottleneck;
@@ -328,7 +331,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(2, ps.PerformanceMetrics.CurrentGpuLevel);
 
             var eventArgs = new PerformanceLevelChangeEventArgs();
-            PerformanceLevelChangeHandler eventHandler = delegate(PerformanceLevelChangeEventArgs args)
+            PerformanceLevelChangeHandler eventHandler = delegate (PerformanceLevelChangeEventArgs args)
             {
                 eventArgs = args;
             };
@@ -357,7 +360,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             var thermals = ap.ThermalStatus;
 
             var metrics = new ThermalMetrics();
-            ThermalEventHandler eventHandler = delegate(ThermalMetrics args)
+            ThermalEventHandler eventHandler = delegate (ThermalMetrics args)
             {
                 metrics = args;
             };
@@ -419,7 +422,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(true, ps.PerformanceMetrics.GpuPerformanceBoost);
 
             var eventArgs = new PerformanceBoostChangeEventArgs();
-            PerformanceBoostChangeHandler eventHandler = delegate(PerformanceBoostChangeEventArgs args)
+            PerformanceBoostChangeHandler eventHandler = delegate (PerformanceBoostChangeEventArgs args)
             {
                 eventArgs = args;
             };
@@ -526,6 +529,29 @@ namespace UnityEditor.AdaptivePerformance.Tests
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.BigCore, 5);
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.MediumCore, 4);
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.LittleCore, -1);
+        }
+
+        /// <summary>
+        /// Verifies the Scalers available in the assembly (e.g. created as sub-types from <see cref="AdaptivePerformanceScaler "/>
+        /// are all registered and available as Scalers in the <see cref="AdaptivePerformanceIndexer"/>.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator All_Scalers_Available()
+        {
+            var ap = Holder.Instance;
+            var apIndexer = ap.Indexer;
+
+            var ti = typeof(AdaptivePerformanceScaler);
+            var assemblyScalers = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(i => i.GetTypes())
+                .Count(i => ti.IsAssignableFrom(i) && !i.IsAbstract);
+
+            var indexedScalers = new List<AdaptivePerformanceScaler>();
+            apIndexer.GetAllRegisteredScalers(ref indexedScalers);
+
+            yield return null;
+
+            Assert.AreEqual(assemblyScalers, indexedScalers.Count);
         }
     }
 }

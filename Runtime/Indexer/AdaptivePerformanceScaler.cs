@@ -1,3 +1,5 @@
+using UnityEngine.Scripting;
+
 #if VISUAL_SCRIPTING_ENABLED
 using Unity.VisualScripting;
 using UnityEngine.AdaptivePerformance.VisualScripting;
@@ -49,6 +51,9 @@ namespace UnityEngine.AdaptivePerformance
     /// You control the quality through changing the levels, where 0 represents the controller not being applied and 1,2... as applied.
     /// As a result, a higher level represents lower visuals, but better performance.
     /// </summary>
+    #if UNITY_2021_2_OR_NEWER
+    [RequireDerived]
+    #endif
     public abstract class AdaptivePerformanceScaler : ScriptableObject
     {
         private AdaptivePerformanceIndexer m_Indexer;

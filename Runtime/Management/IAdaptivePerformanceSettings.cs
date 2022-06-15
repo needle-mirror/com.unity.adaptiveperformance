@@ -751,7 +751,9 @@ namespace UnityEngine.AdaptivePerformance
                 {
                     System.Reflection.PropertyInfo prop = typeof(AdaptivePerformanceScalerSettings).GetProperty(property.Name);
                     var value = prop.GetValue(scalerSettings);
+                    aScaler.Deactivate();
                     aScaler.ApplyDefaultSetting((AdaptivePerformanceScalerSettingsBase)value);
+                    aScaler.Activate();
                     success = true;
                 }
             }

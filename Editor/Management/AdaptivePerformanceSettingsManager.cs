@@ -116,7 +116,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 var ats = TypeLoaderExtensions.GetAllTypesWithAttribute<AdaptivePerformanceConfigurationDataAttribute>();
                 foreach (var at in ats)
                 {
-                    if (at.FullName.Contains("Unity.AdaptivePerformance.TestPackage"))
+                    if (at.FullName.Contains("UnityEngine.AdaptivePerformance.TestPackage"))
                         continue;
 
                     AdaptivePerformanceConfigurationDataAttribute apbda = at.GetCustomAttributes(typeof(AdaptivePerformanceConfigurationDataAttribute), true)[0] as AdaptivePerformanceConfigurationDataAttribute;

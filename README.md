@@ -39,7 +39,7 @@ Packages comes with Test Runner integration tests. They can be activated by addi
     "com.unity.adaptiveperformance.samsung.android": "file:../../com.unity.adaptiveperformance.samsung.android",
     "com.unity.device-simulator": "2.2.4-preview",
   },
-  "testable": [
+  "testables": [
     "com.unity.adaptiveperformance",
     "com.unity.adaptiveperformance.samsung.android"
   ]

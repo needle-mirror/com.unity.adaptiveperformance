@@ -4,6 +4,14 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] - 2022-06-15
+
+### Added
+- Fix bug with scaler not being initialized with settings from the Editor UI properly when using profiles.
+- Fix bug when building with IL2CPP and scaler types getting stripped out.
+- Fix bug with manual lifetime tests failing occasionally.
+- Fix bug with test provider and settings showing up in Project Settings.
+
 ## [4.0.0] - 2022-01-10
 
 ### Added

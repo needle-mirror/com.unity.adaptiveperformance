@@ -79,6 +79,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
 
         public virtual void TearDownTest()
         {
+            testManager.DeinitializeLoader();
             adaptivePerformanceGeneralSettings.Manager.loaders.Remove(loader);
             loader = null;
 
