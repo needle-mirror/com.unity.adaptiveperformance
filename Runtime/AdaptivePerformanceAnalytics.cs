@@ -167,7 +167,6 @@ namespace UnityEngine.AdaptivePerformance
                 return;
 
             s_AdaptivePerformanceEvent.UpdateGeneralEventData();
-            s_AdaptivePerformanceEvent.UpdateFeatureData();
 
             for (var i = 0; i < s_AdaptivePerformanceEvent.featureData.Length; ++i)
             {
@@ -273,8 +272,7 @@ namespace UnityEngine.AdaptivePerformance
             [Conditional("ADAPTIVE_PERFORMANCE_ANALYTICS_LOGGING")]
             public static void Debug(string format, params object[] args)
             {
-                IAdaptivePerformanceSettings settings = AdaptivePerformanceGeneralSettings.Instance?.Manager.ActiveLoaderAs<AdaptivePerformanceLoader>()?.GetSettings();
-                if (settings != null && settings.logging)
+                if (StartupSettings.Logging)
                     UnityEngine.Debug.Log(System.String.Format("[Analytics] " + format, args));
             }
         }

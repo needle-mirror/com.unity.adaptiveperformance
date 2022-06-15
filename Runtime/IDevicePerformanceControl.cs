@@ -9,9 +9,9 @@ namespace UnityEngine.AdaptivePerformance
     public interface IDevicePerformanceControl
     {
         /// <summary>
-        /// When set to true, which is the default value, Adaptive Performance automatically sets  <see cref="CpuLevel"/> and <see cref="GpuLevel"/>.
+        /// When set to `true` (default) <see cref="CpuLevel"/> and <see cref="GpuLevel"/> are set automatically by Adaptive Performance.
         /// </summary>
-        /// <value>True when Adaptive Performance controls <see cref="CpuLevel"/> and <see cref="GpuLevel"/>, otherwise false. The default value is true. </value>
+        /// <value>`true` when Adaptive Performance controls <see cref="CpuLevel"/> and <see cref="GpuLevel"/>, otherwise `false` (default: `true`)</value>
         bool AutomaticPerformanceControl { get; set; }
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// The requested CPU performance level.
         /// Higher levels typically allow CPU cores to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
+        /// The consequence is that thermal warnings and throttling may happen sooner when the device cannot sustain high clock speeds.
         /// Changes are applied once per frame.
-        /// It is recommended to set the CpuLevel as low as possible to save power.
+        /// We recommended to set the CpuLevel as low as possible to save power.
         /// The valid value range is [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceControl.MaxCpuPerformanceLevel"/>].
         /// </summary>
         /// <value>The requested CPU performance level</value>
@@ -49,33 +49,13 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// The requested GPU performance level.
         /// Higher levels typically allow the GPU to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
+        /// The consequence is that thermal warnings and throttling may happen sooner when the device cannot sustain high clock speeds.
         /// Changes are applied once per frame.
-        /// It is recommended to set the GpuLevel as low as possible to save power.
+        /// We recommended to set the GpuLevel as low as possible to save power.
         /// The valid value range is [<see cref="Constants.MinGpuPerformanceLevel"/>, <see cref="IDevicePerformanceControl.MaxGpuPerformanceLevel"/>].
         /// </summary>
         /// <value>The requested GPU performance level</value>
         int GpuLevel { get; set; }
-
-        /// <summary>
-        /// The requested CPU boost mode state.
-        /// Enabled typically allows CPU cores to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
-        /// Changes are applied once per frame.
-        /// It is recommended to not use a boost often and certainly not continuously to save power.
-        /// </summary>
-        /// <value>True when CPU boost is active, otherwise false. The default value is false.</value>
-        bool CpuPerformanceBoost { get; set; }
-
-        /// <summary>
-        /// The requested GPU boost mode state.
-        /// Enabled typically allows GPU cores to run at higher clock speeds.
-        /// The consequence is that thermal warnings and throttling might happen sooner when the device cannot sustain high clock speeds.
-        /// Changes are applied once per frame.
-        /// It is recommended to not use a boost often and certainly not continuously to save power.
-        /// </summary>
-        /// <value>True when CPU boost is active, otherwise false. The default value is false.</value>
-        bool GpuPerformanceBoost { get; set; }
     }
 
     /// <summary>
@@ -85,19 +65,19 @@ namespace UnityEngine.AdaptivePerformance
     {
         /// <summary>
         /// Adaptive Performance controls performance levels automatically (default).
-        /// This mode is enabled by setting <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/> to true.
+        /// This mode is enabled by setting <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/> to `true`.
         /// </summary>
         Automatic,
 
         /// <summary>
         /// You can control performance levels via <see cref="IDevicePerformanceControl.CpuLevel"/> and <see cref="IDevicePerformanceControl.GpuLevel"/>.
-        /// This mode is enabled by setting <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/> to false.
+        /// This mode is enabled by setting <see cref="IDevicePerformanceControl.AutomaticPerformanceControl"/> to `false`.
         /// </summary>
         Manual,
 
         /// <summary>
         /// The operating system controls performance levels.
-        /// This happens if manual control is not supported or if the system is in a thermal throttling state, at which point the operating system takes over control automatically.
+        /// This happens in case manual control is not supported or if the system is in a thermal throttling state at which it takes over control automatically.
         /// </summary>
         System
     }
