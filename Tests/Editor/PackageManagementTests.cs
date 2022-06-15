@@ -142,7 +142,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
 
             m_Settings = null;
             var settings = EditorUtilities.GetInstanceOfTypeFromAssetDatabase<AdaptivePerformanceManagerSettings>();
-            m_Settings =  settings as AdaptivePerformanceManagerSettings;
+            m_Settings = settings as AdaptivePerformanceManagerSettings;
             Assert.IsNotNull(m_Settings);
 
             Assert.IsTrue(SettingsHasLoaderOfType(m_Settings, loaderTypeName));

@@ -138,7 +138,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         public void InitializeLoaderSync()
         {
-            if (activeLoader != null)
+            if (isInitializationComplete && activeLoader != null)
             {
                 Debug.LogWarning(
                     "Adaptive Performance Management has already initialized an active loader in this scene." +
@@ -179,7 +179,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <returns>Enumerator marking the next spot to continue execution at.</returns>
         public IEnumerator InitializeLoader()
         {
-            if (activeLoader != null)
+            if (isInitializationComplete && activeLoader != null)
             {
                 Debug.LogWarning(
                     "Adaptive Performance Management has already initialized an active loader in this scene." +

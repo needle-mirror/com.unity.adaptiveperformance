@@ -30,7 +30,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         public string buildSettingsKey { get; set; }
 
-        private AdaptivePerformanceConfigurationDataAttribute() {}
+        private AdaptivePerformanceConfigurationDataAttribute() { }
 
         /// <summary>Constructor for attribute</summary>
         /// <param name="displayName">The display name to use in the Project Settings window.</param>

@@ -10,7 +10,7 @@ namespace UnityEditor.AdaptivePerformance.TestPackage.Editor
 {
     internal class TestPackage : IAdaptivePerformancePackage
     {
-        public TestPackage() {}
+        public TestPackage() { }
 
         public IAdaptivePerformancePackageMetadata metadata
         {

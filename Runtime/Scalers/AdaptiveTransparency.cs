@@ -1,10 +1,14 @@
 using UnityEngine.Rendering;
+using UnityEngine.Scripting;
 
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to toggle rendering of transparent objects.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveTransparency : AdaptivePerformanceScaler
     {
         /// <summary>

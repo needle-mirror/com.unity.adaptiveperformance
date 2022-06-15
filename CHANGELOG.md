@@ -4,12 +4,19 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.2.4] - 2022-06-15
+
+### Added
+- Fix bug when building with IL2CPP and scaler types getting stripped out.
+- Fix bug with manual lifetime tests failing occasionally.
+- Fix bug with test provider and settings showing up in Project Settings.
+
 ## [2.2.3] - 2021-12-18
 
 ### Added
 - Fix case 1373192: warning 'IAdaptivePerformanceSettings.k_AssetVersion' when building the project.
 - Change boost documentation and timing values in the simulator to reflect the boost mode timing of 10s instead of the previous 15 seconds as it changes on the driver side.
-- Fix frequency change error case (e.g. when boost is activated). Does not retry every frame. Manual retry is required. 
+- Fix frequency change error case (e.g. when boost is activated). Does not retry every frame. Manual retry is required.
 - Fix simulator where temperature level and trend would not get updated when thermal action was updated.
 
 ## [2.2.1] - 2021-06-06

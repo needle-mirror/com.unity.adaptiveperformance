@@ -23,8 +23,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 return;
 
             var oldSettings = from s in preloadedAssets
-                where s != null && s.GetType() == typeof(T)
-                select s;
+                              where s != null && s.GetType() == typeof(T)
+                              select s;
 
             if (oldSettings != null && oldSettings.Any())
             {

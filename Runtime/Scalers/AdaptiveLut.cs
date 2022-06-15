@@ -1,8 +1,13 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the size of the palette used for color grading in URP.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveLut : AdaptivePerformanceScaler
     {
         float m_DefaultLutBias;

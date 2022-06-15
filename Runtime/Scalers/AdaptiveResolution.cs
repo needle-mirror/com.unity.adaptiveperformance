@@ -1,4 +1,5 @@
 using UnityEngine.Rendering;
+using UnityEngine.Scripting;
 
 namespace UnityEngine.AdaptivePerformance
 {
@@ -6,6 +7,9 @@ namespace UnityEngine.AdaptivePerformance
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the resolution of all render targets that allow dynamic resolution.
     /// If a device or graphics API doesn't support a dynamic resolution, it will use the rendering pipeline's render scale multiplier as a fallback.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveResolution : AdaptivePerformanceScaler
     {
         static int instanceCount = 0;
@@ -32,7 +36,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Callback when scaler gets enabled and added to the indexer
         /// </summary>
-        protected override void OnEnabled() {}
+        protected override void OnEnabled() { }
 
         void OnValidate()
         {

@@ -81,12 +81,12 @@ namespace UnityEngine.AdaptivePerformance
             {
                 return m_InitManagerOnStart;
             }
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             set
             {
                 m_InitManagerOnStart = value;
             }
-            #endif
+#endif
         }
 
 

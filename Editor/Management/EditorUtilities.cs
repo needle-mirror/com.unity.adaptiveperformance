@@ -11,9 +11,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 {
     internal static class EditorUtilities
     {
-        internal static readonly string[] s_DefaultGeneralSettingsPath = {"Adaptive Performance"};
-        internal static readonly string[] s_DefaultLoaderPath = {"Adaptive Performance", "Provider"};
-        internal static readonly string[] s_DefaultSettingsPath = {"Adaptive Performance", "Settings"};
+        internal static readonly string[] s_DefaultGeneralSettingsPath = { "Adaptive Performance" };
+        internal static readonly string[] s_DefaultLoaderPath = { "Adaptive Performance", "Provider" };
+        internal static readonly string[] s_DefaultSettingsPath = { "Adaptive Performance", "Settings" };
 
         internal static bool AssetDatabaseHasInstanceOfType(string type)
         {

@@ -11,7 +11,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
 {
     class AdaptivePerformanceGeneralSettingsTests
     {
-        internal static readonly string[] s_TempSettingsPath = {"Temp", "Test", "Settings"};
+        internal static readonly string[] s_TempSettingsPath = { "Temp", "Test", "Settings" };
 
         string testPathToSettings;
 

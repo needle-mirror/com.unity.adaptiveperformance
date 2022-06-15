@@ -1,8 +1,13 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> for adjusting at what distance LODs are switched.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveLOD : AdaptivePerformanceScaler
     {
         float m_DefaultLodBias;

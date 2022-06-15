@@ -122,9 +122,9 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         static CachedMDStoreInformation s_CachedMDStoreInformation = new CachedMDStoreInformation()
         {
             hasAlreadyRequestedData = false,
-            knownPackageInfos = {},
-            installedPackages = {},
-            installablePackages = {},
+            knownPackageInfos = { },
+            installedPackages = { },
+            installablePackages = { },
         };
 
 
@@ -233,10 +233,10 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         internal static List<LoaderBuildTargetQueryResult> GetAllLoadersForBuildTarget(BuildTargetGroup buildTarget)
         {
             var ret = from pm in (from p in s_Packages.Values select p.metadata)
-                from lm in pm.loaderMetadata
-                where lm.supportedBuildTargets.Contains(buildTarget)
-                orderby lm.loaderName
-                select new LoaderBuildTargetQueryResult() { packageName = pm.packageName, packageId = pm.packageId, loaderName = lm.loaderName, loaderType = lm.loaderType };
+                      from lm in pm.loaderMetadata
+                      where lm.supportedBuildTargets.Contains(buildTarget)
+                      orderby lm.loaderName
+                      select new LoaderBuildTargetQueryResult() { packageName = pm.packageName, packageId = pm.packageId, loaderName = lm.loaderName, loaderType = lm.loaderType };
             var retList = ret.Distinct().ToList<LoaderBuildTargetQueryResult>();
             return retList;
         }
@@ -244,10 +244,10 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         internal static List<LoaderBuildTargetQueryResult> GetLoadersForBuildTarget(BuildTargetGroup buildTargetGroup)
         {
             var ret = from pm in (from p in s_Packages.Values select p.metadata)
-                from lm in pm.loaderMetadata
-                where lm.supportedBuildTargets.Contains(buildTargetGroup)
-                orderby lm.loaderName
-                select new LoaderBuildTargetQueryResult() { packageName = pm.packageName, packageId = pm.packageId, loaderName = lm.loaderName, loaderType = lm.loaderType, licenseURL = pm.licenseURL };
+                      from lm in pm.loaderMetadata
+                      where lm.supportedBuildTargets.Contains(buildTargetGroup)
+                      orderby lm.loaderName
+                      select new LoaderBuildTargetQueryResult() { packageName = pm.packageName, packageId = pm.packageId, loaderName = lm.loaderName, loaderType = lm.loaderType, licenseURL = pm.licenseURL };
             var retList = ret.ToList<LoaderBuildTargetQueryResult>();
             return retList;
         }

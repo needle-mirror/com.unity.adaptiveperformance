@@ -1,8 +1,13 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the resolution of shadow maps.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveShadowmapResolution : AdaptivePerformanceScaler
     {
         float m_DefaultShadowmapResolution;

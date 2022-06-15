@@ -74,7 +74,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 InitEditorData(settings);
             }
 
-            if (m_SettingsWrapper != null  && m_SettingsWrapper.targetObject != null && m_CachedEditor != null)
+            if (m_SettingsWrapper != null && m_SettingsWrapper.targetObject != null && m_CachedEditor != null)
             {
                 m_SettingsWrapper.Update();
                 m_CachedEditor.OnInspectorGUI();

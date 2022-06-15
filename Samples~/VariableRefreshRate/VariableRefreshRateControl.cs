@@ -45,7 +45,8 @@ public class VariableRefreshRateControl : MonoBehaviour
         notSupportedPanel.SetActive(true);
 #endif
 
-        targetRefreshRate.onValueChanged.AddListener(delegate {
+        targetRefreshRate.onValueChanged.AddListener(delegate
+        {
             Application.targetFrameRate = (int)targetRefreshRate.value;
         });
         UpdateDropdown();

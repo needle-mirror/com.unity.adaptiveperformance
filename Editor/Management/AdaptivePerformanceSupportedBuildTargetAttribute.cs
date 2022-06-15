@@ -22,7 +22,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// </summary>
         public BuildTarget[] buildTargets { get; set; }
 
-        private AdaptivePerformanceSupportedBuildTargetAttribute() {}
+        private AdaptivePerformanceSupportedBuildTargetAttribute() { }
 
         /// <summary>Constructor for attribute. We assume that all build targets for this group will be supported.</summary>
         /// <param name="buildTargetGroup">Build Target Group that will be supported.</param>

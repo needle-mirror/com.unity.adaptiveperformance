@@ -1,8 +1,13 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> for adjusting what view distance is applied to the camera.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveViewDistance : AdaptivePerformanceScaler
     {
         float m_DefaultFarClipPlane = -1;

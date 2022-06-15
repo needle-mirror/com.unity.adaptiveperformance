@@ -4,7 +4,7 @@ namespace UnityEngine.AdaptivePerformance.Tests.Standalone
     {
         public class StandaloneSubsystemParams
         {
-            public string id { get; set;}
+            public string id { get; set; }
             public System.Type subsystemImplementationType { get; set; }
 
             public StandaloneSubsystemParams(string id, System.Type subsystemImplType)

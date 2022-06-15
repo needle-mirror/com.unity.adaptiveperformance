@@ -1,8 +1,13 @@
+using UnityEngine.Scripting;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
     /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> to adjust the application update rate using <see cref="Application.targetFrameRate"/>.
     /// </summary>
+#if !UNITY_2021_2_OR_NEWER
+    [Preserve]
+#endif
     public class AdaptiveFramerate : AdaptivePerformanceScaler
     {
         int m_DefaultFPS;

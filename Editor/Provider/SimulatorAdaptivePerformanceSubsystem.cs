@@ -237,7 +237,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         /// <summary>
         /// Cleanup when the subsystem object is destroyed.
         /// </summary>
-        protected override void OnDestroy() {}
+        protected override void OnDestroy() { }
 
         private PerformanceDataRecord updateResult = new PerformanceDataRecord();
         private float resetCpuBoostMode = 0;

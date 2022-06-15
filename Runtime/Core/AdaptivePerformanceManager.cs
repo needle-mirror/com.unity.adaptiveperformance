@@ -128,7 +128,7 @@ namespace UnityEngine.AdaptivePerformance
         public AdaptivePerformanceIndexer Indexer { get; private set; }
 
         private IAdaptivePerformanceSettings m_Settings;
-        public IAdaptivePerformanceSettings Settings { get { return m_Settings; }  private set { m_Settings = value; } }
+        public IAdaptivePerformanceSettings Settings { get { return m_Settings; } private set { m_Settings = value; } }
 
         DevicePerformanceControlImpl m_DevicePerfControl;
         AutoPerformanceLevelController m_AutoPerformanceLevelController;

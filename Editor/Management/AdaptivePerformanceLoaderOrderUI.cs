@@ -107,7 +107,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                 foreach (var pmd in AdaptivePerformancePackageMetadataStore.GetLoadersForBuildTarget(buildTargetGroup))
                 {
-                    m_LoaderMetadata.Add(new LoaderInformation() {
+                    m_LoaderMetadata.Add(new LoaderInformation()
+                    {
                         packageName = pmd.packageName,
                         packageId = pmd.packageId,
                         loaderName = pmd.loaderName,

@@ -288,7 +288,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// Optional and only used for development.
         /// </summary>
         /// <value>String with subsystem specific statistics</value>
-        public virtual string Stats { get { return "";  } }
+        public virtual string Stats { get { return ""; } }
     }
 
     /// <summary>
