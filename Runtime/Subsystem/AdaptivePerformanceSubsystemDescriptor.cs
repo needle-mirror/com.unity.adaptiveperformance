@@ -1,13 +1,11 @@
 using System;
 using UnityEngine.Scripting;
 using System.Collections.Generic;
+using UnityEngine.SubsystemsImplementation;
 
 [assembly: AlwaysLinkAssembly]
 namespace UnityEngine.AdaptivePerformance.Provider
 {
-    using AdaptivePerformanceSubsystemDescriptorBase = UnityEngine.SubsystemDescriptor<AdaptivePerformanceSubsystem>;
-
-
     [Preserve]
     internal static class AdaptivePerformanceSubsystemRegistry
     {
@@ -19,20 +17,8 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public static AdaptivePerformanceSubsystemDescriptor RegisterDescriptor(AdaptivePerformanceSubsystemDescriptor.Cinfo cinfo)
         {
             var desc = new AdaptivePerformanceSubsystemDescriptor(cinfo);
-            if (SubsystemRegistration.CreateDescriptor(desc))
-            {
-                return desc;
-            }
-            else
-            {
-                var registeredDescriptors = GetRegisteredDescriptors();
-                foreach (var d in registeredDescriptors)
-                {
-                    if (d.subsystemImplementationType == cinfo.subsystemImplementationType)
-                        return d;
-                }
-            }
-            return null;
+            SubsystemDescriptorStore.RegisterDescriptor(desc);
+            return desc;
         }
 
         /// <summary>
@@ -42,7 +28,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public static List<AdaptivePerformanceSubsystemDescriptor> GetRegisteredDescriptors()
         {
             var perfDescriptors = new List<AdaptivePerformanceSubsystemDescriptor>();
-            SubsystemManager.GetSubsystemDescriptors<AdaptivePerformanceSubsystemDescriptor>(perfDescriptors);
+            SubsystemManager.GetSubsystemDescriptors(perfDescriptors);
             return perfDescriptors;
         }
     }
@@ -50,9 +36,8 @@ namespace UnityEngine.AdaptivePerformance.Provider
     /// <summary>
     /// The Adaptive Performance Subsystem Descriptor is used for describing the subsystem so it can be picked up by the subsystem management system.
     /// </summary>
-#pragma warning disable CS0618
     [Preserve]
-    public sealed class AdaptivePerformanceSubsystemDescriptor : AdaptivePerformanceSubsystemDescriptorBase
+    public sealed class AdaptivePerformanceSubsystemDescriptor : SubsystemDescriptorWithProvider<AdaptivePerformanceSubsystem, AdaptivePerformanceSubsystem.APProvider>
     {
         /// <summary>
         /// Cinfo stores the ID and subsystem implementation type which is used to identify the subsystem during subsystem initialization.
@@ -63,9 +48,27 @@ namespace UnityEngine.AdaptivePerformance.Provider
             /// The ID stores the name of the subsystem used to identify it in the subsystem registry.
             /// </summary>
             public string id { get; set; }
+
+            /// <summary>
+            /// Specifies the provider implementation type to use for instantiation.
+            /// </summary>
+            /// <value>
+            /// The provider implementation type to use for instantiation.
+            /// </value>
+            public Type providerType { get; set; }
+
+            /// <summary>
+            /// Specifies the <c>AdaptivePerformanceSubsystem</c>-derived type that forwards casted calls to its provider.
+            /// </summary>
+            /// <value>
+            /// The type of the subsystem to use for instantiation. If null, <c>Subsystem</c> will be instantiated.
+            /// </value>
+            public Type subsystemTypeOverride { get; set; }
+
             /// <summary>
             /// The subsystem implementation type stores the the type used for initialization in the subsystem registry.
             /// </summary>
+            [Obsolete("AdaptivePerformanceSubsystem no longer supports the deprecated set of base classes for subsystems as of Unity 2023.1. Use providerType and, optionally, subsystemTypeOverride instead.", true)]
             public Type subsystemImplementationType { get; set; }
         }
 
@@ -76,7 +79,8 @@ namespace UnityEngine.AdaptivePerformance.Provider
         public AdaptivePerformanceSubsystemDescriptor(Cinfo cinfo)
         {
             id = cinfo.id;
-            subsystemImplementationType = cinfo.subsystemImplementationType;
+            providerType = cinfo.providerType;
+            subsystemTypeOverride = cinfo.subsystemTypeOverride;
         }
 
         /// <summary>
@@ -89,5 +93,4 @@ namespace UnityEngine.AdaptivePerformance.Provider
             return AdaptivePerformanceSubsystemRegistry.RegisterDescriptor(cinfo);
         }
     }
-#pragma warning restore CS0618
 }

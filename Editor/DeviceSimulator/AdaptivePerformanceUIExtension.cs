@@ -31,7 +31,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         { get { return "Adaptive Performance"; } }
 
 #if UNITY_2021_1_OR_NEWER
-        override public VisualElement OnCreateUI()
+        public override VisualElement OnCreateUI()
         {
             m_ExtensionFoldout = new VisualElement();
 #elif DEVICE_SIMULATOR_ENABLED
@@ -73,6 +73,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_CpuBoost = m_ExtensionFoldout.Q<Toggle>("performance-control-cpu-boost");
             m_GpuBoost = m_ExtensionFoldout.Q<Toggle>("performance-control-gpu-boost");
             m_Bottleneck = m_ExtensionFoldout.Q<EnumField>("performance-bottleneck");
+            m_PerformanceMode = m_ExtensionFoldout.Q<EnumField>("performance-mode");
             m_DevLogging = m_ExtensionFoldout.Q<Toggle>("developer-logging");
             m_DevLoggingFrequency = m_ExtensionFoldout.Q<IntegerField>("developer-logging-frequency");
             m_DeveloperFoldout = m_ExtensionFoldout.Q<Foldout>("developer-options");
@@ -445,6 +446,14 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                 SetBottleneck((PerformanceBottleneck)evt.newValue, subsystem);
             });
+            m_PerformanceMode.RegisterCallback<ChangeEvent<Enum>>(evt =>
+            {
+                SimulatorAdaptivePerformanceSubsystem subsystem = Subsystem();
+                if (subsystem == null)
+                    return;
+
+                subsystem.PerformanceMode = (PerformanceMode)evt.newValue;
+            });
             m_DevLogging.RegisterCallback<ChangeEvent<bool>>((evt) =>
             {
                 var ap = Holder.Instance;
@@ -615,6 +624,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
         Toggle m_CpuBoost;
         Toggle m_GpuBoost;
         EnumField m_Bottleneck;
+        EnumField m_PerformanceMode;
         Foldout m_DeveloperFoldout;
         Toggle m_DevLogging;
         IntegerField m_DevLoggingFrequency;
@@ -626,8 +636,6 @@ namespace UnityEditor.AdaptivePerformance.Editor
         IntegerField m_BigCores;
         IntegerField m_MediumCores;
         IntegerField m_LittleCores;
-
-        SimulatorAdaptivePerformanceSubsystem m_Subsystem;
 
         List<AdaptivePerformanceScaler> m_Scalers = new List<AdaptivePerformanceScaler>();
 
@@ -677,6 +685,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 SyncDeviceSettingsToSimulator();
                 // Set bottleneck so we get CPU/GPU frametimes and a valid bottleneck
                 SetBottleneck((PerformanceBottleneck)m_Bottleneck.value, Subsystem());
+                SubscribeToAPEvents();
 
                 if (AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader?.GetSettings().enableBoostOnStartup == true)
                 {
@@ -686,7 +695,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 EditorApplication.update += Update;
             }
             else
+            {
+                UnsubscribeToAPEvents();
+
                 EditorApplication.update -= Update;
+            }
         }
 
         void SyncDeviceSettingsToSimulator()
@@ -769,6 +782,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
             m_CpuBoost.value = ctrl.CpuPerformanceBoost;
             m_GpuBoost.value = ctrl.GpuPerformanceBoost;
             m_Bottleneck.value = perfMetrics.PerformanceBottleneck;
+            m_PerformanceMode.value = ap.PerformanceModeStatus.PerformanceMode;
             m_DevLogging.value = devSettings.Logging;
             m_DevLoggingFrequency.value = devSettings.LoggingFrequencyInFrames;
             m_ThermalAction.value = ap.Indexer.ThermalAction;
@@ -845,11 +859,35 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 return null;
 
             var loader = AdaptivePerformanceGeneralSettings.Instance?.Manager.activeLoader;
-            if (m_Subsystem == null && loader != null)
-            {
-                m_Subsystem = loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
-            }
-            return m_Subsystem;
+            return loader == null
+                ? null
+                : loader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
+        }
+
+        void SubscribeToAPEvents()
+        {
+            var ap = Holder.Instance;
+            if (ap == null)
+                return;
+
+            ap.PerformanceModeStatus.PerformanceModeEvent += OnPerformanceModeEvent;
+        }
+
+        void UnsubscribeToAPEvents()
+        {
+            var ap = Holder.Instance;
+            if (ap == null)
+                return;
+
+            ap.PerformanceModeStatus.PerformanceModeEvent -= OnPerformanceModeEvent;
+        }
+
+        void OnPerformanceModeEvent(PerformanceMode performanceMode)
+        {
+            if ((PerformanceMode)m_PerformanceMode.value == performanceMode)
+                return;
+
+            m_PerformanceMode.value = performanceMode;
         }
 
         void Update()

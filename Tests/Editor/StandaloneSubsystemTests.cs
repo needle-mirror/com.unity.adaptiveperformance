@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 
 using UnityEngine.AdaptivePerformance.Tests.Standalone;
-using UnityEngine.AdaptivePerformance.Tests.Standalone.Providing;
+using UnityEngine.AdaptivePerformance.Provider;
 
 namespace UnityEditor.AdaptivePerformance.Editor.Tests
 {
@@ -15,8 +15,12 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            StandaloneSubsystemParams parms = new StandaloneSubsystemParams("Standalone Subsystem", typeof(StandaloneSubsystem));
-            StandaloneSubsystemDescriptor.Create(parms);
+            AdaptivePerformanceSubsystemDescriptor.RegisterDescriptor(new AdaptivePerformanceSubsystemDescriptor.Cinfo
+            {
+                id = "Standalone Subsystem",
+                providerType = typeof(StandaloneSubsystem.StandaloneProvider),
+                subsystemTypeOverride = typeof(StandaloneSubsystem)
+            });
         }
 
         StandaloneLoader loader;

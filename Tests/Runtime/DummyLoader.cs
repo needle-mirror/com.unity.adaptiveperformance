@@ -11,6 +11,9 @@ namespace UnityEngine.AdaptivePerformance.Tests
         public int id;
         public GraphicsDeviceType supportedDeviceType = GraphicsDeviceType.Null;
 
+        public override bool Initialized { get { return !shouldFail; } }
+        public override bool Running { get { return !shouldFail; } }
+
         public DummyLoader()
         {
         }

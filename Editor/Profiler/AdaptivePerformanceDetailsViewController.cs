@@ -21,6 +21,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     Label m_BottleneckLabel;
     VisualElement m_BottleneckIcon;
     Label m_UsageDialLabel;
+    Label m_PerformanceModeLabel;
+    VisualElement m_PerformanceModeIcon;
     StyleColor m_appliedScalerColor = new StyleColor(new Color(0.09f, 0.69f, 0.3f, 1f));
     StyleColor m_unappliedScalerColor = new StyleColor(new Color(0.09f, 0.3f, 0.69f, 1f));
     StyleColor m_inactiveColor = new StyleColor(new Color(0.29f, 0.69f, 0.3f, 0.3f));
@@ -41,6 +43,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
         m_Scalers = m_view.Q<VisualElement>("ap-scalers");
         m_BottleneckLabel = m_view.Q<Label>("ap-details-view-bottleneck-icon-label");
         m_BottleneckIcon = m_view.Q<VisualElement>("ap-details-view-bottleneck-icon");
+        m_PerformanceModeLabel = m_view.Q<Label>("ap-details-view-performance-mode-icon-label");
+        m_PerformanceModeIcon = m_view.Q<VisualElement>("ap-details-view-performance-mode-icon");
 
         m_UsageDial = m_view.Q<UsageDial>();
         m_UsageDialLabel = m_view.Q<Label>("ap-details-view-thermal-label");
@@ -110,6 +114,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
 
             var thermalWarningLevel = (WarningLevel)ExtractAdaptivePerformanceCounterValueInt(frameData, "Thermal Warning Level");
             var bottleneck = (PerformanceBottleneck)ExtractAdaptivePerformanceCounterValueInt(frameData, "Bottleneck");
+            var performanceMode = (PerformanceMode)ExtractAdaptivePerformanceCounterValueInt(frameData, "Performance Mode");
+
             m_DetailsViewLabel.text = $"CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU frametime") / 1000000.0f} ms \t\t" +
                 $"Average CPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "CPU avg frametime") / 1000000.0f} ms \n" +
                 $"GPU frametime: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "GPU frametime") / 1000000.0f} ms \t\t" +
@@ -124,7 +130,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                 $"Temperature Trend: {ExtractAdaptivePerformanceCounterValueFloat(frameData, "Temperature Trend")} \n" +
                 $"\n" +
                 $"Thermal Warning Level: {thermalWarningLevel} \n" +
-                $"Bottleneck: {bottleneck} \n";
+                $"Bottleneck: {bottleneck} \n" +
+                $"Performance Mode: {performanceMode} \n";
 
             if (m_BottleneckLabel != null && m_BottleneckIcon != null)
             {
@@ -166,6 +173,40 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
                 {
                     m_UsageDial.Value = 90;
                     m_UsageDialLabel.text = "Throttling";
+                }
+            }
+
+            if (m_PerformanceModeLabel != null && m_PerformanceModeIcon != null)
+            {
+                if (performanceMode == PerformanceMode.Optimize)
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Red;
+                    m_PerformanceModeLabel.text = "Optimize";
+                }
+                else if (performanceMode == PerformanceMode.CPU)
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Red;
+                    m_PerformanceModeLabel.text = "CPU";
+                }
+                else if (performanceMode == PerformanceMode.GPU)
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Red;
+                    m_PerformanceModeLabel.text = "GPU";
+                }
+                else if (performanceMode == PerformanceMode.Battery)
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Yellow;
+                    m_PerformanceModeLabel.text = "Battery";
+                }
+                else if (performanceMode == PerformanceMode.Standard)
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Green;
+                    m_PerformanceModeLabel.text = "Standard";
+                }
+                else
+                {
+                    m_PerformanceModeIcon.style.backgroundColor = k_Yellow;
+                    m_PerformanceModeLabel.text = "Unknown";
                 }
             }
 

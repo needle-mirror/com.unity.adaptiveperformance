@@ -12,6 +12,16 @@ namespace UnityEngine.AdaptivePerformance
     public abstract class AdaptivePerformanceLoader : ScriptableObject
     {
         /// <summary>
+        /// Returns if the provider loader was initialized successfully.
+        /// </summary>
+        public abstract bool Initialized { get; }
+
+        /// <summary>
+        /// Returns if the provider loader is currently running.
+        /// </summary>
+        public abstract bool Running { get; }
+
+        /// <summary>
         /// Initialize the loader. This should initialize all subsystems to support the desired runtime setup this
         /// loader represents.
         /// </summary>

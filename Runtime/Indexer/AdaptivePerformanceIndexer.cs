@@ -109,7 +109,7 @@ namespace UnityEngine.AdaptivePerformance
             var frameMs = Holder.Instance.PerformanceStatus.FrameTiming.AverageFrameTime;
             if (frameMs > 0)
             {
-                var targetMs = 1f / AdaptivePerformanceManager.EffectiveTargetFrameRate();
+                var targetMs = 1f / GetEffectiveTargetFrameRate();
                 var diffMs = (frameMs / targetMs) - 1;
 
                 m_Samples.Enqueue(diffMs);
@@ -135,6 +135,11 @@ namespace UnityEngine.AdaptivePerformance
             // return StaterAction.Increase;
 
             return StateAction.Stale;
+        }
+
+        protected virtual float GetEffectiveTargetFrameRate()
+        {
+            return AdaptivePerformanceManager.EffectiveTargetFrameRate();
         }
     }
 

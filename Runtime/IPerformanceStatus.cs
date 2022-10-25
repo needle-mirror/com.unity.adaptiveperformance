@@ -114,6 +114,11 @@ namespace UnityEngine.AdaptivePerformance
         /// Subscribe to events and get updates when the the current CPU or GPU is boosted.
         /// </summary>
         event PerformanceBoostChangeHandler PerformanceBoostChangeEvent;
+
+        /// <summary>
+        /// Allows you to query the latest performance mode.
+        /// </summary>
+        PerformanceMode PerformanceMode { get; }
     }
 
     /// <summary>
@@ -211,6 +216,42 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         /// <value>Frame time in seconds</value>
         public float AverageCpuFrameTime { get; set; }
+    }
+
+    /// <summary>
+    /// The performance mode enum describes what is currently the active performance mode of the stystem.
+    /// </summary>
+    public enum PerformanceMode
+    {
+        /// <summary>
+        /// Performance mode is unknown.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Default performance mode.
+        /// </summary>
+        Standard,
+
+        /// <summary>
+        /// Performance mode is optimized and may be a mix of accelerating both CPU and GPU.
+        /// </summary>
+        Optimize,
+
+        /// <summary>
+        /// Performance mode is accelerates CPU.
+        /// </summary>
+        CPU,
+
+        /// <summary>
+        /// Performance mode is accelerates GPU.
+        /// </summary>
+        GPU,
+
+        /// <summary>
+        /// Performance is limited as mode is set to preserve battery.
+        /// </summary>
+        Battery
     }
 
     /// <summary>

@@ -5,5 +5,5 @@
     * [Samples](./samples-guide.md)
     * [Device Simulator](./simulator.md)
     * [Upgrade guides](./upgrade-guides.md)
-    * [User Guide](./user-guide.md)
+    * [User guide](./user-guide.md)
     * [Visual Scripting](./visual-scripting.md)

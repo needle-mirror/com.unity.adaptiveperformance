@@ -135,8 +135,8 @@ namespace UnityEngine.AdaptivePerformance
             if (s_AdaptivePerformanceEvent == null)
                 s_AdaptivePerformanceEvent = new AdaptivePerformanceAnalyticsEvent();
 
-            s_AdaptivePerformanceEvent.initialized = subsystem != null ? subsystem.initialized : false;
-            s_AdaptivePerformanceEvent.activeProvider = subsystem != null ? subsystem.SubsystemDescriptor.id : "NoSubsystemLoaded";
+            s_AdaptivePerformanceEvent.initialized = subsystem != null ? subsystem.Initialized : false;
+            s_AdaptivePerformanceEvent.activeProvider = subsystem != null ? subsystem.subsystemDescriptor.id : "NoSubsystemLoaded";
 
             s_AdaptivePerformanceEvent.UpdateGeneralEventData();
             var providerData = s_AdaptivePerformanceEvent.providerData;
@@ -144,10 +144,10 @@ namespace UnityEngine.AdaptivePerformance
             {
                 for (var i = 0; i < providerData.Length; ++i)
                 {
-                    if (providerData[i].id == subsystem.SubsystemDescriptor.id)
+                    if (providerData[i].id == subsystem.subsystemDescriptor.id)
                     {
                         providerData[i].version = subsystem.Version.ToString();
-                        providerData[i].enabled = subsystem.initialized;
+                        providerData[i].enabled = subsystem.running;
                     }
                 }
             }

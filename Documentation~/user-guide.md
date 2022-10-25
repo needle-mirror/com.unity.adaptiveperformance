@@ -55,15 +55,19 @@ Adaptive Performance always tracks the average GPU, CPU, and overall frame times
 
 Overall frame time is the time difference between frames. Use it to calculate the current framerate of the application.
 
-CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread. It doesn’t include the times when Unity might be blocked by the operating system, or when Unity needs to wait for the GPU to catch up with rendering.
+CPU time only includes the time the CPU is actually executing Unity's main thread and the render thread. It doesn't include the times when Unity might be blocked by the operating system, or when Unity needs to wait for the GPU to catch up with rendering.
 
-GPU time is the time the GPU is actively processing data to render a frame. It doesn’t include the time when the GPU has to wait for Unity to provide data to render.
+GPU time is the time the GPU is actively processing data to render a frame. It doesn't include the time when the GPU has to wait for Unity to provide data to render.
 
 ### Performance bottleneck
 
 Adaptive Performance uses the currently configured target frame rate (see [Application.targetFrameRate](https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html) and [QualitySettings](https://docs.unity3d.com/ScriptReference/QualitySettings.html)) and the information that `FrameTiming` provides to calculate what is limiting the application's frame rate. If the application isn’t performing at the desired target framerate, it might be bound by either CPU or GPU processing. To get a notification whenever the current performance bottleneck of the application changes, subscribe with a delegate function to the `PerformanceStatus.PerformanceBottleneckChangeEvent` event.
 
 You can use the information about the current performance bottleneck to make targeted adjustments to the game content at runtime. For example, in a GPU-bound application, lowering the rendering resolution often improves the frame rate significantly, but the same change might not make a big difference for a CPU-bound application.
+
+## Performance mode status
+
+Adaptive Performance tracks the user selected performance mode for the application (if available). To access this, use the `Instance.PerformanceModeStatus.PerformanceMode` property. To get a notification whenever the current performance mode of the application changes, subscribe with a delegate function to the `PerformanceModeStatus.PerformanceModeEvent` event.
 
 ## Device thermal state feedback
 
@@ -314,7 +318,7 @@ The target of a Scaler corresponds to a [performance bottleneck](#performance-bo
 For better understanding please see how some of the scalers are defined.
 
 #### Adaptive Framerate
-Adaptive Framerate requires a minimum and maximum framerate. The Scaler sets the Application.targetFrameRate to a suitable value inbetween those values.
+Adaptive Framerate requires a minimum and maximum framerate. The Scaler sets the Application.targetFrameRate to a suitable value in between those values.
 
 **Note:** Adaptive Framerate is only supported when [QualitySettings.vsyncCount](https://docs.unity3d.com/ScriptReference/QualitySettings-vSyncCount.html) is set to 0 ( `Don't Sync` ).  Set this value using a script, or navigate to the  **Project Settings** (menu: **Edit &gt; Project Settings &gt; Quality &gt; Quality Level &gt; Other &gt; VSync Count** to `Don't Sync`.
 
@@ -370,7 +374,7 @@ See the [Adaptive Performance samples](samples-guide.md) for more information ab
 
 ### Development Settings
 
-Development Settings are only available for development builds. Each setting is disable during a release build as the feature are not avilable during a release build.
+Development Settings are only available for development builds. Each setting is disable during a release build as the feature are not available during a release build.
 
 |**Setting**|**Description**|
 |:---|:---|

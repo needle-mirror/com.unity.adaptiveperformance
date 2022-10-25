@@ -1,5 +1,6 @@
 {
     "name": "Unity.AdaptivePerformance.Editor.Tests",
+    "rootNamespace": "",
     "references": [
         "Unity.AdaptivePerformance.Editor",
         "Unity.AdaptivePerformance",
@@ -8,7 +9,8 @@
         "Unity.AdaptivePerformance.Tests",
         "Unity.AdaptivePerformance.Tests.Standalone",
         "Unity.AdaptivePerformance.TestPackage",
-        "Unity.AdaptivePerformance.TestPackage.Editor"
+        "Unity.AdaptivePerformance.TestPackage.Editor",
+        "Unity.AdaptivePerformance.Simulator.Editor"
     ],
     "includePlatforms": [
         "Editor"

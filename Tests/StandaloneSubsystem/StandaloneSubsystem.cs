@@ -1,44 +1,76 @@
 using System;
+using UnityEngine.AdaptivePerformance.Provider;
+using UnityEngine.SubsystemsImplementation;
 
 namespace UnityEngine.AdaptivePerformance.Tests.Standalone
 {
-#pragma warning disable CS0618
-    public class StandaloneSubsystem : Subsystem
+    public class StandaloneSubsystem : AdaptivePerformanceSubsystem
     {
-        private bool isRunning = false;
-        public override bool running
-        {
-            get
-            {
-                return isRunning;
-            }
-        }
-
         public event Action startCalled;
         public event Action stopCalled;
         public event Action destroyCalled;
 
+        public StandaloneSubsystem() { }
 
-        public override void Start()
+        protected override void OnStart()
         {
-            isRunning = true;
+            base.OnStart();
             if (startCalled != null)
                 startCalled.Invoke();
         }
 
-        public override void Stop()
+        protected override void OnStop()
         {
-            isRunning = false;
+            base.OnStop();
             if (stopCalled != null)
                 stopCalled.Invoke();
         }
 
         protected override void OnDestroy()
         {
-            isRunning = false;
+            base.OnDestroy();
             if (destroyCalled != null)
                 destroyCalled.Invoke();
         }
+
+        public override IApplicationLifecycle ApplicationLifecycle => provider.ApplicationLifecycle;
+        public override IDevicePerformanceLevelControl PerformanceLevelControl => provider.PerformanceLevelControl;
+        public override Version Version => provider.Version;
+        public override Feature Capabilities { get => provider.Capabilities; protected set => provider.Capabilities = value; }
+        public override string Stats => provider.Stats;
+        public override bool Initialized { get => provider.Initialized; protected set => provider.Initialized = value; }
+        public override PerformanceDataRecord Update()
+        {
+            return provider.Update();
+        }
+        public class StandaloneProvider : APProvider, IApplicationLifecycle
+        {
+            override public IApplicationLifecycle ApplicationLifecycle { get { return this; } }
+            override public IDevicePerformanceLevelControl PerformanceLevelControl { get { return null; } }
+
+            public StandaloneProvider() { }
+            public override void Start() {}
+
+            public override void Stop()  {}
+
+            public override void Destroy() {}
+
+            public override string Stats => $"";
+            override public PerformanceDataRecord Update() { return new PerformanceDataRecord(); }
+
+            public override Version Version
+            {
+                get
+                {
+                    return new Version("5.0.0");
+                }
+            }
+            public override Feature Capabilities { get; set; }
+            public override bool Initialized { get; set; }
+
+            public void ApplicationPause() { }
+
+            public void ApplicationResume() { }
+        }
     }
-#pragma warning restore CS0618
 }

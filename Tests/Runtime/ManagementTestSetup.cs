@@ -30,6 +30,9 @@ namespace UnityEditor.AdaptivePerformance.Tests
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void SetupTest()
         {
+            if (AdaptivePerformanceGeneralSettings.Instance != null)
+                return;
+
             testManager = ScriptableObject.CreateInstance<AdaptivePerformanceManagerSettings>();
 
             adaptivePerformanceGeneralSettings = ScriptableObject.CreateInstance<AdaptivePerformanceGeneralSettings>() as AdaptivePerformanceGeneralSettings;

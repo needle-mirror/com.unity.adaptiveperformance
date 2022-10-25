@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 
-using UnityEngine;
-using UnityEngine.AdaptivePerformance;
-
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.AdaptivePerformance;
+using UnityEngine.AdaptivePerformance.Provider;
 #endif
 
 using UnityEngine.AdaptivePerformance.Tests.Standalone;
@@ -24,8 +22,18 @@ namespace UnityEngine.AdaptivePerformance.TestPackage
         public static bool WasAssigned { get; set; }
         public static bool WasUnassigned { get; set; }
 #endif
-        static List<StandaloneSubsystemDescriptor> s_StandaloneSubsystemDescriptors =
-            new List<StandaloneSubsystemDescriptor>();
+        static List<AdaptivePerformanceSubsystemDescriptor> s_StandaloneSubsystemDescriptors =
+            new List<AdaptivePerformanceSubsystemDescriptor>();
+
+        public override bool Initialized
+        {
+            get { return inputSubsystem != null; }
+        }
+
+        public override bool Running
+        {
+            get { return inputSubsystem != null && inputSubsystem.running; }
+        }
 
         public StandaloneSubsystem inputSubsystem
         {
@@ -62,7 +70,7 @@ namespace UnityEngine.AdaptivePerformance.TestPackage
                 // TODO: Pass settings off to plugin prior to subsystem init.
             }
 
-            CreateSubsystem<StandaloneSubsystemDescriptor, StandaloneSubsystem>(s_StandaloneSubsystemDescriptors, "Standalone Subsystem");
+            CreateSubsystem<AdaptivePerformanceSubsystemDescriptor, StandaloneSubsystem>(s_StandaloneSubsystemDescriptors, "Standalone Subsystem");
 
             return false;
         }

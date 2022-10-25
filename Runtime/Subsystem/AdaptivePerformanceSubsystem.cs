@@ -1,4 +1,7 @@
 using System;
+#if UNITY_2020_2_OR_NEWER
+using UnityEngine.SubsystemsImplementation;
+#endif
 
 namespace UnityEngine.AdaptivePerformance.Provider
 {
@@ -60,7 +63,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// <summary>
         /// See <see cref="PerformanceDataRecord.ClusterInfo"/>
         /// </summary>
-        ClusterInfo = 0x800
+        ClusterInfo = 0x800,
+        /// <summary>
+        /// See <see cref="PerformanceDataRecord.PerformanceMode"/>
+        /// </summary>
+        PerformanceMode = 0x1000
     }
 
     /// <summary>
@@ -162,6 +169,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// Current CPU cluster information information. Includes number of big, medium and small cores use at the application startup.
         /// </summary>
         public ClusterInfo ClusterInfo { get; set; }
+
+        /// <summary>
+        /// Current Performance mode information.
+        /// </summary>
+        public PerformanceMode PerformanceMode { get; set; }
     }
 
     /// <summary>
@@ -234,23 +246,23 @@ namespace UnityEngine.AdaptivePerformance.Provider
     }
 
     /// <summary>
-    /// Use the Adaptive Performance Subsystem class to create your custom provider subsystem to deliver data from your provider to Adaptive Performance.
+    /// Base class for subsystems to create your custom provider subsystem to deliver data from your provider to Adaptive Performance.
     /// </summary>
-    public abstract class AdaptivePerformanceSubsystem : AdaptivePerformanceSubsystemBase
+    /// <typeparam name="TSubsystem">Concrete subsystem deriving from AdaptivePerformanceSubsystemBase.</typeparam>
+    /// <typeparam name="TSubsystemDescriptor">The subsystem descriptor for the underlying subsystem.</typeparam>
+    /// <typeparam name="TProvider">Provider type for the AdaptivePerformanceSubsystem-derived subsystem.</typeparam>
+    public abstract class AdaptivePerformanceSubsystemBase<TSubsystem, TSubsystemDescriptor, TProvider>
+        : SubsystemWithProvider<TSubsystem, TSubsystemDescriptor, TProvider>
+        where TSubsystem : SubsystemWithProvider, new()
+        where TSubsystemDescriptor : SubsystemDescriptorWithProvider
+        where TProvider : SubsystemProvider<TSubsystem>
     {
-        /// <summary>
-        /// Main constructor, not used in the subsystem specifically.
-        /// </summary>
-        protected AdaptivePerformanceSubsystem()
-        {
-        }
-
         /// <summary>
         /// Bitset of supported features.
         /// Does not change after startup.
         /// </summary>
         /// <value>Bitset</value>
-        public Feature Capabilities { get; protected set; }
+        public abstract Feature Capabilities { get; protected set; }
 
         /// <summary>
         /// To be called once per frame.
@@ -288,23 +300,152 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// Optional and only used for development.
         /// </summary>
         /// <value>String with subsystem specific statistics</value>
-        public virtual string Stats { get { return "";  } }
-    }
+        public abstract string Stats { get; }
 
+        /// <summary>
+        /// Returns if the subsystem is initialized successfully.
+        /// </summary>
+        /// <value>Boolean to tell if subsystem was initialized successfully.</value>
+        public abstract bool Initialized { get; protected set; }
+
+        /// <summary>
+        /// OnCreate is called at the end of the initialization process.
+        /// </summary>
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+
+            // this method is triggered at the end of the base.Initialize() method (which is sealed), so setting the
+            // Initialized flag here.
+            Initialized = true;
+        }
+    }
     /// <summary>
-    /// This is the base class for <see cref="AdaptivePerformanceSubsystem"/> and acts as a stub for backwards compability.
+    /// A class to define a provider subsystem for Adaptive Performance.
     /// </summary>
-#pragma warning disable CS0618
-    public abstract class AdaptivePerformanceSubsystemBase : UnityEngine.Subsystem<AdaptivePerformanceSubsystemDescriptor>
+    public class AdaptivePerformanceSubsystem : AdaptivePerformanceSubsystemBase<AdaptivePerformanceSubsystem, AdaptivePerformanceSubsystemDescriptor, AdaptivePerformanceSubsystem.APProvider>
     {
         /// <summary>
-        /// Returns if the provider subsystem is currently running.
+        /// Main constructor, not used in the subsystem specifically.
         /// </summary>
-        override public bool running { get { return initialized; } }
+        public AdaptivePerformanceSubsystem()
+        {
+        }
+
         /// <summary>
-        /// Returns if the provider subsystem was initialized successfully.
+        /// Lifecycle of the Subsystem.
         /// </summary>
-        public bool initialized { get; protected set; }
+        public override IApplicationLifecycle ApplicationLifecycle => provider.ApplicationLifecycle;
+        /// <summary>
+        /// Control CPU or GPU performance levels of the device.
+        /// Can be null if the subsystem does not support controlling CPU/GPU performance levels.
+        /// Is null when the <see cref="Feature.PerformanceLevelControl"/> bit is not set in <see cref="Capabilities"/>.
+        /// The returned reference does not change after startup.
+        /// </summary>
+        /// <value>Performance level control object</value>
+        public override IDevicePerformanceLevelControl PerformanceLevelControl => provider.PerformanceLevelControl;
+        /// <summary>
+        /// Returns the version of the subsystem implementation.
+        /// Can be used together with SubsystemDescriptor to identify a subsystem.
+        /// </summary>
+        /// <value>Version number</value>
+        public override Version Version => provider.Version;
+        /// <summary>
+        /// Bitset of supported features.
+        /// Does not change after startup.
+        /// </summary>
+        /// <value>Bitset</value>
+        public override Feature Capabilities { get => provider.Capabilities; protected set => provider.Capabilities = value; }
+        /// <summary>
+        /// Generates a human readable string of subsystem internal stats.
+        /// Optional and only used for development.
+        /// </summary>
+        /// <value>String with subsystem specific statistics</value>
+        public override string Stats => provider.Stats;
+        /// <summary>
+        /// Returns if the subsystem is initialized successfully.
+        /// </summary>
+        /// <value>Boolean to tell if subsystem was initialized successfully.</value>
+        public override bool Initialized { get => provider.Initialized; protected set => provider.Initialized = value; }
+        /// <summary>
+        /// To be called once per frame.
+        /// The returned data structure's fields are populated with the latest available data, according to the supported <see cref="Capabilities"/>.
+        /// </summary>
+        /// <returns>Data structure with the most recent performance data.</returns>
+        public override PerformanceDataRecord Update()
+        {
+            return provider.Update();
+        }
+
+        /// <summary>
+        /// An abstract class to be implemented by providers of this subsystem.
+        /// </summary>
+        public abstract class APProvider : SubsystemProvider<AdaptivePerformanceSubsystem>
+        {
+            /// <summary>
+            /// Returns if the provider is currently running.
+            /// </summary>
+            protected bool m_Running;
+
+            /// <summary>
+            /// Bitset of supported features.
+            /// Does not change after startup.
+            /// </summary>
+            /// <value>Bitset</value>
+            public abstract Feature Capabilities { get; set; }
+
+            /// <summary>
+            /// To be called once per frame.
+            /// The returned data structure's fields are populated with the latest available data, according to the supported <see cref="Capabilities"/>.
+            /// </summary>
+            /// <returns>Data structure with the most recent performance data.</returns>
+            public abstract PerformanceDataRecord Update();
+
+            /// <summary>
+            /// Application lifecycle events to be consumed by subsystem.
+            /// Can be null if the subsystem does not need special handling on life-cycle events.
+            /// The returned reference does not change after startup.
+            /// </summary>
+            /// <value>Application lifecycle object</value>
+            public abstract IApplicationLifecycle ApplicationLifecycle { get; }
+
+            /// <summary>
+            /// Control CPU or GPU performance levels of the device.
+            /// Can be null if the subsystem does not support controlling CPU/GPU performance levels.
+            /// Is null when the <see cref="Feature.PerformanceLevelControl"/> bit is not set in <see cref="Capabilities"/>.
+            /// The returned reference does not change after startup.
+            /// </summary>
+            /// <value>Performance level control object</value>
+            public abstract IDevicePerformanceLevelControl PerformanceLevelControl { get; }
+
+            /// <summary>
+            /// Returns the version of the subsystem implementation.
+            /// Can be used together with SubsystemDescriptor to identify a subsystem.
+            /// </summary>
+            /// <value>Version number</value>
+            public abstract Version Version { get; }
+
+            /// <summary>
+            /// Generates a human readable string of subsystem internal stats.
+            /// Optional and only used for development.
+            /// </summary>
+            /// <value>String with subsystem specific statistics</value>
+            public virtual string Stats { get { return ""; } }
+
+            /// <summary>
+            /// Returns if the subsystem is initialized successfully.
+            /// </summary>
+            /// <value>Boolean to tell if subsystem was initialized successfully.</value>
+            public abstract bool Initialized { get; set; }
+
+            /// <summary>
+            /// Returns if the subsystem is running.
+            /// </summary>
+            /// <value>Boolean to tell if subsystem is running.</value>
+            public new bool running
+            {
+                get { return m_Running; }
+            }
+        }
     }
-#pragma warning restore CS0618
 }

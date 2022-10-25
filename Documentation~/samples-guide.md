@@ -10,33 +10,35 @@ While running, each sample will log information about the current state and any 
 
 Install Adaptive Performance samples from the **Package Manager** window. Some of the samples require Universal Render Pipeline to work while other work with any renderpipeline. The following samples are available for any render pipeline:
 
-- [Sample Environment](#sample-environment)
-- [Thermal Sample](#thermal-sample)
-- [Bottleneck Sample](#bottleneck-sample)
-- [Boost Sample](#boost-sample)
-- [Cluster Info Sample](#cluster-info-sample)
-- [VRR Sample](#vrr-sample)
-- [Automatic Performance Control Sample](#automatic-performance-control-sample)
-- [Adaptive Framerate Sample](#adaptive-framerate-sample)
-- [Adaptive LOD Sample](#adaptive-lod-sample)
-- [Adaptive Resolution Sample](#adaptive-resolution-sample)
-- [Adaptive View Distance Sample](#adaptive-view-distance-sample)
-- [Scaler Profiles Sample](#scaler-profiles-sample)
-- [Custom Scaler Sample](#custom-scaler-sample)
-- [Adaptive Physics Sample](#adaptive-physics)
-- [Visual Scripting](#visual-scripting)
-- [Adaptive Layer Culling](#adaptive-layer-culling)
+* [Sample Environment](#sample-environment)
+* [Thermal Sample](#thermal-sample)
+* [Bottleneck Sample](#bottleneck-sample)
+* [Boost Sample](#boost-sample)
+* [Cluster Info Sample](#cluster-info-sample)
+* [VRR Sample](#vrr-sample)
+* [Automatic Performance Control Sample](#automatic-performance-control-sample)
+* [Adaptive Framerate Sample](#adaptive-framerate-sample)
+* [Adaptive LOD Sample](#adaptive-lod-sample)
+* [Adaptive Resolution Sample](#adaptive-resolution-sample)
+* [Adaptive View Distance Sample](#adaptive-view-distance-sample)
+* [Scaler Profiles Sample](#scaler-profiles-sample)
+* [Custom Scaler Sample](#custom-scaler-sample)
+* [Adaptive Physics Sample](#adaptive-physics)
+* [Visual Scripting](#visual-scripting)
+* [Adaptive Layer Culling](#adaptive-layer-culling)
+* [Lifecycle Management](#lifecycle-management)
+* [Performance Mode](#performance-mode)
 
 
 The following samples require Universal Render Pipeline:
 
-- [Adaptive Batching Sample](#adaptive-batching-sample)
-- [Adaptive LUT Sample](#adaptive-lut-sample)
-- [Adaptive MSAA Sample](#adaptive-msaa-sample)
-- [Adaptive Shadow Sample](#adaptive-shadow-sample)
-- [Adaptive Sorting Sample](#adaptive-sorting-sample)
-- [Adaptive Transparency Sample](#adaptive-transparency-sample)
-- [Adaptive Decals Sample](#adaptive-decals-sample)
+* [Adaptive Batching Sample](#adaptive-batching-sample)
+* [Adaptive LUT Sample](#adaptive-lut-sample)
+* [Adaptive MSAA Sample](#adaptive-msaa-sample)
+* [Adaptive Shadow Sample](#adaptive-shadow-sample)
+* [Adaptive Sorting Sample](#adaptive-sorting-sample)
+* [Adaptive Transparency Sample](#adaptive-transparency-sample)
+* [Adaptive Decals Sample](#adaptive-decals-sample)
 
 ## Sample Environment
 The sample environment is required for most of the samples, because the samples share the same assets. You should install the sample environment before installing any other samples to have the necessary base structure available.
@@ -48,9 +50,9 @@ This sample demonstrates how to register and respond to thermal state change eve
 
 This sample is heavy on GPU usage to produce enough heat and then be able to cool down quickly afterward to activate the different warning levels. These levels are:
 
-- Nominal - The device is cool enough to operate at full CPU speed.
-- Throttling Imminent - The device is heating up and trending toward the need to throttle the CPU and GPU soon to prevent overheating.
-- Throttling - The device has overheated and the CPU and GPU speeds have been throttled until the temperate drops down to a safe level.
+* Nominal - The device is cool enough to operate at full CPU speed.
+* Throttling Imminent - The device is heating up and trending toward the need to throttle the CPU and GPU soon to prevent overheating.
+* Throttling - The device has overheated and the CPU and GPU speeds have been throttled until the temperate drops down to a safe level.
 
 The sample also has sliders to indicate the current temperature trend and level. When the device reaches a throttling state, the sample will stop drawing most objects to begin a fast cool off period until it is trending back toward a nominal state.
 
@@ -61,9 +63,9 @@ This sample demonstrates the use of the bottleneck detection API. Adaptive Perfo
 
 The sample runs in a rotation of the three possible states:
 
-- Targeting CPU Bottleneck - Disable GPU heavy tasks, enable CPU heavy tasks.
-- Targeting GPU Bottleneck - Disable CPU heavy tasks, enable GPU heavy tasks.
-- Targeting Framerate - Disable CPU and GPU heavy tasks.
+* Targeting CPU Bottleneck - Disable GPU heavy tasks, enable CPU heavy tasks.
+* Targeting GPU Bottleneck - Disable CPU heavy tasks, enable GPU heavy tasks.
+* Targeting Framerate - Disable CPU and GPU heavy tasks.
 
 While the sample runs, information about the bottleneck state is stored in a list of Marker structs. Each Marker contains the time, a label, and the number of objects that were active at that time. When the sample has finished running, all of the Markers are written to the log.
 
@@ -95,7 +97,7 @@ When you simulate a high load, you can see the CPU time or GPU frame time increa
 Using boost mode with CPU load generally increases the number of bees spawned.
 
 ## Cluster Info Sample
-![Boost](Images/Samples/samples-clusterinfo.png)
+![Cluster Info](Images/Samples/samples-clusterinfo.png)
 
 This sample demonstrates the use of the Cluster Info feature.
 
@@ -147,8 +149,8 @@ The sample uses the same content as the Auto Performance Control sample. It swit
 ### Options
 The Adaptive Framerate sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 To adapt framerate automatically, use the **Adaptive Framerate** and **Adaptive Variable Refresh Rate** Scalers.
 
@@ -183,8 +185,8 @@ The overdraw control allows you to render multiple instances of the image on top
 ### Options
 The Adaptive Resolution sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 
 ## Adaptive LOD Sample
@@ -199,8 +201,8 @@ The sample uses the same content as the Auto Performance Control sample. It swit
 ### Options
 The Adaptive LOD sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Batching Sample
 ![Adaptive Batching Sample](Images/Samples/samples-adaptivebatching.png)
@@ -216,8 +218,8 @@ Changes are not visible on-screen for this demo, please use a graphics performan
 ### Options
 The Adaptive batching sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive LUT Sample
 ![Adaptive LUT Sample](Images/Samples/samples-adaptivelut.png)
@@ -235,8 +237,8 @@ The sample shows color grading quality change when LUT size is adjusted. With sm
 ### Options
 The Adaptive LUT sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive MSAA Sample
 ![Adaptive MSAA Sample](Images/Samples/samples-adaptivemsaa.png)
@@ -253,8 +255,8 @@ The scaler affects only camera's post processing subpixel morphological Anti-ali
 ### Options
 The Adaptive MSAA sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Shadow Sample
 ![Adaptive Shadow Sample](Images/Samples/samples-adaptiveshadows.png)
@@ -272,8 +274,8 @@ In the sample you should see the resolution of and distance at which shadows are
 ### Options
 The Adaptive Shadow sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Sorting Sample
 ![Adaptive Sorting Sample](Images/Samples/samples-adaptivesorting.png)
@@ -287,8 +289,8 @@ This feature uses the Indexer system to make decisions on when to change sorting
 ### Options
 The Adaptive Sorting sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 Changes are not visible on-screen for this demo, please use a graphics performance analyzer to see the differences. In the Editor Stats you can see a change in SetPass calls.
 
@@ -304,8 +306,8 @@ This feature uses the Indexer system to make decisions on when to disable transp
 ### Options
 The Adaptive Transparency sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive View Distance Sample
 ![Adaptive View Distance Sample](Images/Samples/samples-adaptiveviewdistance.png)
@@ -317,8 +319,8 @@ This feature uses the Indexer system to make decisions on when reduce the view d
 ### Options
 The Adaptive View Distance sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Scaler Profiles Sample
 ![Scaler Profiles Sample](Images/Samples/samples-scalerprofiles.png)
@@ -339,8 +341,8 @@ The **Custom Scaler** sample shows how to create a custom scaler that implements
 Fog can be switched between Exponential and Linear in the Settings under (menu: **Lighting &gt; Environment &gt; Other Settings &gt; Mode**.
 The scaler's behavior changes depending on which fog mode you use:
 
-- **Exponential Fog**: Reduces the density of the fog with every scale step until the fog disappears completely.
-- **Linear Fog**: Changes the fog's **End** distance to coincide with the camera's view distance.This hides the reduced view distance with fog.
+* **Exponential Fog**: Reduces the density of the fog with every scale step until the fog disappears completely.
+* **Linear Fog**: Changes the fog's **End** distance to coincide with the camera's view distance.This hides the reduced view distance with fog.
 
 **Note:** Custom scaler don't appear in the UI list and the settings are hardcoded in the custom scaler class. The scalar initiates automatically and shows up in the device simulator, but you can't access it via scaler profiles.
 
@@ -349,8 +351,8 @@ This feature uses the [Indexer](https://docs.unity3d.com/Packages/com.unity.adap
 ### Options
 The Custom Scaler sample uses the Scaler Visualization Prefab which enables you to see the status of the scaler. Use it to modify the status of the scalars for easier testing. You can:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Physics
 
@@ -405,8 +407,8 @@ The sample uses similar content to the Auto Performance Control sample. It loops
 ### Options
 The Adaptive Decals sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
 
 ## Adaptive Layer Culling
 The Adaptive Layer Culling sample shows how to dynamically adjust [layer cull distances](https://docs.unity3d.com/ScriptReference/Camera-layerCullDistances.html) at runtime.
@@ -446,8 +448,30 @@ In the sample you should see the distance change at which objects on layers are 
 ### Options
 The Adaptive Decals sample uses the Scaler Visualization Prefab and enables you to see the status of the Scalers. It lets you modify the status for easier testing:
 
-- Enable or disable the scaler.
-- Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+* Enable or disable the scaler.
+* Override the level via a slider in the UI instead of relying on the Indexer to control the level. This is useful for testing.
+
+## Lifecycle Management
+![Lifecycle Management](Images/Samples/samples-lifecyclemanagement.png)
+
+This sample demonstrates how to control the lifecycle of Adaptive Performance at runtime, such as creating (initializing) and destorying (deinitialization) Adaptive Performance, starting and stopping Adaptive Performance, as well as inspecting various state properties. There is also an event that can be registered for to be notified when Adaptive Performance has been created (initialized) and destroyed (deinitialized).
+
+## Performance Mode
+
+![Performance Mode](Images/Samples/samples-performancemode.png)
+
+This sample demonstrates how to register and respond to performance mode change events from the Adaptive Performance API. To test it, you can use the Android Game Dashboard UI or Android Debug Bridge (ADB) ([see details](https://developer.android.com/games/gamemode/gamemode-api#testing)).
+
+This sample is based on the Thermal sample, and is heavy on GPU usage to demonstrate how to respond and make adjustments to the app at runtime based on the user selected performance mode. These available performance modes are:
+
+* Standard - Default performance mode.
+* CPU - Performance mode accelerates CPU.
+* GPU - Performance mode accelerates GPU.
+* Optimize - Performance is optimized as mode may accelerate both CPU and GPU.
+* Battery - Performance is limited as mode is set to preserve battery.
+* Unknown - Performance mode is unknown.
+
+**Note** This demo requires you to install the [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) provider.
 
 # Technical details
 ## Requirements
@@ -475,6 +499,6 @@ Adaptive Performance requires Universal Render Pipeline versions `12.0` and late
 
 To use the Universal Render Pipeline Settings we ship with the samples you have to follow following steps:
 
-- Go to **Project Settings &gt; Graphics &gt; Scriptable Render Pipeline Settings** and add the Universal Render Pipeline Asset from `Environment/URP Settings/APSamplesHighQuality.asset`.
-- Go to **Project Settings &gt; Quality &gt; Rendering** and add the Universal Render Pipeline Asset from `Environment/URP Settings/APSamplesHighQuality.asset`.
-- Convert the Assets from Unity built-in pipeline to Universal Render Pipeline. Go to **Edit &gt; Render Pipeline &gt; Universal Render Pipeline &gt; Upgrade Project Materials to UniversalRP Materials** from Unity's main menu.
+* Go to **Project Settings &gt; Graphics &gt; Scriptable Render Pipeline Settings** and add the Universal Render Pipeline Asset from `Environment/URP Settings/APSamplesHighQuality.asset`.
+* Go to **Project Settings &gt; Quality &gt; Rendering** and add the Universal Render Pipeline Asset from `Environment/URP Settings/APSamplesHighQuality.asset`.
+* Convert the Assets from Unity built-in pipeline to Universal Render Pipeline. Go to **Edit &gt; Render Pipeline &gt; Universal Render Pipeline &gt; Upgrade Project Materials to UniversalRP Materials** from Unity's main menu.

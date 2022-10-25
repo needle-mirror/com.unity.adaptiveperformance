@@ -27,6 +27,14 @@
         <ui:Instance template="UsageDial" name="ap-usage-dial" />
         <ui:Label name="ap-details-view-thermal-label" text="No Warning"/>
       </ui:VisualElement>
+      <ui:VisualElement name="ap-details-view-performance-mode">
+        <ui:Label name="ap-details-view-performance-mode-label" text="Performance Mode"/>
+        <ui:VisualElement name="ap-details-view-performance-mode-icon-container">
+          <ui:VisualElement name="ap-details-view-performance-mode-icon">
+            <ui:Label name="ap-details-view-performance-mode-icon-label" text="Unknown"/>
+          </ui:VisualElement>
+        </ui:VisualElement>
+      </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="ap-details-view-head">
       <ui:Label name="ap-details-view-header-label" text="Scalers"/>

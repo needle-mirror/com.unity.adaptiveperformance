@@ -12,6 +12,7 @@ using UnityEngine.UIElements;
 using UnityEngine.Serialization;
 
 [assembly: InternalsVisibleTo("Unity.AdaptivePerformance.Tests")]
+[assembly: InternalsVisibleTo("Unity.AdaptivePerformance.Editor.Tests")]
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
@@ -136,7 +137,7 @@ namespace UnityEngine.AdaptivePerformance
         ///
         /// This method is synchronous and on return all state should be immediately checkable.
         /// </summary>
-        public void InitializeLoaderSync()
+        internal void InitializeLoaderSync()
         {
             if (isInitializationComplete && activeLoader != null)
             {
@@ -177,7 +178,7 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         ///
         /// <returns>Enumerator marking the next spot to continue execution at.</returns>
-        public IEnumerator InitializeLoader()
+        internal IEnumerator InitializeLoader()
         {
             if (isInitializationComplete && activeLoader != null)
             {
@@ -211,7 +212,7 @@ namespace UnityEngine.AdaptivePerformance
         ///
         /// You must wait for <see cref="isInitializationComplete"/> to be set to true before calling this API.
         /// </summary>
-        public void StartSubsystems()
+        internal void StartSubsystems()
         {
             if (!m_InitializationComplete)
             {
@@ -221,10 +222,10 @@ namespace UnityEngine.AdaptivePerformance
                 return;
             }
 
-            if (activeLoader != null)
-            {
-                activeLoader.Start();
-            }
+            if (activeLoader == null)
+                return;
+
+            activeLoader.Start();
         }
 
         /// <summary>
@@ -233,7 +234,7 @@ namespace UnityEngine.AdaptivePerformance
         ///
         /// You must wait for <see cref="isInitializationComplete"/> to be set to true before calling this API.
         /// </summary>
-        public void StopSubsystems()
+        internal void StopSubsystems()
         {
             if (!m_InitializationComplete)
             {
@@ -243,10 +244,10 @@ namespace UnityEngine.AdaptivePerformance
                 return;
             }
 
-            if (activeLoader != null)
-            {
-                activeLoader.Stop();
-            }
+            if (activeLoader == null)
+                return;
+
+            activeLoader.Stop();
         }
 
         /// <summary>
@@ -258,7 +259,7 @@ namespace UnityEngine.AdaptivePerformance
         ///
         /// On return, <see cref="isInitializationComplete"/> will be set to false.
         /// </summary>
-        public void DeinitializeLoader()
+        internal void DeinitializeLoader()
         {
             if (!m_InitializationComplete)
             {
@@ -278,17 +279,10 @@ namespace UnityEngine.AdaptivePerformance
             m_InitializationComplete = false;
         }
 
-        // Use this for initialization
-        void Start()
-        {
-            if (automaticLoading && automaticRunning)
-            {
-                StartSubsystems();
-            }
-        }
-
         void OnDisable()
         {
+            // should we have an OnEnable()?
+
             if (automaticLoading && automaticRunning)
             {
                 StopSubsystems();

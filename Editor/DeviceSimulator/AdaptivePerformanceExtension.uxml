@@ -14,6 +14,7 @@
     <ui:Foldout text="Performance" value="True" name="performance">
         <Style src="AdaptivePerformanceExtension.uss" />
         <uie:EnumField name="performance-bottleneck" label="Bottleneck" type="UnityEngine.AdaptivePerformance.PerformanceBottleneck, Unity.AdaptivePerformance" value="Unknown" include-obsolete-values="false" tooltip="Simulate the device bottleneck by setting it to CPU, GPU or target framerate bound. Target framerate is either VSync or the value set in UnityEngine.Application.TargetFramerate." />
+        <uie:EnumField name="performance-mode" label="Mode" type="UnityEngine.AdaptivePerformance.PerformanceMode, Unity.AdaptivePerformance" value="Unknown" include-obsolete-values="false" tooltip="Simulate the device performance mode by setting it to Battery, CPU or GPU." />
         <ui:Toggle name="performance-control-auto-mode" label="Auto Control Mode" value="true" tooltip="Auto Control Mode sets CPU and GPU level automatically. If the system is throttling the Performance Control Mode is set to system and Auto Control Mode has no influence." />
         <ui:VisualElement name="performance-target-fps-container" style="flex-direction: row;" tooltip="Target FPS simulates the application target framerate in frames per second.">
             <ui:SliderInt label="Target FPS" name="performance-target-fps" low-value="0" high-value="1000" value="30" style="flex-grow: 10;"/>

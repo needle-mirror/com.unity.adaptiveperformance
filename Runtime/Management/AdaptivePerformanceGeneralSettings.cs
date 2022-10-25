@@ -40,6 +40,22 @@ namespace UnityEngine.AdaptivePerformance
         private bool m_ProviderStarted = false;
 #pragma warning restore 414
 
+        /// <summary>
+        /// Indicates if provider loader has been initialized.
+        /// </summary>
+        public bool IsProviderInitialized
+        {
+            get { return m_ProviderIntialized; }
+        }
+
+        /// <summary>
+        /// Indicates if provider loader and subsystem has been started.
+        /// </summary>
+        public bool IsProviderStarted
+        {
+            get { return m_ProviderStarted; }
+        }
+
         /// <summary>The current settings instance.</summary>
         public static AdaptivePerformanceGeneralSettings Instance
         {
@@ -126,14 +142,10 @@ namespace UnityEngine.AdaptivePerformance
             instance.DeInitAdaptivePerformance();
         }
 
-        void Start()
-        {
-            StartAdaptivePerformance();
-        }
-
         void OnDestroy()
         {
             DeInitAdaptivePerformance();
+            s_RuntimeSettingsInstance = null;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
@@ -156,9 +168,12 @@ namespace UnityEngine.AdaptivePerformance
             instance.StartAdaptivePerformance();
         }
 
-        private void InitAdaptivePerformance()
+        internal void InitAdaptivePerformance()
         {
-            if (AdaptivePerformanceGeneralSettings.Instance == null || AdaptivePerformanceGeneralSettings.Instance.m_LoaderManagerInstance == null || AdaptivePerformanceGeneralSettings.Instance.m_InitManagerOnStart == false)
+            if (m_ProviderIntialized)
+                return;
+
+            if (AdaptivePerformanceGeneralSettings.Instance == null)
                 return;
 
             m_AdaptivePerformanceManager = AdaptivePerformanceGeneralSettings.Instance.m_LoaderManagerInstance;
@@ -174,32 +189,45 @@ namespace UnityEngine.AdaptivePerformance
             m_ProviderIntialized = true;
         }
 
-        private void StartAdaptivePerformance()
+        internal void StartAdaptivePerformance()
         {
-            if (m_AdaptivePerformanceManager != null && m_AdaptivePerformanceManager.activeLoader != null)
-            {
-                m_AdaptivePerformanceManager.StartSubsystems();
-                m_ProviderStarted = true;
-            }
+            if (!m_ProviderIntialized || m_ProviderStarted)
+                return;
+
+            if (m_AdaptivePerformanceManager == null || m_AdaptivePerformanceManager.activeLoader == null)
+                return;
+
+            m_AdaptivePerformanceManager.StartSubsystems();
+            m_ProviderStarted = true;
         }
 
-        private void StopAdaptivePerformance()
+        internal void StopAdaptivePerformance()
         {
-            if (m_AdaptivePerformanceManager != null && m_AdaptivePerformanceManager.activeLoader != null)
-            {
-                m_AdaptivePerformanceManager.StopSubsystems();
-                m_ProviderStarted = false;
-            }
+            if (!m_ProviderIntialized || !m_ProviderStarted)
+                return;
+
+            if (m_AdaptivePerformanceManager == null || m_AdaptivePerformanceManager.activeLoader == null)
+                return;
+
+            m_AdaptivePerformanceManager.StopSubsystems();
+            m_ProviderStarted = false;
         }
 
-        private void DeInitAdaptivePerformance()
+        internal void DeInitAdaptivePerformance()
         {
-            if (m_AdaptivePerformanceManager != null && m_AdaptivePerformanceManager.activeLoader != null)
+            if (!m_ProviderIntialized)
+                return;
+
+            if (m_ProviderStarted)
+                StopAdaptivePerformance();
+
+            if (m_AdaptivePerformanceManager != null)
             {
                 m_AdaptivePerformanceManager.DeinitializeLoader();
                 m_AdaptivePerformanceManager = null;
-                m_ProviderIntialized = false;
             }
+
+            m_ProviderIntialized = false;
         }
     }
 }

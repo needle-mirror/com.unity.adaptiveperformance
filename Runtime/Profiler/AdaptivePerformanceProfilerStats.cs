@@ -66,6 +66,10 @@ public static class AdaptivePerformanceProfilerStats
     /// Profiler counter to report the bottleneck.
     /// </summary>
     public static ProfilerCounter<int> BottleneckCounter = new ProfilerCounter<int>(AdaptivePerformanceProfilerCategory, "Bottleneck", ProfilerMarkerDataUnit.Count);
+    /// <summary>
+    /// Profiler counter to report the performance mode.
+    /// </summary>
+    public static ProfilerCounter<int> PerformanceModeCounter = new ProfilerCounter<int>(AdaptivePerformanceProfilerCategory, "Performance Mode", ProfilerMarkerDataUnit.Count);
 
     /// <summary>
     /// GUID for the Adaptive Performance Profile Module definition.

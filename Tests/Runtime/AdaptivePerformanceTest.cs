@@ -1,12 +1,13 @@
 using System;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using UnityEditor.AdaptivePerformance.Simulator.Editor;
 using UnityEngine;
-using UnityEngine.TestTools;
 using UnityEngine.AdaptivePerformance;
+using UnityEngine.AdaptivePerformance.Provider;
+using UnityEngine.TestTools;
 
 namespace UnityEditor.AdaptivePerformance.Tests
 {
@@ -38,6 +39,16 @@ namespace UnityEditor.AdaptivePerformance.Tests
         public void TeardownAdaptivePerformanceManagerTest()
         {
             base.TearDownTest();
+        }
+
+        [SetUp]
+        public void Initialization()
+        {
+            if(!adaptivePerformanceGeneralSettings.IsProviderInitialized)
+                Holder.Instance.InitializeAdaptivePerformance();
+
+            if(!adaptivePerformanceGeneralSettings.IsProviderStarted)
+                Holder.Instance.StartAdaptivePerformance();
         }
 
         [UnityTest]
@@ -506,7 +517,7 @@ namespace UnityEditor.AdaptivePerformance.Tests
             var subsystem = AdaptivePerformanceGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<SimulatorAdaptivePerformanceSubsystem>();
             var ap = Holder.Instance;
 
-            var clusterInfo = ap.SupportedFeature(UnityEngine.AdaptivePerformance.Provider.Feature.ClusterInfo);
+            var clusterInfo = ap.SupportedFeature(Feature.ClusterInfo);
             var bigcores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.BigCore;
             var mediumcores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.MediumCore;
             var tinycores = ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.LittleCore;
@@ -523,9 +534,9 @@ namespace UnityEditor.AdaptivePerformance.Tests
             yield return null;
 
             Assert.AreEqual(true, clusterInfo);
-            Assert.AreEqual(bigcores, 0); // Big core is always 0 in Simulator
-            Assert.AreEqual(mediumcores, 0); // Medium core is always 0 in Simulator
-            Assert.AreEqual(tinycores, 0); // Small core is always 0 in Simulator
+            Assert.AreEqual(bigcores, 1);
+            Assert.AreEqual(mediumcores, 3);
+            Assert.AreEqual(tinycores, 4);
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.BigCore, 5);
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.MediumCore, 4);
             Assert.AreEqual(ap.PerformanceStatus.PerformanceMetrics.ClusterInfo.LittleCore, -1);
@@ -552,6 +563,531 @@ namespace UnityEditor.AdaptivePerformance.Tests
             yield return null;
 
             Assert.AreEqual(assemblyScalers, indexedScalers.Count);
+        }
+
+        [Test]
+        public void Lifecycle_Running_Works()
+        {
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsTrue(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsTrue(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Initialization_When_Running_NoChange()
+        {
+            // attempting to initialize when AP is already running should result in no change
+
+            var originalIndexer = Holder.Instance.Indexer;
+
+            Holder.Instance.InitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsTrue(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsTrue(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Start_When_Running_NoChange()
+        {
+            // attempting to start when AP is already running should result in no change
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsTrue(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsTrue(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Stop_When_Running_Works()
+        {
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Deinitialize_When_Running_Works()
+        {
+            var previousActiveLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var previousSubsystem = previousActiveLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNull(activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(previousActiveLoader.Initialized);
+            Assert.IsFalse(previousActiveLoader.Running);
+            Assert.IsFalse(previousSubsystem.Initialized);
+            Assert.IsFalse(previousSubsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Stop_Deinitialize_Works()
+        {
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            Assert.IsNull(adaptivePerformanceGeneralSettings.Manager.activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+            Assert.IsFalse(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Stop_Start_Works()
+        {
+            var originalIndexer = Holder.Instance.Indexer;
+            var originalLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var originalSubsystem = originalLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(originalLoader, activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(originalSubsystem, subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(originalLoader, activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsTrue(activeLoader.Running);
+
+            subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(originalSubsystem, subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsTrue(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Entire_Workflow_Works()
+        {
+            var originalIndexer = Holder.Instance.Indexer;
+            var originalLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var originalSubsystem = originalLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(originalLoader, activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(originalSubsystem, subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            Assert.IsNull(adaptivePerformanceGeneralSettings.Manager.activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+            Assert.IsFalse(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+
+            Holder.Instance.InitializeAdaptivePerformance();
+            yield return null;
+
+            var newIndexer = Holder.Instance.Indexer;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreNotSame(originalIndexer, newIndexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var newLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(newLoader);
+            Assert.AreSame(originalLoader, newLoader);
+            Assert.IsTrue(newLoader.Initialized);
+            Assert.IsFalse(newLoader.Running);
+
+            var newSubsystem = newLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(newSubsystem);
+            Assert.AreNotSame(originalSubsystem, newSubsystem);
+            Assert.IsTrue(newSubsystem.Initialized);
+            Assert.IsFalse(newSubsystem.running);
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(newIndexer, Holder.Instance.Indexer);
+            Assert.AreNotSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            Assert.AreNotSame(originalSubsystem, adaptivePerformanceGeneralSettings.Manager.activeLoader.GetDefaultSubsystem());
+
+            activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(newLoader, activeLoader);
+            Assert.AreSame(originalLoader, activeLoader);
+            Assert.IsTrue(activeLoader.Initialized);
+            Assert.IsTrue(activeLoader.Running);
+
+            subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(newSubsystem, subsystem);
+            Assert.AreNotSame(originalSubsystem, subsystem);
+            Assert.IsTrue(subsystem.Initialized);
+            Assert.IsTrue(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Deinitialize_Start_NotAllowed()
+        {
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            // should not be running b/c initialization was not called first
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            Assert.IsNull(adaptivePerformanceGeneralSettings.Manager.activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+            Assert.IsFalse(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Deinitialize_Stop_NowAllowed()
+        {
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            // should still be torn down
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            Assert.IsNull(adaptivePerformanceGeneralSettings.Manager.activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(activeLoader.Initialized);
+            Assert.IsFalse(activeLoader.Running);
+            Assert.IsFalse(subsystem.Initialized);
+            Assert.IsFalse(subsystem.running);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Double_Initialization_NoChange()
+        {
+            // attempting to double initialization should result in no change
+
+            var originalIndexer = Holder.Instance.Indexer;
+            var originalLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var originalSubsystem = originalLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.InitializeAdaptivePerformance();
+            yield return null;
+
+            var newIndexer = Holder.Instance.Indexer;
+            Assert.IsNotNull(newIndexer);
+            Assert.AreNotSame(originalIndexer, newIndexer);
+
+            var newLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(newLoader);
+            Assert.AreSame(originalLoader, newLoader);
+
+            var newSubsystem = newLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(newSubsystem);
+            Assert.AreNotSame(originalSubsystem, newSubsystem);
+
+            Holder.Instance.InitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(newIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(newLoader, activeLoader);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(newSubsystem, subsystem);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Double_Start_NoChange()
+        {
+            // attempting to double start should result in no change
+
+            var originalIndexer = Holder.Instance.Indexer;
+            var originalLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var originalSubsystem = originalLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.InitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            var newIndexer = Holder.Instance.Indexer;
+            Assert.IsNotNull(newIndexer);
+            Assert.AreNotSame(originalIndexer, newIndexer);
+
+            var newLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(newLoader);
+            Assert.AreSame(originalLoader, newLoader);
+
+            var newSubsystem = newLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(newSubsystem);
+            Assert.AreNotSame(originalSubsystem, newSubsystem);
+
+            Holder.Instance.StartAdaptivePerformance();
+            yield return null;
+
+            Assert.IsTrue(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(newIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(newLoader, activeLoader);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(newSubsystem, subsystem);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Double_Stop_NoChange()
+        {
+            // attempting to double stop should result in no change
+
+            var originalIndexer = Holder.Instance.Indexer;
+            var originalLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var originalSubsystem = originalLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.StopAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNotNull(Holder.Instance.Indexer);
+            Assert.AreSame(originalIndexer, Holder.Instance.Indexer);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsTrue(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNotNull(activeLoader);
+            Assert.AreSame(originalLoader, activeLoader);
+
+            var subsystem = activeLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+            Assert.IsNotNull(subsystem);
+            Assert.AreSame(originalSubsystem, subsystem);
+        }
+
+        [UnityTest]
+        public IEnumerator Lifecycle_Double_Deinitialize_NoChange()
+        {
+            // attempting to double deinitialize should result in no change
+
+            var previousActiveLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            var previousSubsystem = previousActiveLoader.GetDefaultSubsystem() as AdaptivePerformanceSubsystem;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Holder.Instance.DeinitializeAdaptivePerformance();
+            yield return null;
+
+            Assert.IsFalse(Holder.Instance.Active);
+            Assert.IsNull(Holder.Instance.Indexer);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderInitialized);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.IsProviderStarted);
+            Assert.IsFalse(adaptivePerformanceGeneralSettings.Manager.isInitializationComplete);
+
+            var activeLoader = adaptivePerformanceGeneralSettings.Manager.activeLoader;
+            Assert.IsNull(activeLoader);
+
+            // check previous active loader and subsystem if shut down
+            Assert.IsFalse(previousActiveLoader.Initialized);
+            Assert.IsFalse(previousActiveLoader.Running);
+            Assert.IsFalse(previousSubsystem.Initialized);
+            Assert.IsFalse(previousSubsystem.running);
         }
     }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine.Rendering;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Unity.AdaptivePerformance.Editor.Tests")]
 namespace UnityEngine.AdaptivePerformance
 {
     internal class TemperatureTrend
@@ -150,6 +152,12 @@ namespace UnityEngine.AdaptivePerformance
 
             if (updateTrend)
                 UpdateTrend();
+        }
+
+        public int NumValues
+        {
+            get => m_NumValues;
+            set => m_NumValues = value;
         }
     }
 }

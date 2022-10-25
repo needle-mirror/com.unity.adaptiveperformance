@@ -1,10 +1,21 @@
 using System.Collections.Generic;
+using UnityEngine.AdaptivePerformance.Provider;
 
 namespace UnityEngine.AdaptivePerformance.Tests.Standalone
 {
     public class StandaloneLoader : AdaptivePerformanceLoaderHelper
     {
-        static List<StandaloneSubsystemDescriptor> s_StandaloneSubsystemDescriptors = new List<StandaloneSubsystemDescriptor>();
+        static List<AdaptivePerformanceSubsystemDescriptor> s_StandaloneSubsystemDescriptors = new List<AdaptivePerformanceSubsystemDescriptor>();
+
+        public override bool Initialized
+        {
+            get { return standaloneSubsystem != null; }
+        }
+
+        public override bool Running
+        {
+            get { return standaloneSubsystem != null && standaloneSubsystem.running; }
+        }
 
         public StandaloneSubsystem standaloneSubsystem
         {
@@ -49,7 +60,7 @@ namespace UnityEngine.AdaptivePerformance.Tests.Standalone
             stopped = false;
             deInitialized = false;
 
-            CreateSubsystem<StandaloneSubsystemDescriptor, StandaloneSubsystem>(s_StandaloneSubsystemDescriptors, "Standalone Subsystem");
+            CreateSubsystem<AdaptivePerformanceSubsystemDescriptor, StandaloneSubsystem>(s_StandaloneSubsystemDescriptors, "Standalone Subsystem");
             if (standaloneSubsystem == null)
                 return false;
 

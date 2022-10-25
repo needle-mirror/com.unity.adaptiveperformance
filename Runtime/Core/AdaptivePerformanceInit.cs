@@ -5,35 +5,51 @@ namespace UnityEngine.AdaptivePerformance
 {
     internal class AdaptivePerformanceManagerSpawner : ScriptableObject
     {
-        public GameObject m_ManagerGameObject;
+        public const string AdaptivePerformanceManagerObjectName = "AdaptivePerformanceManager";
+
+        GameObject m_ManagerGameObject;
+
+        public GameObject ManagerGameObject { get { return m_ManagerGameObject; } }
 
         void OnEnable()
         {
-            if (m_ManagerGameObject == null)
+            if (m_ManagerGameObject != null)
+                return;
+
+            m_ManagerGameObject = GameObject.Find(AdaptivePerformanceManagerObjectName);
+        }
+
+        public void Initialize(bool isCheckingProvider)
+        {
+            if (m_ManagerGameObject != null)
+                return;
+
+            m_ManagerGameObject = new GameObject(AdaptivePerformanceManagerObjectName);
+            var apm = m_ManagerGameObject.AddComponent<AdaptivePerformanceManager>();
+
+            if (isCheckingProvider)
             {
-                m_ManagerGameObject = new GameObject("AdaptivePerformanceManager");
-                var ap = m_ManagerGameObject.AddComponent<AdaptivePerformanceManager>();
-
                 // if no provider was found we can disable AP and destroy the game object, otherwise continue with initialization.
-                if (ap.Indexer == null)
+                if (apm.Indexer == null)
                 {
-                    Destroy(m_ManagerGameObject);
+                    Deinitialize();
+
                     return;
                 }
-
-                Holder.Instance = ap;
-                InstallScalers();
-                DontDestroyOnLoad(m_ManagerGameObject);
-
-                var settings = ap.Settings;
-                var scalerProfiles = settings.GetAvailableScalerProfiles();
-                if (scalerProfiles.Length <= 0)
-                {
-                    APLog.Debug("No Scaler Profiles available. Did you remove all profiles manually from the provider Settings?");
-                    return;
-                }
-                settings.LoadScalerProfile(scalerProfiles[settings.defaultScalerProfilerIndex]);
             }
+
+            Holder.Instance = apm;
+            InstallScalers();
+            DontDestroyOnLoad(m_ManagerGameObject);
+        }
+        public void Deinitialize()
+        {
+            if (m_ManagerGameObject == null)
+                return;
+
+            Destroy(m_ManagerGameObject);
+
+            m_ManagerGameObject = null;
         }
 
         void InstallScalers()
@@ -54,10 +70,45 @@ namespace UnityEngine.AdaptivePerformance
 
     internal static class AdaptivePerformanceInitializer
     {
+        static AdaptivePerformanceManagerSpawner s_Spawner;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
+        static void AutoInitialize()
         {
-            ScriptableObject.CreateInstance<AdaptivePerformanceManagerSpawner>();
+            InitializeSpawner(isAuto: true);
+        }
+
+        public static void Initialize()
+        {
+            InitializeSpawner(isAuto: false);
+        }
+
+        public static void Deinitialize()
+        {
+            if (s_Spawner == null)
+                return;
+
+            s_Spawner.Deinitialize();
+            UnityEngine.Object.Destroy(s_Spawner);
+            s_Spawner = null;
+        }
+
+        static void InitializeSpawner(bool isAuto)
+        {
+            if (s_Spawner == null)
+                s_Spawner = ScriptableObject.CreateInstance<AdaptivePerformanceManagerSpawner>();
+
+            if (s_Spawner != null && s_Spawner.ManagerGameObject != null)
+                return;
+
+            // isAuto translates to isCheckingProvider:
+            //    - IsAuto=True, then isCheckingProvider=true; DO check if provider is present
+            //    - IsAuto=False, then isCheckingProvider=false; DON'T check if provider is present
+            // the reason for this is the auto startup process initializes providers, and should be available at the
+            // time of the check.  During a manual startup, the providers have not yet been initialized, so skipping
+            // the check so that the AP Manager is created and available to be initialized and the provider is then
+            // made available.
+            s_Spawner.Initialize(isCheckingProvider: isAuto);
         }
     }
 }

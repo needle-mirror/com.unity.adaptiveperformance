@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
@@ -59,7 +61,14 @@ namespace UnityEngine.AdaptivePerformance
         /// Returns true if Adaptive Performance was initialized successfully, false otherwise.
         /// This means that Adaptive Performance is enabled in StartupSettings and the application runs on a device that supports Adaptive Performance.
         /// </summary>
-        /// <value>True when Adaptive Performance is available, false otherwise.</value>
+        /// <value>True when Adaptive Performance is initialized, running and available, false otherwise.</value>
+        bool Initialized { get; }
+
+        /// <summary>
+        /// Returns true if Adaptive Performance was initialized and is actively running, false otherwise.
+        /// This means that Adaptive Performance is enabled in StartupSettings.
+        /// </summary>
+        /// <value>True when Adaptive Performance is initialized and available, false otherwise.</value>
         bool Active { get; }
 
         /// <summary>
@@ -79,6 +88,12 @@ namespace UnityEngine.AdaptivePerformance
         /// </summary>
         /// <value>Interface to control CPU and GPU performance levels of the device.</value>
         IDevicePerformanceControl DevicePerformanceControl { get; }
+
+        /// <summary>
+        /// Access performance mode status information of the device.
+        /// </summary>
+        /// <value>Interface to access performance mode status information of the device.</value>
+        IPerformanceModeStatus PerformanceModeStatus { get; }
 
         /// <summary>
         /// Access to development (logging) settings.
@@ -104,16 +119,117 @@ namespace UnityEngine.AdaptivePerformance
         /// <param name="feature">The feature in question. See <see cref="Provider.Feature"/>.</param>
         /// <returns>True if the requested feature is supported, false otherwise.</returns>
         bool SupportedFeature(Provider.Feature feature);
+
+        /// <summary>
+        /// Initiates the initialization process for Adaptive Performance by attempting to initialize the loaders.  When
+        /// this completes successfully, <see cref="Initialized"/> will be <c>true</c>. Adaptive Performance can now be
+        /// started by calling the <see cref="StartAdaptivePerformance"/> method.
+        /// </summary>
+        void InitializeAdaptivePerformance();
+
+        /// <summary>
+        /// Attempts to start Adaptive Performance by requesting the active loader and all subsystems to start.  When
+        /// this completes successfully, <see cref="Active"/> will be <c>true</c>.
+        /// </summary>
+        void StartAdaptivePerformance();
+
+        /// <summary>
+        /// Attempts to stop Adaptive Performance by requesting the active loader and all subsystems to stop.  When
+        /// this completes successfully, <see cref="Active"/> will be <c>false</c>.
+        /// </summary>
+        void StopAdaptivePerformance();
+
+        /// <summary>
+        /// Stops Adaptive Performance (if still running) and initiates the tear down process.  When this completes
+        /// successfully, <see cref="Initialized"/> will be <c>false</c>.
+        /// </summary>
+        void DeinitializeAdaptivePerformance();
     }
 
     /// <summary>
-    /// Global access to the default AdaptivePerformance interface.
+    /// Global access to the default Adaptive Performance interface and lifecycle management controls.
     /// </summary>
     public static class Holder
     {
+        static IAdaptivePerformance m_Instance;
+
         /// <summary>
-        /// Global access to the default AdaptivePerformance interface to access the main manager object.
+        /// Global access to the default Adaptive Performance interface to access the main manager object.
         /// </summary>
-        static public IAdaptivePerformance Instance { get; internal set; }
+        public static IAdaptivePerformance Instance
+        {
+            get { return m_Instance; }
+            internal set
+            {
+                if(value == null)
+                    LifecycleEventHandler?.Invoke(m_Instance, LifecycleChangeType.Destroyed);
+                else
+                    LifecycleEventHandler?.Invoke(value, LifecycleChangeType.Created);
+
+                m_Instance = value;
+            }
+        }
+
+        /// <summary>
+        /// Create and attach the Adaptive Performance to the scene and initiate the startup process for the provider.
+        /// After initialization is complete, <see cref="Instance"/> is made available.
+        /// <remarks>
+        /// Should only be used when "Initialize on Startup" is disabled.
+        /// </remarks>
+        /// </summary>
+        public static void Initialize()
+        {
+            if (Instance != null)
+                return;
+
+            AdaptivePerformanceInitializer.Initialize();
+
+            if (Instance != null)
+                Instance.InitializeAdaptivePerformance();
+        }
+
+        /// <summary>
+        /// Stops Adaptive Performance (if still running) and initiates the tear down process. Once complete,
+        /// <see cref="Instance"/> is no longer available.  All Adaptive Performance objects are removed from the
+        /// scene.
+        /// </summary>
+        public static void Deinitialize()
+        {
+            if (Instance != null)
+                Instance.DeinitializeAdaptivePerformance();
+
+            AdaptivePerformanceInitializer.Deinitialize();
+            Instance = null;
+        }
+
+        /// <summary>
+        /// Subscribe to Adaptive Performance lifecycle events which are sent when the <see cref="Instance"/>
+        /// value changes.
+        /// </summary>
+        public static event LifecycleEventHandler LifecycleEventHandler;
+    }
+
+    /// <summary>
+    /// Adaptive Performance lifecycle events which are sent when the lifecycle of <see cref="IAdaptivePerformance"/>
+    /// is changed.
+    /// </summary>
+    /// <param name="instance"><see cref="IAdaptivePerformance"/> instance.</param>
+    /// <param name="changeType">Type of lifecycle change on <c>instance</c></param>
+    public delegate void LifecycleEventHandler(IAdaptivePerformance instance, LifecycleChangeType changeType);
+
+    /// <summary>
+    /// Types of Adaptive Performance lifecycle changes.
+    /// </summary>
+    public enum LifecycleChangeType
+    {
+        /// <summary>
+        /// Adaptive Performance was created.
+        /// </summary>
+        Created,
+
+        /// <summary>
+        /// Adaptive Performance was destroyed.
+        /// </summary>
+        Destroyed
     }
 }

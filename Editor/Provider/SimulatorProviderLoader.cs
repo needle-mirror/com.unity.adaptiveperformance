@@ -15,6 +15,22 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         static List<AdaptivePerformanceSubsystemDescriptor> s_SimulatorSubsystemDescriptors =
             new List<AdaptivePerformanceSubsystemDescriptor>();
 
+        /// <summary>
+        /// Returns if the provider loader was initialized successfully.
+        /// </summary>
+        public override bool Initialized
+        {
+            get { return simulatorSubsystem != null; }
+        }
+
+        /// <summary>
+        /// Returns if the provider loader is currently running.
+        /// </summary>
+        public override bool Running
+        {
+            get { return simulatorSubsystem != null && simulatorSubsystem.running; }
+        }
+
         /// <summary>Returns the currently active Simulator Subsystem instance, if any.</summary>
         public SimulatorAdaptivePerformanceSubsystem simulatorSubsystem
         {
@@ -73,7 +89,7 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
         public override bool Deinitialize()
         {
             DestroySubsystem<SimulatorAdaptivePerformanceSubsystem>();
-            return true;
+            return base.Deinitialize();
         }
     }
 }

@@ -73,7 +73,16 @@ namespace UnityEngine.AdaptivePerformance
         {
             T subsystem = GetLoadedSubsystem<T>();
             if (subsystem != null)
+            {
+                if (subsystem.running)
+                    subsystem.Stop();
+
+                var subsystemType = typeof(T);
+                if (m_SubsystemInstanceMap.ContainsKey(subsystemType))
+                    m_SubsystemInstanceMap.Remove(subsystemType);
+
                 subsystem.Destroy();
+            }
         }
 
         /// <summary>
@@ -111,7 +120,7 @@ namespace UnityEngine.AdaptivePerformance
         }
 
         /// <summary>
-        /// Override of <see cref="Deinitialize"/> to provide for clearing the instance map.true
+        /// Override of <see cref="Deinitialize"/> to provide for clearing the instance map.
         ///
         /// If you override <see cref="Deinitialize"/> in your subclass, you must call the base
         /// implementation to allow the instance map tp be cleaned up correctly.

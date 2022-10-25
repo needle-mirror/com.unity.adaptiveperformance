@@ -68,7 +68,8 @@ For more information about the Cluster Info feature see the [user guide](user-gu
 
 #### Performance Levels
 
-Use the On Performance Level event unit to recieve updates when CPU or GPU levels change.
+Use the On Performance Level event unit to receive updates when CPU or GPU levels change.
+
 ![Adaptive Performance on performance levels event unit.](Images/VisualScripting/vs-performancelevels.png)
 
 To actively change performance levels use the Set Performance Level unit.
@@ -79,7 +80,19 @@ To see the current CPU and GPU performance levels use the Get Performance Level 
 
 ![Adaptive Performance performance levels read only unit.](Images/VisualScripting/vs-getperformancelevels.png)
 
-For more information about boost mode see the [user guide](user-guide.md#configuring-cpu-and-gpu-performance-levels).
+For more information about performance levels see the [user guide](user-guide.md#configuring-cpu-and-gpu-performance-levels).
+
+#### Performance Mode
+
+Use the On Performance Mode event unit to receive updates when the performance mode changes.
+
+![Adaptive Performance on performance mode event unit.](Images/VisualScripting/vs-onperformancemode.png)
+
+To see the current performance mode use the Get Performance Mode unit.
+
+![Adaptive Performance performance mode read only unit.](Images/VisualScripting/vs-getperformancemode.png)
+
+For more information about performance mode see the [user guide](user-guide.md#performance-mode-status).
 
 #### Boost
 
@@ -103,7 +116,7 @@ To see the current thermal or performance action or when the next evaluation hap
 
 ![Adaptive Performance scaler unit.](Images/VisualScripting/vs-indexer.png)
 
-Use the On Level Scaler event unit to recieve updates when and to which level a scaler changes.
+Use the On Level Scaler event unit to receive updates when and to which level a scaler changes.
 
 ![Adaptive Performance scaler unit.](Images/VisualScripting/vs-scaler.png)
 

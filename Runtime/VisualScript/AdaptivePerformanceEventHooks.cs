@@ -41,6 +41,10 @@ namespace UnityEngine.AdaptivePerformance.VisualScripting
         /// Scaler event triggered
         /// </summary>
         public const string OnScalerEvent = "OnScalerEvent";
+        /// <summary>
+        /// Performance Mode event triggered
+        /// </summary>
+        public const string OnPerformanceModeEvent = "OnPerformanceModeEvent";
     }
 }
 #endif

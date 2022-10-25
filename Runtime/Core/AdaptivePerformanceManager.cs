@@ -8,12 +8,13 @@ namespace UnityEngine.AdaptivePerformance
     internal class AdaptivePerformanceManager
         : MonoBehaviour
         , IAdaptivePerformance
-        , IThermalStatus, IPerformanceStatus, IDevicePerformanceControl, IDevelopmentSettings
+        , IThermalStatus, IPerformanceStatus, IDevicePerformanceControl, IDevelopmentSettings, IPerformanceModeStatus
     {
         public event ThermalEventHandler ThermalEvent;
         public event PerformanceBottleneckChangeHandler PerformanceBottleneckChangeEvent;
         public event PerformanceLevelChangeHandler PerformanceLevelChangeEvent;
         public event PerformanceBoostChangeHandler PerformanceBoostChangeEvent;
+        public event PerformanceModeEventHandler PerformanceModeEvent;
 
         private Provider.AdaptivePerformanceSubsystem m_Subsystem = null;
 
@@ -57,6 +58,10 @@ namespace UnityEngine.AdaptivePerformance
 
         public FrameTiming FrameTiming { get { return m_FrameTiming; } }
 
+        private PerformanceMode m_PerformanceMode = PerformanceMode.Unknown;
+
+        public PerformanceMode PerformanceMode { get { return m_PerformanceMode; } }
+
         public bool Logging
         {
             get { return APLog.enabled; }
@@ -65,7 +70,28 @@ namespace UnityEngine.AdaptivePerformance
 
         public int LoggingFrequencyInFrames { get; set; }
 
-        public bool Active { get { return m_Subsystem != null; } }
+        public bool Initialized
+        {
+            get
+            {
+                return m_Subsystem != null
+                       && m_Subsystem.Initialized
+                       && AdaptivePerformanceGeneralSettings.Instance != null
+                       && AdaptivePerformanceGeneralSettings.Instance.IsProviderInitialized;
+            }
+        }
+
+        public bool Active
+        {
+            get
+            {
+                return m_Subsystem != null
+                       && m_Subsystem.running
+                       && AdaptivePerformanceGeneralSettings.Instance != null
+                       && AdaptivePerformanceGeneralSettings.Instance.IsProviderInitialized
+                       && AdaptivePerformanceGeneralSettings.Instance.IsProviderStarted;
+            }
+        }
 
         public int MaxCpuPerformanceLevel { get { return m_DevicePerfControl != null ? m_DevicePerfControl.MaxCpuPerformanceLevel : Constants.UnknownPerformanceLevel; } }
 
@@ -129,6 +155,7 @@ namespace UnityEngine.AdaptivePerformance
         public IThermalStatus ThermalStatus { get { return this; } }
         public IPerformanceStatus PerformanceStatus { get { return this; } }
         public IDevicePerformanceControl DevicePerformanceControl { get { return this; } }
+        public IPerformanceModeStatus PerformanceModeStatus { get { return this; } }
 
         public AdaptivePerformanceIndexer Indexer { get; private set; }
 
@@ -151,6 +178,7 @@ namespace UnityEngine.AdaptivePerformance
         public void Awake()
         {
             APLog.enabled = true;
+
             if (AdaptivePerformanceGeneralSettings.Instance == null)
             {
                 APLog.Debug("No Provider was configured for use. Make sure you added at least one Provider in the Adaptive Performance Settings.");
@@ -165,96 +193,7 @@ namespace UnityEngine.AdaptivePerformance
                 return;
             }
 
-            var activeLoader = AdaptivePerformanceGeneralSettings.Instance.Manager.ActiveLoaderAs<AdaptivePerformanceLoader>();
-            if (activeLoader == null)
-            {
-                APLog.Debug("No Active Loader was found. Make sure to select your loader in the Adaptive Performance Settings for this platform.");
-                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
-                return;
-            }
-
-            m_Settings = activeLoader.GetSettings();
-            if (m_Settings == null)
-            {
-                APLog.Debug("No Settings available. Did the Post Process Buildstep fail?");
-                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
-                return;
-            }
-
-            AutomaticPerformanceControl = m_Settings.automaticPerformanceMode;
-            LoggingFrequencyInFrames = m_Settings.statsLoggingFrequencyInFrames;
-            APLog.enabled = m_Settings.logging;
-
-            if (m_Subsystem == null)
-            {
-                var subsystem = (Provider.AdaptivePerformanceSubsystem)activeLoader.GetDefaultSubsystem();
-
-                if (subsystem != null)
-                {
-                    if (subsystem.initialized)
-                    {
-                        m_Subsystem = subsystem;
-                        APLog.Debug("Subsystem version={0}", m_Subsystem.Version);
-                    }
-                    else
-                    {
-                        subsystem.Destroy();
-                        APLog.Debug("Subsystem not initialized.");
-                        AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
-                        return;
-                    }
-                }
-            }
-
-            if (m_Subsystem != null)
-            {
-                m_UseProviderOverallFrameTime = m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime);
-                m_DevicePerfControl = new DevicePerformanceControlImpl(m_Subsystem.PerformanceLevelControl);
-                m_AutoPerformanceLevelController = new AutoPerformanceLevelController(m_DevicePerfControl, PerformanceStatus, ThermalStatus);
-
-                m_AppLifecycle = m_Subsystem.ApplicationLifecycle;
-
-                if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuFrameTime))
-                {
-                    m_CpuFrameTimeProvider = new CpuTimeProvider();
-                    StartCoroutine(InvokeEndOfFrame());
-                }
-
-                if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.GpuFrameTime))
-                {
-                    m_GpuFrameTimeProvider = new GpuTimeProvider();
-                }
-
-                m_TemperatureTrend = new TemperatureTrend(m_Subsystem.Capabilities.HasFlag(Provider.Feature.TemperatureTrend));
-
-                // Request maximum performance by default
-                if (m_RequestedCpuLevel == Constants.UnknownPerformanceLevel)
-                    m_RequestedCpuLevel = m_DevicePerfControl.MaxCpuPerformanceLevel;
-                if (m_RequestedGpuLevel == Constants.UnknownPerformanceLevel)
-                    m_RequestedGpuLevel = m_DevicePerfControl.MaxGpuPerformanceLevel;
-
-                // Override to get maximum performance by default in 'auto' mode
-                m_NewUserPerformanceLevelRequest = true;
-
-                if (m_Subsystem.PerformanceLevelControl == null)
-                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.System;
-                else if (AutomaticPerformanceControl)
-                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.Automatic;
-                else
-                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.Manual;
-
-                ThermalEvent += (ThermalMetrics thermalMetrics) => LogThermalEvent(thermalMetrics);
-                PerformanceBottleneckChangeEvent += (PerformanceBottleneckChangeEventArgs ev) => LogBottleneckEvent(ev);
-                PerformanceLevelChangeEvent += (PerformanceLevelChangeEventArgs ev) => LogPerformanceLevelEvent(ev);
-
-                if (m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuPerformanceBoost))
-                    PerformanceBoostChangeEvent += (PerformanceBoostChangeEventArgs ev) => LogBoostEvent(ev);
-
-                Indexer = new AdaptivePerformanceIndexer(ref m_Settings);
-
-                UpdateSubsystem();
-            }
-            AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+            InitializeAdaptivePerformance();
         }
 
         private void LogThermalEvent(ThermalMetrics ev)
@@ -279,6 +218,14 @@ namespace UnityEngine.AdaptivePerformance
             APLog.Debug("[perf event] CPU boost: {0}, GPU boost: {1}", ev.CpuBoost, ev.GpuBoost);
             #if VISUAL_SCRIPTING_ENABLED
             EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnBoostEvent, ev);
+            #endif
+        }
+
+        private void LogPerformanceModeEvent(PerformanceMode performanceMode)
+        {
+            APLog.Debug("[performance mode event] performance mode: {0}", performanceMode);
+            #if VISUAL_SCRIPTING_ENABLED
+            EventBus.Trigger(VisualScripting.AdaptivePerformanceEventHooks.OnPerformanceModeEvent, performanceMode);
             #endif
         }
 
@@ -315,6 +262,9 @@ namespace UnityEngine.AdaptivePerformance
 
         public void LateUpdate()
         {
+            if (!Active)
+                return;
+
             // m_RenderThreadCpuTime uses native plugin event to get CPU time of render thread.
             // We don't want to do this at end of frame because it might introduce an unnecessary sync when GraphicsJobs are used.
             // Alternative would be to use Vulkan native plugin API to configure the event.
@@ -334,7 +284,7 @@ namespace UnityEngine.AdaptivePerformance
 
         public void Update()
         {
-            if (m_Subsystem == null)
+            if (!Active)
                 return;
 
             UpdateSubsystem();
@@ -359,6 +309,7 @@ namespace UnityEngine.AdaptivePerformance
                     APLog.Debug("CPU Boost Mode {0}, GPU Boost Mode {1}", m_PerformanceMetrics.CpuPerformanceBoost, m_PerformanceMetrics.GpuPerformanceBoost);
                     APLog.Debug("Cluster Info = Big Cores: {0} Medium Cores: {1} Little Cores: {2}", m_PerformanceMetrics.ClusterInfo.BigCore, m_PerformanceMetrics.ClusterInfo.MediumCore, m_PerformanceMetrics.ClusterInfo.LittleCore);
                     APLog.Debug("FPS = {0}", 1.0f / m_FrameTiming.AverageFrameTime);
+                    APLog.Debug("Performance Mode = {0}", m_PerformanceMode);
                 }
             }
         }
@@ -377,6 +328,7 @@ namespace UnityEngine.AdaptivePerformance
             AdaptivePerformanceProfilerStats.TemperatureLevelCounter.Sample(m_ThermalMetrics.TemperatureLevel);
             AdaptivePerformanceProfilerStats.TemperatureTrendCounter.Sample(m_ThermalMetrics.TemperatureTrend);
             AdaptivePerformanceProfilerStats.BottleneckCounter.Sample((int)m_PerformanceMetrics.PerformanceBottleneck);
+            AdaptivePerformanceProfilerStats.PerformanceModeCounter.Sample((int)m_PerformanceMode);
         }
 
         private void AccumulateTimingValue(ref float accu, float newValue)
@@ -439,6 +391,7 @@ namespace UnityEngine.AdaptivePerformance
             bool triggerPerformanceBottleneckChangeEvent = false;
             bool triggerThermalEventEvent = false;
             bool triggerPerformanceBoostChangeEvent = false;
+            bool triggerPerformanceModeEvent = false;
             var performanceBottleneckChangeEventArgs = new PerformanceBottleneckChangeEventArgs();
             var performanceBoostChangeEventArgs = new PerformanceBoostChangeEventArgs();
 
@@ -461,6 +414,8 @@ namespace UnityEngine.AdaptivePerformance
                 (updateResult.ChangeFlags.HasFlag(Provider.Feature.WarningLevel) ||
                     updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureLevel) ||
                     updateResult.ChangeFlags.HasFlag(Provider.Feature.TemperatureTrend));
+
+            triggerPerformanceModeEvent = (PerformanceModeEvent != null) && updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceMode);
 
             // The Subsystem may have changed the current levels (e.g. "timeout" of Samsung subsystem)
             if (updateResult.ChangeFlags.HasFlag(Provider.Feature.CpuPerformanceLevel))
@@ -564,6 +519,12 @@ namespace UnityEngine.AdaptivePerformance
             {
                 m_PerformanceMetrics.ClusterInfo = updateResult.ClusterInfo;
             }
+
+            if (updateResult.ChangeFlags.HasFlag(Provider.Feature.PerformanceMode))
+            {
+                m_PerformanceMode = updateResult.PerformanceMode;
+            }
+
             // PerformanceLevelChangeEvent and BoostModeChangeEvent triggers before those since it's useful for the user to know when the auto cpu/gpu level controller already made adjustments
             if (triggerThermalEventEvent)
                 ThermalEvent.Invoke(m_ThermalMetrics);
@@ -574,6 +535,10 @@ namespace UnityEngine.AdaptivePerformance
                 performanceBoostChangeEventArgs.CpuBoost = m_DevicePerfControl.CpuPerformanceBoost;
                 performanceBoostChangeEventArgs.GpuBoost = m_DevicePerfControl.GpuPerformanceBoost;
                 PerformanceBoostChangeEvent(performanceBoostChangeEventArgs);
+            }
+            if (triggerPerformanceModeEvent)
+            {
+                PerformanceModeEvent.Invoke(m_PerformanceMode);
             }
         }
 
@@ -589,10 +554,191 @@ namespace UnityEngine.AdaptivePerformance
 
         public void OnDestroy()
         {
+            DeinitializeAdaptivePerformance();
+        }
+
+        public void InitializeAdaptivePerformance()
+        {
+            if (Active)
+            {
+                // already initialized and running
+                return;
+            }
+
+            if (Initialized)
+            {
+                // already initialized
+                return;
+            }
+
+            APLog.enabled = true;
+
+            if (AdaptivePerformanceGeneralSettings.Instance == null)
+            {
+                APLog.Debug("No Provider was configured for use. Make sure you added at least one Provider in the Adaptive Performance Settings.");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            if (!AdaptivePerformanceGeneralSettings.Instance.IsProviderInitialized)
+            {
+                // attempt to initialize
+                AdaptivePerformanceGeneralSettings.Instance.InitAdaptivePerformance();
+            }
+
+            if (!AdaptivePerformanceGeneralSettings.Instance.IsProviderInitialized)
+            {
+                // did not initialize successfully
+
+                APLog.Debug("Initialization of Provider was not successful. Are there errors present?");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            var activeLoader = AdaptivePerformanceGeneralSettings.Instance.Manager.ActiveLoaderAs<AdaptivePerformanceLoader>();
+            if (activeLoader == null)
+            {
+                APLog.Debug("No Active Loader was found. Make sure to select your loader in the Adaptive Performance Settings for this platform.");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            m_Settings = activeLoader.GetSettings();
+            if (m_Settings == null)
+            {
+                APLog.Debug("No Settings available. Did the Post Process Buildstep fail?");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+
+            var scalerProfiles = m_Settings.GetAvailableScalerProfiles();
+            if (scalerProfiles.Length <= 0)
+            {
+                APLog.Debug("No Scaler Profiles available. Did you remove all profiles manually from the provider Settings?");
+                AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                return;
+            }
+            m_Settings.LoadScalerProfile(scalerProfiles[m_Settings.defaultScalerProfilerIndex]);
+
+            AutomaticPerformanceControl = m_Settings.automaticPerformanceMode;
+            LoggingFrequencyInFrames = m_Settings.statsLoggingFrequencyInFrames;
+            APLog.enabled = m_Settings.logging;
+
+            if (m_Subsystem == null)
+            {
+                var subsystem = (Provider.AdaptivePerformanceSubsystem)activeLoader.GetDefaultSubsystem();
+
+                if (subsystem != null)
+                {
+                    if (subsystem.Initialized)
+                    {
+                        m_Subsystem = subsystem;
+                        APLog.Debug("Subsystem version={0}", m_Subsystem.Version);
+                    }
+                    else
+                    {
+                        subsystem.Destroy();
+                        APLog.Debug("Subsystem not initialized.");
+                        AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+                        return;
+                    }
+                }
+            }
+
             if (m_Subsystem != null)
-                m_Subsystem.Destroy();
+            {
+                m_UseProviderOverallFrameTime = m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime);
+                m_DevicePerfControl = new DevicePerformanceControlImpl(m_Subsystem.PerformanceLevelControl);
+                m_AutoPerformanceLevelController = new AutoPerformanceLevelController(m_DevicePerfControl, PerformanceStatus, ThermalStatus);
+
+                m_AppLifecycle = m_Subsystem.ApplicationLifecycle;
+
+                if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuFrameTime))
+                {
+                    m_CpuFrameTimeProvider = new CpuTimeProvider();
+                    StartCoroutine(InvokeEndOfFrame());
+                }
+
+                if (!m_Subsystem.Capabilities.HasFlag(Provider.Feature.GpuFrameTime))
+                {
+                    m_GpuFrameTimeProvider = new GpuTimeProvider();
+                }
+
+                m_TemperatureTrend = new TemperatureTrend(m_Subsystem.Capabilities.HasFlag(Provider.Feature.TemperatureTrend));
+
+                // Request maximum performance by default
+                if (m_RequestedCpuLevel == Constants.UnknownPerformanceLevel)
+                    m_RequestedCpuLevel = m_DevicePerfControl.MaxCpuPerformanceLevel;
+                if (m_RequestedGpuLevel == Constants.UnknownPerformanceLevel)
+                    m_RequestedGpuLevel = m_DevicePerfControl.MaxGpuPerformanceLevel;
+
+                // Override to get maximum performance by default in 'auto' mode
+                m_NewUserPerformanceLevelRequest = true;
+
+                if (m_Subsystem.PerformanceLevelControl == null)
+                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.System;
+                else if (AutomaticPerformanceControl)
+                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.Automatic;
+                else
+                    m_DevicePerfControl.PerformanceControlMode = PerformanceControlMode.Manual;
+
+                ThermalEvent += LogThermalEvent;
+                PerformanceBottleneckChangeEvent += LogBottleneckEvent;
+                PerformanceLevelChangeEvent += LogPerformanceLevelEvent;
+                PerformanceModeEvent += LogPerformanceModeEvent;
+
+                if (m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuPerformanceBoost))
+                    PerformanceBoostChangeEvent += LogBoostEvent;
+
+                Indexer = new AdaptivePerformanceIndexer(ref m_Settings);
+
+                UpdateSubsystem();
+            }
+            AdaptivePerformanceAnalytics.SendAdaptiveStartupEvent(m_Subsystem);
+        }
+
+        public void StartAdaptivePerformance()
+        {
+            if (!Initialized)
+                return;
+
+            AdaptivePerformanceGeneralSettings.Instance.StartAdaptivePerformance();
+        }
+
+        public void StopAdaptivePerformance()
+        {
+            if (!Active)
+                return;
+
+            AdaptivePerformanceGeneralSettings.Instance.StopAdaptivePerformance();
+        }
+
+        public void DeinitializeAdaptivePerformance()
+        {
+            if (!Initialized)
+                return;
+
+            AdaptivePerformanceGeneralSettings.Instance.DeInitAdaptivePerformance();
+
             if (Indexer != null)
                 Indexer.UnapplyAllScalers();
+
+            ThermalEvent -= LogThermalEvent;
+            PerformanceBottleneckChangeEvent -= LogBottleneckEvent;
+            PerformanceLevelChangeEvent -= LogPerformanceLevelEvent;
+            PerformanceBoostChangeEvent -= LogBoostEvent;
+            PerformanceModeEvent -= LogPerformanceModeEvent;
+
+            APLog.enabled = false;
+            m_Settings = null;
+            m_Subsystem = null;
+            m_DevicePerfControl = null;
+            m_AutoPerformanceLevelController = null;
+            m_AppLifecycle = null;
+            m_CpuFrameTimeProvider = null;
+            m_GpuFrameTimeProvider = null;
+            m_TemperatureTrend = null;
+            Indexer = null;
         }
 
         public void OnApplicationPause(bool pause)
