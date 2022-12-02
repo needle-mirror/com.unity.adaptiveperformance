@@ -1,6 +1,6 @@
 # Adaptive Performance provider guide
 
-Adaptive Performance requires platform providers to supply it with necessary data. Loaders, such as the [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html) provider, are generally provided via their own package, with the exception of the [Device Simulator (Desktop)](simulator.md) plugin.
+Adaptive Performance requires platform providers to supply it with necessary data. Loaders, such as the [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) and [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html) providers, are generally provided via their own package, with the exception of the [Device Simulator (Desktop)](simulator.md) plugin.
 
 ## Lifecycle management
 

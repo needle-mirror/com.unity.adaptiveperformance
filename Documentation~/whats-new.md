@@ -10,6 +10,7 @@ The main updates in this release include:
 * Adaptive Performance Subsystem is using the internal Subsystems module now and removed the subsystem registration. This introduces an internal APProvider class.
 * New APIs for controlling the lifecycle of Adaptive Performance.
 * New `IPerformanceModeStatus` for retrieving performance mode and listening to performance mode changes.
+* Support for new the [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) Adaptive Performance provider.
 
 ## Updated
 * Documentation

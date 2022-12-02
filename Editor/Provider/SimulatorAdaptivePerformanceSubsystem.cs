@@ -499,6 +499,12 @@ namespace UnityEditor.AdaptivePerformance.Simulator.Editor
             /// </summary>
             public int MaxGpuPerformanceLevel { get { return 4; } }
 
+            protected override bool TryInitialize()
+            {
+                Initialized = true;
+
+                return Initialized;
+            }
         }
 
         /// <summary>

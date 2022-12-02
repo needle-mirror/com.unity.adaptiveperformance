@@ -54,5 +54,6 @@ Adaptive Performance only works in combination with data provider subsystems. Yo
 
 To use Adaptive Performance, you must install and activate at least one subsystem. This version of Adaptive Performance supports the following subsystems:
 
+* [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html)
 * [Samsung (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.samsung.android@latest/index.html)
 * [Simulator (Desktop)](simulator.md)

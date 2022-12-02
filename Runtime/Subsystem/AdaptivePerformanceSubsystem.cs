@@ -307,18 +307,6 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         /// <value>Boolean to tell if subsystem was initialized successfully.</value>
         public abstract bool Initialized { get; protected set; }
-
-        /// <summary>
-        /// OnCreate is called at the end of the initialization process.
-        /// </summary>
-        protected override void OnCreate()
-        {
-            base.OnCreate();
-
-            // this method is triggered at the end of the base.Initialize() method (which is sealed), so setting the
-            // Initialized flag here.
-            Initialized = true;
-        }
     }
     /// <summary>
     /// A class to define a provider subsystem for Adaptive Performance.
