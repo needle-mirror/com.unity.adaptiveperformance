@@ -296,12 +296,12 @@ namespace UnityEngine.AdaptivePerformance
             }
         }
 
-        internal AdaptivePerformanceIndexer(ref IAdaptivePerformanceSettings settings)
+        internal AdaptivePerformanceIndexer(ref IAdaptivePerformanceSettings settings, PerformanceStateTracker tracker)
         {
             m_Settings = settings;
             TimeUntilNextAction = m_Settings.indexerSettings.thermalActionDelay;
             m_ThermalStateTracker = new ThermalStateTracker();
-            m_PerformanceStateTracker = new PerformanceStateTracker(120);
+            m_PerformanceStateTracker = tracker;
             m_UnappliedScalers = new List<AdaptivePerformanceScaler>();
             m_AppliedScalers = new List<AdaptivePerformanceScaler>();
             m_DisabledScalers = new List<AdaptivePerformanceScaler>();
@@ -328,7 +328,7 @@ namespace UnityEngine.AdaptivePerformance
                 CollectProfilerStats();
 
             // Enforce minimum wait time between any scaler changes
-            TimeUntilNextAction = Mathf.Max(TimeUntilNextAction - Time.deltaTime, 0);
+            TimeUntilNextAction = Mathf.Max(TimeUntilNextAction - DeltaTime(), 0);
             if (TimeUntilNextAction != 0)
                 return;
 
@@ -371,6 +371,11 @@ namespace UnityEngine.AdaptivePerformance
                 TimeUntilNextAction = m_Settings.indexerSettings.performanceActionDelay / 2;
                 return;
             }
+        }
+
+        protected virtual float DeltaTime()
+        {
+            return Time.deltaTime;
         }
 
         void CollectProfilerStats()

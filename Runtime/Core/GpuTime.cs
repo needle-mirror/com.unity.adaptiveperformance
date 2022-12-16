@@ -12,7 +12,7 @@ namespace UnityEngine.AdaptivePerformance
         {
             get
             {
-                if (UnityEngine.FrameTimingManager.GetLatestTimings(1, m_FrameTiming) >= 1)
+                if (GetLatestTimings() >= 1)
                 {
                     double gpuFrameTime = m_FrameTiming[0].gpuFrameTime;
                     if (gpuFrameTime > 0.0)
@@ -20,6 +20,11 @@ namespace UnityEngine.AdaptivePerformance
                 }
                 return -1.0f;
             }
+        }
+
+        protected virtual uint GetLatestTimings()
+        {
+            return UnityEngine.FrameTimingManager.GetLatestTimings(1, m_FrameTiming);
         }
 
         public void Measure()

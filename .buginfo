@@ -1,6 +1,0 @@
-system: jira
-server: jira.unity3d.com
-project: APB
-issuetype: Bug
-component:
-  - AdaptivePerformance

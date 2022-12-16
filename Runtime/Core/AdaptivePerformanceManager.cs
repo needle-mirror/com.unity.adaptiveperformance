@@ -16,8 +16,6 @@ namespace UnityEngine.AdaptivePerformance
         public event PerformanceBoostChangeHandler PerformanceBoostChangeEvent;
         public event PerformanceModeEventHandler PerformanceModeEvent;
 
-        private Provider.AdaptivePerformanceSubsystem m_Subsystem = null;
-
         private bool m_JustResumed = false;
 
         private int m_RequestedCpuLevel = Constants.UnknownPerformanceLevel;
@@ -161,6 +159,12 @@ namespace UnityEngine.AdaptivePerformance
 
         private IAdaptivePerformanceSettings m_Settings;
         public IAdaptivePerformanceSettings Settings { get { return m_Settings; }  private set { m_Settings = value; } }
+
+        private Provider.AdaptivePerformanceSubsystem m_Subsystem = null;
+        public Provider.AdaptivePerformanceSubsystem Subsystem
+        {
+            get { return m_Subsystem; }
+        }
 
         DevicePerformanceControlImpl m_DevicePerfControl;
         AutoPerformanceLevelController m_AutoPerformanceLevelController;
@@ -690,7 +694,7 @@ namespace UnityEngine.AdaptivePerformance
                 if (m_Subsystem.Capabilities.HasFlag(Provider.Feature.CpuPerformanceBoost))
                     PerformanceBoostChangeEvent += LogBoostEvent;
 
-                Indexer = new AdaptivePerformanceIndexer(ref m_Settings);
+                Indexer = new AdaptivePerformanceIndexer(ref m_Settings, new PerformanceStateTracker(120));
 
                 UpdateSubsystem();
             }

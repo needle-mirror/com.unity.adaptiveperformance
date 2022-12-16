@@ -114,6 +114,12 @@ namespace UnityEngine.AdaptivePerformance
         IAdaptivePerformanceSettings Settings { get; }
 
         /// <summary>
+        /// Access to the active Subsystem. See <see cref="Provider.AdaptivePerformanceSubsystem"/>.
+        /// </summary>
+        /// <value>Reference to active Subsystem.</value>
+        Provider.AdaptivePerformanceSubsystem Subsystem { get; }
+
+        /// <summary>
         /// List of supported Features by the loaded provider. See <see cref="Provider.Feature"/>.
         /// </summary>
         /// <param name="feature">The feature in question. See <see cref="Provider.Feature"/>.</param>

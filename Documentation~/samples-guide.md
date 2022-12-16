@@ -471,7 +471,7 @@ This sample is based on the Thermal sample, and is heavy on GPU usage to demonst
 * Battery - Performance is limited as mode is set to preserve battery.
 * Unknown - Performance mode is unknown.
 
-**Note** This demo requires you to install the [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) provider.
+**Note** This demo requires you to install the [Android](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) provider.
 
 # Technical details
 ## Requirements

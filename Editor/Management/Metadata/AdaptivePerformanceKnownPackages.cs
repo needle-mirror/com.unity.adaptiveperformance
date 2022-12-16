@@ -59,14 +59,14 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
 
             packages.Add(new KnownPackage() {
                 metadata = new KnownPackageMetadata(){
-                    packageName = "Adaptive Performance Google Android",
+                    packageName = "Adaptive Performance Android",
                     packageId = "com.unity.adaptiveperformance.google.android",
                     settingsType = "UnityEngine.AdaptivePerformance.Google.Android.GoogleAndroidProviderSettings",
                     licenseURL = "https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest?subfolder=/license/LICENSE.html",
                     loaderMetadata = new List<IAdaptivePerformanceLoaderMetadata>()
                     {
                         new KnownLoaderMetadata() {
-                            loaderName = "Google Android Provider",
+                            loaderName = "Android Provider",
                             loaderType = "UnityEngine.AdaptivePerformance.Google.Android.GoogleAndroidProviderLoader",
                             supportedBuildTargets = new List<BuildTargetGroup>()
                             {

@@ -101,8 +101,13 @@ namespace UnityEngine.AdaptivePerformance
         public CpuTimeProvider()
         {
             m_MainThreadCpuTime = new MainThreadCpuTime();
-            if (SystemInfo.graphicsMultiThreaded)
+            if (IsGraphicsMultiThreaded())
                 m_RenderThreadCpuTime = new RenderThreadCpuTime();
+        }
+
+        protected virtual bool IsGraphicsMultiThreaded()
+        {
+            return SystemInfo.graphicsMultiThreaded;
         }
 
         public void Reset()

@@ -9,16 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 * New APIs for controlling the lifecycle of Adaptive Performance.
 * New `IPerformanceModeStatus` for retrieving performance mode and listening to performance mode changes.
-* Support for new the [Google (Android)](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) Adaptive Performance provider.
+* Support for new the [Android](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) Adaptive Performance provider.
+* New property on `IAdaptivePerformance` to access the active subsystem.
 
 ### Removed
 * Dependency on com.unity.subsystemregistration
 
 ### Changed
 * Adaptive Performance Subsystem is using the internal Subsystems module now and removed the subsystem registration. This introduces an internal APProvider class.
+* Adjusted labeling of new Android provider to be listed as Android provider.
 
 ### Fixed
 - Adjusted the loader and subsystem initialization process to allow for falling back to another subsystem if init is not successful.
+- Addressed silent test failure reporting as success now surfacing as a failure after UTF bug addressed.
 
 ## [4.0.1] - 2022-06-15
 
