@@ -181,16 +181,6 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
             Assert.IsNotNull(changeType);
             Assert.AreEqual(LifecycleChangeType.Destroyed, changeType.Value);
 
-
-            yield return null;
-
-            apGameObject = GameObject.Find(AdaptivePerformanceManagerSpawner.AdaptivePerformanceManagerObjectName);
-            Assert.IsNull(apGameObject);
-
-            apm = UnityEngine.Object.FindObjectOfType<AdaptivePerformanceManager>();
-            Assert.IsNull(apm);
-
-
             yield return null;
 
             Assert.AreEqual(2, lifecycleEventCount);

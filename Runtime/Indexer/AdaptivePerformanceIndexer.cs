@@ -372,7 +372,10 @@ namespace UnityEngine.AdaptivePerformance
                 return;
             }
         }
-
+        /// <summary>
+        /// Returns <see cref="Time.deltaTime"/> only and is primarily encapsulated for tests. 
+        /// </summary>
+        /// <returns>delta time</returns>
         protected virtual float DeltaTime()
         {
             return Time.deltaTime;

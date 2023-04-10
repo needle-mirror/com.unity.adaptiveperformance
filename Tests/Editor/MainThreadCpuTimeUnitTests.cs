@@ -22,7 +22,6 @@ namespace UnityEditor.AdaptivePerformance.Editor.Tests
         }
 
         [Test]
-        [Ignore("Better to write an integration test, since the Unit Test cannot stub implementations based on a programmatic call")]
         public void CheckCPUFrameTime_WithMeasurement_WithoutReset()
         {
             testSubject.Measure();

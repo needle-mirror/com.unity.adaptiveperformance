@@ -97,6 +97,15 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// </summary>
         public bool m_ShowScalerSettings = true;
 
+        /// <summary>
+        /// Controls whether or not the 'EnableBoostOnStartup' option is available. Default value is <c>true</c>.
+        /// </summary>
+        protected virtual bool IsBoostAvailable { get; private set; } = true;
+        /// <summary>
+        /// Controls whether or not the 'AutomaticPerformanceModeEnabled' option is available. Default value is <c>true</c>.
+        /// </summary>
+        protected virtual bool IsAutoPerformanceModeAvailable { get; private set; } = true;
+
         static GUIContent k_ShowRuntimeSettings = EditorGUIUtility.TrTextContent(L10n.Tr("Runtime Settings"));
         static GUIContent k_ShowDevelopmentSettings = EditorGUIUtility.TrTextContent(L10n.Tr("Development Settings"));
         static GUIContent k_ShowIndexerSettings = EditorGUIUtility.TrTextContent(L10n.Tr("Indexer Settings"));
@@ -160,9 +169,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             if (m_LoggingProperty == null)
                 m_LoggingProperty = serializedObject.FindProperty(k_Logging);
-            if (m_AutoPerformanceModeEnabledProperty == null)
+            if (IsAutoPerformanceModeAvailable && m_AutoPerformanceModeEnabledProperty == null)
                 m_AutoPerformanceModeEnabledProperty = serializedObject.FindProperty(k_AutoPerformanceModeEnabled);
-            if (m_EnableBoostOnStartupProperty == null)
+            if (IsBoostAvailable && m_EnableBoostOnStartupProperty == null)
                 m_EnableBoostOnStartupProperty = serializedObject.FindProperty(k_EnableBoostOnStartup);
             if (m_StatsLoggingFrequencyInFramesProperty == null)
                 m_StatsLoggingFrequencyInFramesProperty = serializedObject.FindProperty(k_StatsLoggingFrequencyInFrames);
@@ -214,8 +223,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
             if (m_ShowRuntimeSettings)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(m_AutoPerformanceModeEnabledProperty, s_AutomaticPerformanceModeEnabledLabel);
-                EditorGUILayout.PropertyField(m_EnableBoostOnStartupProperty, s_EnableBoostOnStartupLabel);
+
+                if (IsAutoPerformanceModeAvailable)
+                    EditorGUILayout.PropertyField(m_AutoPerformanceModeEnabledProperty, s_AutomaticPerformanceModeEnabledLabel);
+
+                if (IsBoostAvailable)
+                    EditorGUILayout.PropertyField(m_EnableBoostOnStartupProperty, s_EnableBoostOnStartupLabel);
+
                 DisplayBaseIndexerSettings();
                 DisplayScalerSettings();
                 EditorGUI.indentLevel--;

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 * Adaptive Performance Subsystem is using the internal Subsystems module now and removed the subsystem registration. This introduces an internal APProvider class.
 * Adjusted labeling of new Android provider to be listed as Android provider.
+* Adjusted Project Settings to not allow displaying options that are not present on all Providers.
 
 ### Fixed
 - Adjusted the loader and subsystem initialization process to allow for falling back to another subsystem if init is not successful.
