@@ -1,12 +1,12 @@
 # Adaptive Performance Visual Scripting
 
-After installing Adaptive Performance, Unity's [Visual Scripting](https://docs.unity3d.com/2021.2/Documentation/Manual/com.unity.visualscripting.html) system includes [units](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest/index.html?subfolder=/manual/vs-understanding-units.html) you can use to access Adaptive Performance metrics without implementing anything in C#.
+After installing Adaptive Performance, Unity's [Visual Scripting](https://docs.unity3d.com/2021.2/Documentation/Manual/com.unity.visualscripting.html) system includes [nodes](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest/index.html?subfolder=/manual/vs-nodes.html) that you can use to access Adaptive Performance metrics without implementing anything in C#.
 
 When you install the Visual Scripting package, Unity automatically activates the Adaptive Performance units. When you add Adaptive Performance to a project with existing Visual Scripting graphs, you must recompile the units. To do this, select **Edit** &gt; **Project Settings** &gt; **Visual Scripting** &gt; **Node Library** &gt; **Regenerate Units**.
 
 ![Visual Scripting Regenerate Node setting.](Images/VisualScripting/vs-regenerate.png)
 
-After Unity regenerates Adaptive Performance units, you can add new units in your graph. To do this, right-click on the background of any script graph. You can find the units in the Adaptive Performance submenu.
+After Unity regenerates Adaptive Performance units, you can add new units in your graph. To do this, right-click on the background of any script graph. You can find the units in the Adaptive Performance sub-menu.
 
 ![Visual Scripting Fuzzy entries.](Images/VisualScripting/vs-fuzzy.png)
 
@@ -16,7 +16,7 @@ This section contains information on the Adaptive Performance-related units.
 
 ![Adaptive Performance Visual Scripting units overview.](Images/VisualScripting/vs-overview.png)
 
-After you install Adaptive Performance, the **Visual Scripting Fuzzy finder** will display the following additional units:
+After you install Adaptive Performance, the **Visual Scripting Fuzzy finder** displays the following additional units:
 
 ### Thermal
 
@@ -30,11 +30,11 @@ For read-only properties, the Thermal Metric unit includes the temperature level
 
 ![Adaptive Performance thermal unit.](Images/VisualScripting/vs-thermal.png)
 
-For more information about thermals see the [user guide](user-guide.md#device-thermal-state-feedback).
+For more information on thermals, refer to [device-thermal-state-feedback](user-guide.md#device-thermal-state-feedback).
 
 ### Performance
 
-There are many different performance units available. You can find them in the fuzzy search under AdaptivePerformance/Performance.
+You can find all available performance units in the fuzzy search under AdaptivePerformance/Performance.
 
 #### Bottleneck
 
@@ -42,19 +42,19 @@ Use the On Bottleneck event unit to receive updates when the state of a bottlene
 
 ![Adaptive Performance bottleneck even unit.](Images/VisualScripting/vs-bottleneck.png)
 
-For more information about the bottleneck feature see the [user guide](user-guide.md#performance-bottleneck).
+For more information on the bottleneck feature, refer to the [user guide](user-guide.md#performance-bottleneck).
 
 #### Frametiming
 
 The Frame Timing unit provides different frametime metrics.
 
-![Adaptive Performance frametiming unit.](Images/VisualScripting/vs-frametiming.png)
+![Adaptive Performance frametiming unit](Images/VisualScripting/vs-frametiming.png)
 
-For more information about the frametimings see the [user guide](user-guide.md#frame-timing).
+For more information, refer to [frametimings](user-guide.md#frame-timing).
 
 ##### FPS
 
-The FPS (Frames per Second) items provides with an accurate representation of how many frames per seconds are rendered.
+The FPS (Frames per Second) items provide an accurate representation of how many frames are rendered per second.
 
 ![Adaptive Performance frametiming unit.](Images/VisualScripting/vs-fps.png)
 
@@ -64,7 +64,7 @@ The Cluster Info unit provides information about CPU cores.
 
 ![Adaptive Performance clusterinfo unit.](Images/VisualScripting/vs-clusterinfo.png)
 
-For more information about the Cluster Info feature see the [user guide](user-guide.md#cluster-info).
+For more information about the Cluster Info feature, refer to the [user guide](user-guide.md#cluster-info).
 
 #### Performance Levels
 
@@ -80,7 +80,7 @@ To see the current CPU and GPU performance levels use the Get Performance Level 
 
 ![Adaptive Performance performance levels read only unit.](Images/VisualScripting/vs-getperformancelevels.png)
 
-For more information about performance levels see the [user guide](user-guide.md#configuring-cpu-and-gpu-performance-levels).
+For more information, refer the [user guide](user-guide.md#configuring-cpu-and-gpu-performance-levels).
 
 #### Performance Mode
 
@@ -88,11 +88,11 @@ Use the On Performance Mode event unit to receive updates when the performance m
 
 ![Adaptive Performance on performance mode event unit.](Images/VisualScripting/vs-onperformancemode.png)
 
-To see the current performance mode use the Get Performance Mode unit.
+To see the current performance mode, use the Get Performance Mode unit.
 
 ![Adaptive Performance performance mode read only unit.](Images/VisualScripting/vs-getperformancemode.png)
 
-For more information about performance mode see the [user guide](user-guide.md#performance-mode-status).
+For more information about performance mode, refer to the [user guide](user-guide.md#performance-mode-status).
 
 #### Boost
 
@@ -104,15 +104,15 @@ To activate the CPU or GPU boost use the Set Boost unit.
 
 ![Adaptive Performance boost unit.](Images/VisualScripting/vs-setboost.png)
 
-To see the current status of the CPU or GPU boost use the Get Boost unit.
+To see the current status of the CPU or GPU boost, use the Get Boost unit.
 
 ![Adaptive Performance boost unit.](Images/VisualScripting/vs-getboost.png)
 
-For more information about boost mode see the [user guide](user-guide.md#boost-mode).
+For more information, refer to the [boost mode](user-guide.md#boost-mode).
 
 ### Indexer and Scalers
 
-To see the current thermal or performance action or when the next evaluation happens use the Get Indexer Data unit.
+To view the current thermal or performance action or when the next evaluation happens, use the Get Indexer Data unit.
 
 ![Adaptive Performance scaler unit.](Images/VisualScripting/vs-indexer.png)
 
@@ -120,4 +120,4 @@ Use the On Level Scaler event unit to receive updates when and to which level a 
 
 ![Adaptive Performance scaler unit.](Images/VisualScripting/vs-scaler.png)
 
-For more information about the individual scalers see the [user guide](user-guide.md#indexer-and-scalers).
+For more information about the individual scalers, refer to [indexer-and-scalers](user-guide.md#indexer-and-scalers).

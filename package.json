@@ -2,7 +2,7 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "unity": "2021.2",
   "unityRelease": "0a18",
   "keywords": [
@@ -156,15 +156,15 @@
     }
   ],
   "_upm": {
-    "changelog": "### Added\n* New APIs for controlling the lifecycle of Adaptive Performance.\n* New `IPerformanceModeStatus` for retrieving performance mode and listening to performance mode changes.\n* Support for new the [Android](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) Adaptive Performance provider.\n* New property on `IAdaptivePerformance` to access the active subsystem.\n\n### Removed\n* Dependency on com.unity.subsystemregistration\n\n### Changed\n* Adaptive Performance Subsystem is using the internal Subsystems module now and removed the subsystem registration. This introduces an internal APProvider class.\n* Adjusted labeling of new Android provider to be listed as Android provider.\n* Adjusted Project Settings to not allow displaying options that are not present on all Providers.\n\n### Fixed\n- Adjusted the loader and subsystem initialization process to allow for falling back to another subsystem if init is not successful.\n- Addressed silent test failure reporting as success now surfacing as a failure after UTF bug addressed."
+    "changelog": "### Fixed\n- APB-19: Fixed a missing provider popup message appearing on platforms when not provider is available but Adaptive Performance is installed."
   },
   "upmCi": {
-    "footprint": "2f3aabb5a7f18cbf5dcfd2eb9ae5218621afa5a0"
+    "footprint": "947be195df51e946849e9be66dbf2ff4589906fa"
   },
   "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@5.0/manual/index.html",
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "ef9aded8b3178a1e7593de3c0cba3b0475ce2c18"
+    "revision": "adbff13b4ebae879962b791aa21c2e8c14bf1e22"
   }
 }

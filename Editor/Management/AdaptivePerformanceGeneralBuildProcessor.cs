@@ -29,7 +29,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            CheckInstalledProvider();
+            if(report.summary.platform == BuildTarget.Android)
+                CheckInstalledProvider();
 
             // Always remember to clean up preloaded assets after build to make sure we don't
             // dirty later builds with assets that may not be needed or are out of date.
