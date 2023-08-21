@@ -210,8 +210,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             EditorGUIUtility.hierarchyMode = m_PreviousHierarchyMode;
 
-            serializedObject.ApplyModifiedProperties();
-            AssetDatabase.SaveAssets();
+            if (serializedObject.hasModifiedProperties)
+            {
+                serializedObject.ApplyModifiedProperties();
+                AssetDatabase.SaveAssets();
+            }
         }
 
         /// <summary>
@@ -330,8 +333,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 list.index = index;
                 var element = list.serializedProperty.GetArrayElementAtIndex(index);
                 element.FindPropertyRelative(k_ScalerName).stringValue = s;
-                serializedObject.ApplyModifiedProperties();
-                AssetDatabase.SaveAssets();
+                if (serializedObject.hasModifiedProperties)
+                {
+                    serializedObject.ApplyModifiedProperties();
+                    AssetDatabase.SaveAssets();
+                }
             }));
         }
 

@@ -30,7 +30,10 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
             m_LoaderUi.OnGUI(BuildTarget);
 
-            serializedObject.ApplyModifiedProperties();
+            if (serializedObject.hasModifiedProperties)
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 }
