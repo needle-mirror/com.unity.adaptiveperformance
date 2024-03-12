@@ -625,6 +625,18 @@ namespace UnityEngine.AdaptivePerformance
             set { m_AutomaticPerformanceModeEnabled = value; }
         }
 
+        [SerializeField, Tooltip("Automatic Game Mode")]
+        bool m_AutomaticGameModeEnabled = false;
+
+        /// <summary>
+        /// Whether automated target frame rate based on device GameMode settings should be used.
+        /// </summary>
+        public bool automaticGameMode
+        {
+            get { return m_AutomaticGameModeEnabled; }
+            set { m_AutomaticGameModeEnabled = value; }
+        }
+
         [SerializeField, Tooltip("Enables the CPU and GPU boost mode before engine startup to decrease startup time.")]
         bool m_EnableBoostOnStartup = true;
 

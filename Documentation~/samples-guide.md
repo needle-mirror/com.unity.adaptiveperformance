@@ -28,6 +28,7 @@ Install Adaptive Performance samples from the **Package Manager** window. Some s
 * [Adaptive Layer Culling](#adaptive-layer-culling)
 * [Lifecycle Management](#lifecycle-management)
 * [Performance Mode](#performance-mode)
+* [Game Mode](#game-mode)
 
 
 The following samples require [Universal Render Pipeline](#universal-render-pipeline) to work:
@@ -384,7 +385,7 @@ The Lifecycle Management sample shows how to control the lifecycle of Adaptive P
 
 ## Performance Mode
 
-The Performance Mode sample shows the process to register and respond to performance mode change events from the Adaptive Performance API. To test this, you can use the [Android Game Dashboard UI or Android Debug Bridge (ADB)](https://developer.android.com/games/gamemode/gamemode-api#testing).
+The Performance Mode sample shows the process to register and respond to performance mode change events from the Adaptive Performance API. To test this, you can use the [Android Game Dashboard UI or Android Debug Bridge (ADB)](https://developer.android.com/games/optimize/adpf/gamemode/gamemode-api#switch_game_modes).
 
 ![Performance Mode](Images/Samples/samples-performancemode.png)
 
@@ -398,6 +399,14 @@ This sample is based on the Thermal sample and because it's heavy on GPU usage t
 * Unknown - Performance mode is unknown.
 
 **Note** This demo requires you to install the [Android](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) provider.
+
+## Game Mode
+
+The Game Mode sample demonstrates the automated target refresh rate changes based on the device GameMode setting. Run the demo scene on the device and observe the changes in frame rate counter as you set the game mode using [Android Game Dashboard UI or Android Debug Bridge (ADB)](https://developer.android.com/games/optimize/adpf/gamemode/gamemode-api#switch_game_modes).
+
+![Game Mode](Images/Samples/samples-gamemode.png)
+
+**Note** To use this sample, install the [Android](https://docs.unity3d.com/Packages/com.unity.adaptiveperformance.google.android@latest/index.html) provider and enable **Auto Game Mode** in Adaptive Performance Android provider settings. To achieve the maximum possible refresh rate higher than 60Hz (if supported), disable the **Optimized Frame Pacing** in Player settings.
 
 # Technical details
 

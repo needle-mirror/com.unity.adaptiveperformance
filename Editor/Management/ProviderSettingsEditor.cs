@@ -15,6 +15,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
     {
         const string k_Logging = "m_Logging";
         const string k_AutoPerformanceModeEnabled = "m_AutomaticPerformanceModeEnabled";
+        const string k_AutoGameModeEnabled = "m_AutomaticGameModeEnabled";
         const string k_EnableBoostOnStartup = "m_EnableBoostOnStartup";
         const string k_StatsLoggingFrequencyInFrames = "m_StatsLoggingFrequencyInFrames";
         const string k_IndexerSettings = "m_IndexerSettings";
@@ -33,6 +34,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         static GUIContent s_LoggingLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Logging"), L10n.Tr("Only active in development mode."));
         static GUIContent s_AutomaticPerformanceModeEnabledLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Auto Performance Mode"), L10n.Tr("Auto Performance Mode controls performance by changing CPU and GPU levels."));
+        static GUIContent s_AutomaticGameModeEnabledLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Auto Game Mode"), L10n.Tr("Auto Game Mode controls performance by changing target FPS based on device GameMode settings."));
         static GUIContent s_EnableBoostOnStartupLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Boost mode on startup"), L10n.Tr("Enables the CPU and GPU boost mode before engine startup to decrease startup time."));
         static GUIContent s_StatsLoggingFrequencyInFramesLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Logging Frequency"), L10n.Tr("Changes the logging frequency."));
         static GUIContent s_IndexerActiveLabel = EditorGUIUtility.TrTextContent(L10n.Tr("Active"), L10n.Tr("Is indexer enabled."));
@@ -63,7 +65,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         static GUIContent s_AdaptiveDecals = EditorGUIUtility.TrTextContent(L10n.Tr("Decals"), L10n.Tr("Adaptive Decal changes the maximum draw distance for all decals of the Universal Render Pipeline based on the thermal and performance load."));
         static GUIContent s_AdaptiveLayerCulling = EditorGUIUtility.TrTextContent(L10n.Tr("Layer Culling"), L10n.Tr("Adaptive Layer Culling changes the maximum draw distance for each layer based on the thermal and performance load. It scales the value provided by camera.layerCullDistances."));
 
-        static string s_FrameRateWarning = L10n.Tr("Adaptive Framerate is only supported without VSync. Set VSync Count to \"Don't Sync\" in Quality settings.");
+        static string s_FramerateWarningVSync = L10n.Tr("Adaptive Framerate is only supported without VSync. Set VSync Count to \"Don't Sync\" in Quality settings.");
+        static string s_FramerateWarningGameMode = L10n.Tr("Adaptive Framerate is only supported when \"Auto Game Mode\" is turned off.");
         static string s_WarningPopup = L10n.Tr("Warning");
         static string s_WarningPopupMessage = L10n.Tr("Adaptive Performance requires at least one profile to work properly");
         static string s_WarningPopupOption = L10n.Tr("Ok");
@@ -73,6 +76,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
         SerializedProperty m_LoggingProperty;
         SerializedProperty m_AutoPerformanceModeEnabledProperty;
+        SerializedProperty m_AutoGameModeEnabledProperty;
         SerializedProperty m_EnableBoostOnStartupProperty;
         SerializedProperty m_StatsLoggingFrequencyInFramesProperty;
         SerializedProperty m_IndexerActiveProperty;
@@ -105,6 +109,10 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// Controls whether or not the 'AutomaticPerformanceModeEnabled' option is available. Default value is <c>true</c>.
         /// </summary>
         protected virtual bool IsAutoPerformanceModeAvailable { get; private set; } = true;
+        /// <summary>
+        /// Controls whether or not the 'AutomaticGameModeEnabled' option is available. Default value is <c>false</c>.
+        /// </summary>
+        protected virtual bool IsAutoGameModeAvailable { get; private set; } = false;
 
         static GUIContent k_ShowRuntimeSettings = EditorGUIUtility.TrTextContent(L10n.Tr("Runtime Settings"));
         static GUIContent k_ShowDevelopmentSettings = EditorGUIUtility.TrTextContent(L10n.Tr("Development Settings"));
@@ -171,6 +179,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 m_LoggingProperty = serializedObject.FindProperty(k_Logging);
             if (IsAutoPerformanceModeAvailable && m_AutoPerformanceModeEnabledProperty == null)
                 m_AutoPerformanceModeEnabledProperty = serializedObject.FindProperty(k_AutoPerformanceModeEnabled);
+            if (IsAutoGameModeAvailable && m_AutoGameModeEnabledProperty == null)
+                m_AutoGameModeEnabledProperty = serializedObject.FindProperty(k_AutoGameModeEnabled);
             if (IsBoostAvailable && m_EnableBoostOnStartupProperty == null)
                 m_EnableBoostOnStartupProperty = serializedObject.FindProperty(k_EnableBoostOnStartup);
             if (m_StatsLoggingFrequencyInFramesProperty == null)
@@ -229,6 +239,9 @@ namespace UnityEditor.AdaptivePerformance.Editor
 
                 if (IsAutoPerformanceModeAvailable)
                     EditorGUILayout.PropertyField(m_AutoPerformanceModeEnabledProperty, s_AutomaticPerformanceModeEnabledLabel);
+
+                if (IsAutoGameModeAvailable)
+                    EditorGUILayout.PropertyField(m_AutoGameModeEnabledProperty, s_AutomaticGameModeEnabledLabel);
 
                 if (IsBoostAvailable)
                     EditorGUILayout.PropertyField(m_EnableBoostOnStartupProperty, s_EnableBoostOnStartupLabel);
@@ -358,6 +371,12 @@ namespace UnityEditor.AdaptivePerformance.Editor
             return list.count > 0;
         }
 
+        // Adaptive Framerate scaler should be automatically disabled in case of using vSync or when fps is conrolled by device GameMode
+        bool DisabledAdaptiveFramerateScaler(string scalerName)
+        {
+            return (scalerName == s_AdaptiveFramerateMenu && (QualitySettings.vSyncCount > 0 || m_AutoGameModeEnabledProperty.boolValue));
+        }
+
         float ElementHeightCallback(int index)
         {
             var name = m_ReorderableList.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative(k_ScalerName).stringValue;
@@ -388,7 +407,7 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     {
                         height += k_NumberOfScalerProperties * (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
                     }
-                    if (scalerName == s_AdaptiveFramerateMenu && QualitySettings.vSyncCount > 0)
+                    if (DisabledAdaptiveFramerateScaler(scalerName))
                     {
                         if (scalerSettingInfo.showScalerSettings && !scalerSetting.FindPropertyRelative(k_ScalerEnabled).boolValue) // if before was not executed due to scaler not enabled, but we need the height.
                         {
@@ -405,9 +424,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         {
             string name = scalerSetting.FindPropertyRelative(k_ScalerName).stringValue;
             var isEnabled = renderNotDisabled && !EditorApplication.isPlayingOrWillChangePlaymode;
-            var isFrameRateScaler = name == s_AdaptiveFramerateMenu;
 
-            if (isFrameRateScaler && QualitySettings.vSyncCount > 0)
+            if (DisabledAdaptiveFramerateScaler(name))
             {
                 isEnabled = false;
             }
@@ -452,13 +470,16 @@ namespace UnityEditor.AdaptivePerformance.Editor
                 rect.x += 10;
                 rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-                if (isFrameRateScaler && QualitySettings.vSyncCount > 0)
+                if (DisabledAdaptiveFramerateScaler(name))
                 {
                     GUI.enabled = true;
                     rect.x += 10;
                     rect.width -= 10;
                     rect.height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    EditorGUI.HelpBox(rect, s_FrameRateWarning, MessageType.Warning);
+                    var framerateWarning = (QualitySettings.vSyncCount > 0 && m_AutoGameModeEnabledProperty.boolValue) ?
+                        s_FramerateWarningVSync + "\n" + s_FramerateWarningGameMode :
+                        (QualitySettings.vSyncCount > 0 ? s_FramerateWarningVSync : s_FramerateWarningGameMode);
+                    EditorGUI.HelpBox(rect, framerateWarning, MessageType.Warning);
                     rect.height -= EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                     rect.x -= 10;
                     rect.width += 10;

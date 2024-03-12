@@ -168,6 +168,7 @@ namespace UnityEngine.AdaptivePerformance
 
         DevicePerformanceControlImpl m_DevicePerfControl;
         AutoPerformanceLevelController m_AutoPerformanceLevelController;
+        AutoPerformanceModeController m_AutoPerformanceModeController;
         CpuTimeProvider m_CpuFrameTimeProvider;
         GpuTimeProvider m_GpuFrameTimeProvider;
         Provider.IApplicationLifecycle m_AppLifecycle;
@@ -654,6 +655,10 @@ namespace UnityEngine.AdaptivePerformance
                 m_UseProviderOverallFrameTime = m_Subsystem.Capabilities.HasFlag(Provider.Feature.OverallFrameTime);
                 m_DevicePerfControl = new DevicePerformanceControlImpl(m_Subsystem.PerformanceLevelControl);
                 m_AutoPerformanceLevelController = new AutoPerformanceLevelController(m_DevicePerfControl, PerformanceStatus, ThermalStatus);
+                if (m_Settings.automaticGameMode)
+                {
+                    m_AutoPerformanceModeController = new AutoPerformanceModeController(PerformanceModeStatus);
+                }
 
                 m_AppLifecycle = m_Subsystem.ApplicationLifecycle;
 
@@ -738,6 +743,7 @@ namespace UnityEngine.AdaptivePerformance
             m_Subsystem = null;
             m_DevicePerfControl = null;
             m_AutoPerformanceLevelController = null;
+            m_AutoPerformanceModeController = null;
             m_AppLifecycle = null;
             m_CpuFrameTimeProvider = null;
             m_GpuFrameTimeProvider = null;
