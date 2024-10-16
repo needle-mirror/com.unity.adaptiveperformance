@@ -4,6 +4,16 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.1.1] - 2024-10-16
+
+### Fixed
+- APB-45 Custom Adaptive Performance Scaler is not updated in the Profiler and Simulator when it does not have an overridden name
+- Issues with Scaler profiles not applied during start initialization
+- APB-34 Adaptive Performance reset Application.target framerate to -1
+- APB-36: "NullReferenceException: Object reference not set to an instance of an object“ error is thrown when clicking on the disabled Default Scaler Profile setting
+- APB-40 In ShadowQuality Scaler the MainLightShadowCascadesCountBias being incorrectly adjusted when changing Adaptive Performance Shadow Quality. It adjust ShadowQualityBias now instead.
+- DOCR-4448, DOCR-4715, DOCR-4608 - Documentation fixes.
+
 ## [5.1.0] - 2024-03-12
 
 ### Added

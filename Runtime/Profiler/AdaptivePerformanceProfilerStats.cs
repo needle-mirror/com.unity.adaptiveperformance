@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Profiling;
 using UnityEngine.Profiling;
-using UnityEngine;
 
 /// <summary>
 /// Profiler Stats reporting helper class. Stores all adaptive performance counters and helper functions.
@@ -140,7 +138,6 @@ public static class AdaptivePerformanceProfilerStats
         if (!existingInfo)
             scalerInfo = new ScalerInfo();
 
-        byte[] scalerNameBytes = Encoding.ASCII.GetBytes(scalerName);
         scalerInfo.enabled = (uint)(enabled ? 1 : 0);
         scalerInfo.overrideLevel = overrideLevel;
         scalerInfo.currentLevel = currentLevel;
@@ -148,12 +145,10 @@ public static class AdaptivePerformanceProfilerStats
         scalerInfo.maxLevel = maxLevel;
         scalerInfo.applied = (uint)(applied ? 1 : 0);
 
+        const int maxScalerNameSizeInBytes = 320;
         unsafe
         {
-            fixed(byte* pSource = scalerNameBytes)
-            {
-                UnsafeUtility.MemCpy(scalerInfo.scalerName, pSource, scalerNameBytes.Length);
-            }
+            Encoding.ASCII.GetBytes(scalerName.AsSpan(), new Span<byte>(scalerInfo.scalerName, maxScalerNameSizeInBytes));
         }
 
         if (!existingInfo)

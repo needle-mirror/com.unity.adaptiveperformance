@@ -56,7 +56,7 @@ namespace UnityEditor.AdaptivePerformance.TestPackage.Editor
                         {
                             BuildTargetGroup.Android,
                             BuildTargetGroup.iOS,
-                            BuildTargetGroup.Lumin
+                            BuildTargetGroup.Switch
                         }
                     },
                     new TestLoaderMetadata() {

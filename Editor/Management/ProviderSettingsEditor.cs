@@ -374,7 +374,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         // Adaptive Framerate scaler should be automatically disabled in case of using vSync or when fps is conrolled by device GameMode
         bool DisabledAdaptiveFramerateScaler(string scalerName)
         {
-            return (scalerName == s_AdaptiveFramerateMenu && (QualitySettings.vSyncCount > 0 || m_AutoGameModeEnabledProperty.boolValue));
+            bool automode = IsAutoGameModeAvailable ? m_AutoGameModeEnabledProperty.boolValue : false;
+            return (scalerName == s_AdaptiveFramerateMenu && (QualitySettings.vSyncCount > 0 || automode));
         }
 
         float ElementHeightCallback(int index)
@@ -476,7 +477,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
                     rect.x += 10;
                     rect.width -= 10;
                     rect.height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    var framerateWarning = (QualitySettings.vSyncCount > 0 && m_AutoGameModeEnabledProperty.boolValue) ?
+                    bool automode = IsAutoGameModeAvailable ? m_AutoGameModeEnabledProperty.boolValue : false;
+                    var framerateWarning = (QualitySettings.vSyncCount > 0 && automode) ?
                         s_FramerateWarningVSync + "\n" + s_FramerateWarningGameMode :
                         (QualitySettings.vSyncCount > 0 ? s_FramerateWarningVSync : s_FramerateWarningGameMode);
                     EditorGUI.HelpBox(rect, framerateWarning, MessageType.Warning);

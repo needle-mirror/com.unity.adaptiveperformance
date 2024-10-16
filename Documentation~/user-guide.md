@@ -162,7 +162,7 @@ In the following sample case, the big and medium cores of the CPU are overloaded
 
 ![Big and medium cores are accelerated while tiny cores are on the same level as before.](Images/boost-mode.png)
 
-The downside is a higher energy consumption and heat production; using boost mode can easily bring the device into a throttling state. You should profile your application and look for additional optimizations before considering boost mood, and only use boost mode for short bursts.
+The downside is a higher energy consumption and heat production; using boost mode can easily bring the device into a throttling state. You should profile your application and look for additional optimizations before considering boost mode, and only use boost mode for short bursts.
 
 Typical scenarios for boost mode:
 
@@ -243,41 +243,61 @@ See the [Adaptive Performance samples](samples-guide.md) for more information ab
 
 ### Custom Scalers
 
-To create custom Scalers, you need to create a new class that inherits from `AdaptivePerformanceScaler`.
+To create custom Scalers, you need to create a new class that inherits from `AdaptivePerformanceScaler`. The class name and the name of the SettingsBase name must be the same otherwise the values are not propergated in the profiler correctly.
 
 The following example shows a Scaler for controlling texture quality:
 
 ```
 public class TextureQualityScaler : AdaptivePerformanceScaler
 {
-   public override ScalerVisualImpact VisualImpact => ScalerVisualImpact.High;
-   public override ScalerTarget Target => ScalerTarget.GPU;
-   public override int MaxLevel => 4;
-   public override int MinBound => 0;
-   public override int MaxBound => 4;
+    AdaptivePerformanceScalerSettingsBase m_AdaptiveTexureQualityScaler = new AdaptivePerformanceScalerSettingsBase
+    {
+        name = "Texture Quality Scaler",
+        enabled = false,
+        scale = 1.0f,
+        visualImpact = ScalerVisualImpact.High,
+        target = ScalerTarget.GPU,
+        minBound = 0,
+        maxBound = 4,
+        maxLevel = 4
+    };
 
-   int m_DefaultTextureQuality;
+    int m_DefaultTextureLimit;
 
-   protected override void OnDisabled()
-   {
-       QualitySettings.masterTextureLimit = m_DefaultTextureLimit;
-   }
+    public AdaptivePerformanceScalerSettingsBase AdaptiveTexureQualitySetting
+    {
+        get { return m_AdaptiveTexureQualityScaler; }
+        set { m_AdaptiveTexureQualityScaler = value; }
+    }
 
-   protected override void OnEnabled()
-   {
-       m_DefaultTextureLimit = QualitySettings.masterTextureLimit;
-   }
+    protected override void Awake()
+    {
+        base.Awake();
+        ApplyDefaultSetting(AdaptiveTexureQualitySetting);
+    }
 
-   protected override void OnLevel()
-   {
-        float oldScaleFactor = Scale;
+    protected override void OnDisabled()
+    {
+        QualitySettings.globalTextureMipmapLimit = m_DefaultTextureLimit;
+    }
+
+    protected override void OnEnabled()
+    {
+        m_DefaultTextureLimit = QualitySettings.globalTextureMipmapLimit;
+    }
+
+    protected override void OnLevel()
+    {
         float scaleIncrement = (MaxBound - MinBound) / MaxLevel;
 
         Scale = scaleIncrement * (MaxLevel - CurrentLevel) + MinBound;
 
-        if (Scale != oldScaleFactor)
-            QualitySettings.masterTextureLimit = (int)MaxBound-((int)(MaxBound*Scale));
-   }
+        if (ScaleChanged())
+        {
+            Debug.Log(Scale);
+            QualitySettings.globalTextureMipmapLimit = (int)MaxBound - ((int)(MaxBound * Scale));
+        }
+    }
 }
 ```
 

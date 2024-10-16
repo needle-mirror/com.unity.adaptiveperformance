@@ -40,7 +40,7 @@ namespace UnityEngine.AdaptivePerformance
         protected override void OnLevel()
         {
             if (ScaleChanged())
-                AdaptivePerformanceRenderSettings.MainLightShadowCascadesCountBias = (int)(3 - 3 * Scale);
+                AdaptivePerformanceRenderSettings.ShadowQualityBias = (int)(3 - 3 * Scale);
         }
     }
 }

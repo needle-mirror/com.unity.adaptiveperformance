@@ -41,6 +41,18 @@ namespace UnityEngine.AdaptivePerformance
             Holder.Instance = apm;
             InstallScalers();
             DontDestroyOnLoad(m_ManagerGameObject);
+
+            var settings = apm.Settings;
+            if (settings == null)
+                return;
+
+            var scalerProfiles = settings.GetAvailableScalerProfiles();
+            if (scalerProfiles.Length <= 0)
+            {
+                APLog.Debug("No Scaler Profiles available. Did you remove all profiles manually from the provider Settings?");
+                return;
+            }
+            settings.LoadScalerProfile(scalerProfiles[settings.defaultScalerProfilerIndex]);
         }
         public void Deinitialize()
         {

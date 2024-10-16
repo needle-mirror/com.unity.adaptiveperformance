@@ -128,7 +128,10 @@ namespace UnityEditor.AdaptivePerformance.Editor
                         maxValueField.value = scalerInstance.MaxBound;
                         maxValueField.name = $"{t.Name}-scaler-max-value";
                         maxValueField.SetEnabled(scalerInstance.Enabled);
-                        foldout.text = t.Name.Substring(8);
+                        if (t.Name.StartsWith("Adaptive"))
+                            foldout.text = t.Name.Substring(8);
+                        else
+                            foldout.text = t.Name;
                         // Now set up the callback actions
                         toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
                         {

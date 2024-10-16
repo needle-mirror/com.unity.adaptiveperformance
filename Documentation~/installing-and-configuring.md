@@ -6,6 +6,12 @@ You can install the package in one of the following ways:
 - From the [Unity Package Manager](#unity-package-manager)
 - Manually from the [Package Manifest](#package-manifest)
 
+The Adaptive Performance module depends on the com.unity.modules.subsystems module. If the module is not activated ensure to enable the VR or XR module.
+
+# Uninstalling Adaptive Performance
+
+Uninstall the package by using the Package Manager.
+
 ### Project Settings
 
 Access the **Project Settings** window (menu: **Edit &gt; Project Settings &gt; Adaptive Performance**), then click the **Install Adaptive Performance** button.
