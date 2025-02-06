@@ -16,11 +16,11 @@ namespace UnityEditor.AdaptivePerformance.Editor
     public abstract class AdaptivePerformanceBuildHelper<T>  : IPreprocessBuildWithReport, IPostprocessBuildWithReport where T : UnityEngine.Object
     {
         /// <summary>Override of base IPreprocessBuildWithReport.</summary>
-        /// <returns>The callback order.</returns>
+        /// <value>The callback order.</value>
         public virtual int callbackOrder { get { return 0; } }
 
         /// <summary>Override of base IPreprocessBuildWithReport.</summary>
-        /// <returns>String that specifies the key to be used to set or get settings in EditorBuildSettings.</returns>
+        /// <value>String that specifies the key to be used to set or get settings in EditorBuildSettings.</value>
         public abstract string BuildSettingsKey { get; }
 
         /// <summary>Helper function to return current settings for a specific build target.</summary>
@@ -127,8 +127,8 @@ namespace UnityEditor.AdaptivePerformance.Editor
         /// <summary>
         /// Get value for boost mode on startup for given settings
         /// </summary>
-        /// <param name="settings"></param>
-        /// <returns></returns>
+        /// <param name="settings">The Adaptive Performance Settings Object</param>
+        /// <returns>Returns string 1 if boost on startup is set, 0 otherwise</returns>
         public static string GetWantedStartupBoostSetting(UnityEngine.AdaptivePerformance.IAdaptivePerformanceSettings settings)
         {
             if (settings == null)

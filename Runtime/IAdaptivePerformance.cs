@@ -179,10 +179,10 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Create and attach the Adaptive Performance to the scene and initiate the startup process for the provider.
         /// After initialization is complete, <see cref="Instance"/> is made available.
+        /// </summary>
         /// <remarks>
         /// Should only be used when "Initialize on Startup" is disabled.
         /// </remarks>
-        /// </summary>
         public static void Initialize()
         {
             if (Instance != null)

@@ -9,7 +9,7 @@ using UnityEngine.SubsystemsImplementation;
 namespace UnityEditor.AdaptivePerformance.Simulator.Editor
 {
     /// <summary>
-    /// The subsystem is used for simulating Adaptive Performance in the Editor with the <see href="https://docs.unity3d.com/Manual/DeviceSimulator.html">Device Simulator</see>.
+    /// The subsystem is used for simulating Adaptive Performance in the Editor with the <a href="https://docs.unity3d.com/Manual/DeviceSimulator.html">Device Simulator</a>.
     /// It is also used for Adaptive Performance tests and to simulate Adaptive Performance when it is not available on the hardware you work with.
     /// </summary>
     [Preserve]

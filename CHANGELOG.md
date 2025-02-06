@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.1.2] - 2025-02-06
+
+### Added
+- APB-59 Support Android 16 KB page size devices by aligning `libAndroidCpuUsage.so` to 16 KB
+
 ## [5.1.1] - 2024-10-16
 
 ### Fixed

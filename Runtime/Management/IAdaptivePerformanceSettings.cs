@@ -775,7 +775,7 @@ namespace UnityEngine.AdaptivePerformance
         /// <summary>
         /// Returns a list of all available scaler profiles.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string array with all available scaler profiles</returns>
         public string[] GetAvailableScalerProfiles()
         {
             string[] scalerNames = new string[m_scalerProfileList.Length];

@@ -3,7 +3,7 @@ namespace UnityEngine.AdaptivePerformance
     /// <summary>
     /// You can subscribe to the performance mode event delegate which sends the <see cref="PerformanceMode"/> when the performance mode changes.
     /// </summary>
-    /// <param name="performanceMode"></param>
+    /// <param name="performanceMode">Passes the active <see cref="PerformanceMode"/></param>
     public delegate void PerformanceModeEventHandler(PerformanceMode performanceMode);
 
     /// <summary>

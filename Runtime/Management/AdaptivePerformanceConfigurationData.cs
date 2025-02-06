@@ -12,7 +12,7 @@ namespace UnityEngine.AdaptivePerformance
     /// will present the settings as an inspectable object in the Project Settings window using the built-in inspector UI.
     ///
     /// The implementor of the settings is able to create their own custom UI and the Project Settings system will use that UI in
-    /// place of the build-in one in the Inspector. See the <see href="https://docs.unity3d.com/Manual/ExtendingTheEditor.html">Extending the Editor</see>
+    /// place of the build-in one in the Inspector. See the <a href="https://docs.unity3d.com/Manual/ExtendingTheEditor.html">Extending the Editor</a>
     /// page in the Unity Manual for more information.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
@@ -25,7 +25,7 @@ namespace UnityEngine.AdaptivePerformance
 
         /// <summary>
         /// The key that will be used to store the singleton instance of these settings within EditorBuildSettings.
-        /// For more information, see the <see href="https://docs.unity3d.com/ScriptReference/EditorBuildSettings.html">EditorBuildSettings</see> scripting
+        /// For more information, see the <a href="https://docs.unity3d.com/ScriptReference/EditorBuildSettings.html">EditorBuildSettings</a> scripting
         /// API documentation.
         /// </summary>
         public string buildSettingsKey { get; set; }

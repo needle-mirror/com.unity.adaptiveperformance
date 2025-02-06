@@ -10,14 +10,13 @@ namespace UnityEditor.AdaptivePerformance.Editor
     public sealed class AdaptivePerformanceSupportedBuildTargetAttribute : Attribute
     {
         /// <summary>
-        /// String representation of <see href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.html">UnityEditor.Build.BuildTargetGroup</see>.
+        /// String representation of <a href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.html">UnityEditor.Build.BuildTargetGroup</a>.
         /// </summary>
         public BuildTargetGroup buildTargetGroup { get; set; }
 
         /// <summary>
-        /// Array of BuildTargets, each of which is the representation of <see href="https://docs.unity3d.com/ScriptReference/BuildTarget.html">UnityEditor.Build.BuildTarget</see>
+        /// Array of BuildTargets, each of which is the representation of <a href="https://docs.unity3d.com/ScriptReference/BuildTarget.html">UnityEditor.Build.BuildTarget</a>
         /// aligned with <see cref="buildTargetGroup"/>.
-        ///
         /// Currently only advisory.
         /// </summary>
         public BuildTarget[] buildTargets { get; set; }

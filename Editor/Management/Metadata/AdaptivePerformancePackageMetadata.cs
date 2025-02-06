@@ -36,7 +36,7 @@ namespace UnityEditor.AdaptivePerformance.Editor.Metadata
         /// The full list of supported build targets for this loader. This allows the UI to only show the
         /// loaders appropriate for a specific build target.
         ///
-        /// Returning an empty list or a list containing just <see href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.Unknown.html">BuildTargetGroup.Unknown</see> will make this
+        /// Returning an empty list or a list containing just <a href="https://docs.unity3d.com/ScriptReference/BuildTargetGroup.Unknown.html">BuildTargetGroup.Unknown</a> will make this
         /// loader invisible in the UI.
         /// </summary>
         List<BuildTargetGroup> supportedBuildTargets { get; }

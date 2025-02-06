@@ -5,7 +5,7 @@ namespace UnityEngine.AdaptivePerformance
     /// <summary>
     /// You can subscribe to the thermal event delegate which sends the <see cref="ThermalMetrics"/> when the thermal state changes.
     /// </summary>
-    /// <param name="thermalMetrics"></param>
+    /// <param name="thermalMetrics">Passes the active <see cref="ThermalMetrics"/></param>
     public delegate void ThermalEventHandler(ThermalMetrics thermalMetrics);
 
     /// <summary>

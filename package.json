@@ -2,9 +2,9 @@
   "name": "com.unity.adaptiveperformance",
   "displayName": "Adaptive Performance",
   "description": "The Adaptive Performance package provides an API to get feedback about the thermal and power state of mobile devices, enabling applications to make performance-relevant adaptions at runtime.\n\nFor instruction on how to use samples, please read the documentation.\n\nBy installing this package, you agree to the terms and conditions of the Unity End User License Agreement found under \"View licenses\" above.",
-  "version": "5.1.1",
-  "unity": "2021.2",
-  "unityRelease": "0a18",
+  "version": "5.1.2",
+  "unity": "2022.3",
+  "unityRelease": "0f1",
   "keywords": [
     "mobile",
     "adaptive",
@@ -25,7 +25,8 @@
     "clusterinfo"
   ],
   "dependencies": {
-    "com.unity.profiling.core": "1.0.2"
+    "com.unity.profiling.core": "1.0.2",
+    "com.unity.modules.subsystems": "1.0.0"
   },
   "license": "See LICENSE.md file",
   "samples": [
@@ -161,15 +162,15 @@
     }
   ],
   "_upm": {
-    "changelog": "### Fixed\n- APB-45 Custom Adaptive Performance Scaler is not updated in the Profiler and Simulator when it does not have an overridden name\n- Issues with Scaler profiles not applied during start initialization\n- APB-34 Adaptive Performance reset Application.target framerate to -1\n- APB-36: \"NullReferenceException: Object reference not set to an instance of an object“ error is thrown when clicking on the disabled Default Scaler Profile setting\n- APB-40 In ShadowQuality Scaler the MainLightShadowCascadesCountBias being incorrectly adjusted when changing Adaptive Performance Shadow Quality. It adjust ShadowQualityBias now instead.\n- DOCR-4448, DOCR-4715, DOCR-4608 - Documentation fixes."
+    "changelog": "### Added\n- APB-59 Support Android 16 KB page size devices by aligning `libAndroidCpuUsage.so` to 16 KB"
   },
   "upmCi": {
-    "footprint": "2b85ea478e546646ad3c6d398d0f9772d6e9ccf4"
+    "footprint": "3b2bb7849cbecd61369232428d13a1fabf60bf5c"
   },
   "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@5.1/manual/index.html",
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.adaptiveperformance.git",
     "type": "git",
-    "revision": "d0431cfc85db595b0aead2d2a9620ad8aaad5521"
+    "revision": "95cb958f9a89dab4d51e1e91929a894942506d99"
   }
 }

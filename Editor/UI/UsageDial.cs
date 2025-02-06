@@ -81,8 +81,8 @@ namespace UnityEditor.AdaptivePerformance.UI.Editor
         /// <summary>
         /// Change the percentage levels of the dial.
         /// </summary>
-        /// <param name="yellowPercentage"></param>
-        /// <param name="redPercentage"></param>
+        /// <param name="yellowPercentage">How much red Percentage is used in percent</param>
+        /// <param name="redPercentage">How much red Percentage is used in percent</param>
         /// <param name="force">Force and intemediate update.</param>
         public void SetThresholds(int yellowPercentage, int redPercentage, bool force = false)
         {
@@ -256,7 +256,7 @@ namespace UnityEditor.AdaptivePerformance.UI.Editor
             UxmlBoolAttributeDescription m_ShowLabel = new UxmlBoolAttributeDescription { name = "show-label", defaultValue = true };
 
             /// <summary>
-            ///
+            /// Returns an enumerable of <see cref="UxmlChildElementDescription"/>.
             /// </summary>
             public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
             {
@@ -266,9 +266,9 @@ namespace UnityEditor.AdaptivePerformance.UI.Editor
             /// <summary>
             /// Initializes the <see cref="UsageDial"/> with supplied <see cref="UxmlTraits"/>.
             /// </summary>
-            /// <param name="ve"></param>
-            /// <param name="bag"></param>
-            /// <param name="cc"></param>
+            /// <param name="ve">VisualElement</param>
+            /// <param name="bag">IUxmlAttributes</param>
+            /// <param name="cc">CreationContext</param>
             public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
             {
                 base.Init(ve, bag, cc);

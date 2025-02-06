@@ -7,7 +7,7 @@ namespace UnityEngine.AdaptivePerformance.Provider
 {
     /// <summary>
     /// Feature flags
-    /// See <see cref="PerformanceDataRecord.ChangeFlags"/> and <seealso cref="AdaptivePerformanceSubsystem.Capabilities"/>.
+    /// See <see cref="PerformanceDataRecord.ChangeFlags"/> and <see cref="AdaptivePerformanceSubsystem.Capabilities"/>.
     /// </summary>
     [Flags]
     public enum Feature
@@ -29,15 +29,15 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         TemperatureTrend = 0x4,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.CpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
+        /// See <see cref="PerformanceDataRecord.CpuPerformanceLevel"/> and <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
         /// </summary>
         CpuPerformanceLevel = 0x8,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.GpuPerformanceLevel"/> and <seealso cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
+        /// See <see cref="PerformanceDataRecord.GpuPerformanceLevel"/> and <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/>
         /// </summary>
         GpuPerformanceLevel = 0x10,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/> and <seealso cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
+        /// See <see cref="PerformanceDataRecord.PerformanceLevelControlAvailable"/> and <see cref="AdaptivePerformanceSubsystem.PerformanceLevelControl"/>
         /// </summary>
         PerformanceLevelControl = 0x20,
         /// <summary>
@@ -53,11 +53,11 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// </summary>
         OverallFrameTime = 0x100,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.CpuPerformanceBoost"/> and <seealso cref="IDevicePerformanceLevelControl.EnableCpuBoost"/>
+        /// See <see cref="PerformanceDataRecord.CpuPerformanceBoost"/> and <see cref="IDevicePerformanceLevelControl.EnableCpuBoost"/>
         /// </summary>
         CpuPerformanceBoost = 0x200,
         /// <summary>
-        /// See <see cref="PerformanceDataRecord.GpuPerformanceBoost"/> and <seealso cref="IDevicePerformanceLevelControl.EnableGpuBoost"/>
+        /// See <see cref="PerformanceDataRecord.GpuPerformanceBoost"/> and <see cref="IDevicePerformanceLevelControl.EnableGpuBoost"/>
         /// </summary>
         GpuPerformanceBoost = 0x400,
         /// <summary>
@@ -109,17 +109,16 @@ namespace UnityEngine.AdaptivePerformance.Provider
         /// <summary>
         /// The currently active CPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
         /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
-        /// CPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>], or <seealso cref="Constants.UnknownPerformanceLevel"/>.
+        /// CPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxCpuPerformanceLevel"/>], or <see cref="Constants.UnknownPerformanceLevel"/>.
         /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// CPU performance level has changed when <see cref="Feature.CpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
-        /// <value></value>
         public int CpuPerformanceLevel { get; set; }
 
         /// <summary>
         /// The currently active GPU performance level. This is typically the value previously set with <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> once the levels are successfully applied.
         /// Adaptive Performance might also change this level on its own. This typically happens when the device is thermal throttling or when <see cref="IDevicePerformanceLevelControl.SetPerformanceLevel"/> failed.
-        /// GPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>], or <seealso cref="Constants.UnknownPerformanceLevel"/>.
+        /// GPU performance level has a value in the range of [<see cref="Constants.MinCpuPerformanceLevel"/>, <see cref="IDevicePerformanceLevelControl.MaxGpuPerformanceLevel"/>], or <see cref="Constants.UnknownPerformanceLevel"/>.
         /// A value of <see cref="Constants.UnknownPerformanceLevel"/> means that Adaptive Performance took control of performance levels.
         /// GPU performance level has changed when <see cref="Feature.GpuPerformanceLevel"/> bit is set in <see cref="ChangeFlags"/>.
         /// </summary>
@@ -232,15 +231,15 @@ namespace UnityEngine.AdaptivePerformance.Provider
 
         /// <summary>
         /// Request a CPU performance boost.
-        /// </summary>
         /// If <see cref="Feature.CpuPerformanceBoost"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this function is ignored.
+        /// </summary>
         /// <returns>Returns true on success. When this fails, it means that the system took control and does not allow boosts.</returns>
         bool EnableCpuBoost();
 
         /// <summary>
         /// Request a GPU performance boost.
-        /// </summary>
         /// If <see cref="Feature.GpuPerformanceBoost"/> is not supported (see <see cref="AdaptivePerformanceSubsystem.Capabilities"/>), this function is ignored.
+        /// </summary>
         /// <returns>Returns true on success. When this fails, it means that the system took control and does not allow boosts.</returns>
         bool EnableGpuBoost();
     }

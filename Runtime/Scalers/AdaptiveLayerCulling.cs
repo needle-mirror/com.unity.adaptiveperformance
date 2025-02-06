@@ -1,7 +1,7 @@
 namespace UnityEngine.AdaptivePerformance
 {
     /// <summary>
-    /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> for adjusting <see href="https://docs.unity3d.com/ScriptReference/Camera-layerCullDistances.html">layer culling</see> distances.
+    /// A scaler used by <see cref="AdaptivePerformanceIndexer"/> for adjusting <a href="https://docs.unity3d.com/ScriptReference/Camera-layerCullDistances.html">layer culling</a> distances.
     /// </summary>
     public class AdaptiveLayerCulling : AdaptivePerformanceScaler
     {
