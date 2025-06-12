@@ -32,6 +32,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
     static readonly StyleColor k_Green = new StyleColor(new Color32(136, 176, 49, byte.MaxValue));
     static readonly StyleColor k_Yellow = new StyleColor(new Color32(221, 124, 69, byte.MaxValue));
     static readonly StyleColor k_Red = new StyleColor(new Color32(219, 89, 81, byte.MaxValue));
+    const int m_arraySize = 320;
+    byte[] m_arr = new byte[m_arraySize];
 
     public AdaptivePerformanceDetailsViewController(ProfilerWindow profilerWindow) : base(profilerWindow) {}
 
@@ -216,10 +218,8 @@ internal class AdaptivePerformanceDetailsViewController : ProfilerModuleViewCont
             {
                 foreach (var scalerInfo in scalerInfos)
                 {
-                    const int arraySize = 320;
-                    var arr = new byte[arraySize];
-                    Marshal.Copy((IntPtr)scalerInfo.scalerName, arr, 0, arraySize);
-                    var scalerName = Encoding.ASCII.GetString(arr).Replace(" ", "");
+                    Marshal.Copy((IntPtr)scalerInfo.scalerName, m_arr, 0, m_arraySize);
+                    var scalerName = Encoding.ASCII.GetString(m_arr).Replace(" ", "");
                     scalerName = scalerName.Replace("\0", "");
                     var viewName = m_Scalers.Q<Label>($"{scalerName}-element-label");
                     var barFill = m_Scalers.Q<VisualElement>($"{scalerName}-element-bar-fill");

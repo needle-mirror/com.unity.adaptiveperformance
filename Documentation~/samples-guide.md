@@ -8,9 +8,9 @@ Each sample logs information about the current state and any decisions being mad
 
 ## Installation
 
-Install Adaptive Performance samples from the **Package Manager** window. Make sure you install the [Sample Environment](#sample-environment) first. It's a prerequisite for most other samples. 
+Install Adaptive Performance samples from the **Package Manager** window. Make sure you install the [Sample Environment](#sample-environment) first. It's a prerequisite for most other samples.
 
-Some samples require Universal Render Pipeline to work, while others work with any render pipeline. 
+Some samples require Universal Render Pipeline to work, while others work with any render pipeline.
 
 The following samples are available for any render pipeline:
 

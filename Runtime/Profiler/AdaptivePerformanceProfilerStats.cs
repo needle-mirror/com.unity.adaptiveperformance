@@ -79,7 +79,9 @@ public static class AdaptivePerformanceProfilerStats
     /// </summary>
     public static readonly int kScalerDataTag = 0;
 
-    static Dictionary<string, ScalerInfo> scalerInfos = new Dictionary<string, ScalerInfo>();
+    static List<ScalerInfo> scalerInfos = new List<ScalerInfo>();
+    const int maxScalerNameSizeInBytes = 320;
+    static byte[] arr = new byte[maxScalerNameSizeInBytes];
 
     /// <summary>
     /// ScalerInfo is a struct used to collect and send scaler info to the profile collectively.
@@ -132,29 +134,67 @@ public static class AdaptivePerformanceProfilerStats
     {
         if (!Profiler.enabled || scalerName.Length == 0)
             return;
-        ScalerInfo scalerInfo;
-        bool existingInfo = scalerInfos.TryGetValue(scalerName, out scalerInfo);
 
-        if (!existingInfo)
-            scalerInfo = new ScalerInfo();
+        int scalerIndex = -1;
+        ScalerInfo info = default;
 
-        scalerInfo.enabled = (uint)(enabled ? 1 : 0);
-        scalerInfo.overrideLevel = overrideLevel;
-        scalerInfo.currentLevel = currentLevel;
-        scalerInfo.scale = scale;
-        scalerInfo.maxLevel = maxLevel;
-        scalerInfo.applied = (uint)(applied ? 1 : 0);
-
-        const int maxScalerNameSizeInBytes = 320;
+        // Use stackalloc for temporary name buffer to avoid heap allocation
         unsafe
         {
-            Encoding.ASCII.GetBytes(scalerName.AsSpan(), new Span<byte>(scalerInfo.scalerName, maxScalerNameSizeInBytes));
-        }
+            fixed (byte* namePtr = arr)
+            {
+                for (int i = 0; i < scalerInfos.Count; ++i)
+                {
+                    info = scalerInfos[i];
+                    Buffer.MemoryCopy(info.scalerName, namePtr, maxScalerNameSizeInBytes, maxScalerNameSizeInBytes);
+                    int nameLength = 0;
+                    for (; nameLength < maxScalerNameSizeInBytes && namePtr[nameLength] != 0; ++nameLength) ;
+                    bool match = true;
+                    if (nameLength == scalerName.Length)
+                    {
+                        for (int j = 0; j < nameLength; ++j)
+                        {
+                            if (namePtr[j] != (byte)scalerName[j])
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        match = false;
+                    }
+                    if (match)
+                    {
+                        scalerIndex = i;
+                        break;
+                    }
+                }
 
-        if (!existingInfo)
-            scalerInfos.Add(scalerName, scalerInfo);
-        else
-            scalerInfos[scalerName] = scalerInfo;
+                if (scalerIndex == -1)
+                {
+                    info = new ScalerInfo();
+                    int copyLen = Math.Min(scalerName.Length, maxScalerNameSizeInBytes);
+                    for (int i = 0; i < copyLen; ++i)
+                        info.scalerName[i] = (byte)scalerName[i];
+                    for (int i = copyLen; i < maxScalerNameSizeInBytes; ++i)
+                        info.scalerName[i] = 0;
+                }
+            }
+
+            info.enabled = (uint)(enabled ? 1 : 0);
+            info.overrideLevel = overrideLevel;
+            info.currentLevel = currentLevel;
+            info.scale = scale;
+            info.maxLevel = maxLevel;
+            info.applied = (uint)(applied ? 1 : 0);
+
+            if (scalerIndex == -1)
+                scalerInfos.Add(info);
+            else
+                scalerInfos[scalerIndex] = info;
+        }
     }
 
     /// <summary>
@@ -162,8 +202,6 @@ public static class AdaptivePerformanceProfilerStats
     /// </summary>
     public static void FlushScalerDataToProfilerStream()
     {
-        ScalerInfo[] arr = new ScalerInfo[scalerInfos.Count];
-        scalerInfos.Values.CopyTo(arr, 0);
-        Profiler.EmitFrameMetaData(kAdaptivePerformanceProfilerModuleGuid, kScalerDataTag, arr);
+        Profiler.EmitFrameMetaData<ScalerInfo>(kAdaptivePerformanceProfilerModuleGuid, kScalerDataTag, scalerInfos);
     }
 }
